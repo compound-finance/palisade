@@ -1,0 +1,340 @@
+@import 'node_modules/compound-components/src/scss/components/dot-indicator';
+
+@import 'variables';
+
+footer {
+  padding: $column-gutter 0;
+  background: $color_dark_1;
+
+  .top {
+    display: flex;
+    justify-content: space-between;
+    padding: 31px 0 31px;
+    border-bottom: 1px solid $color_dark_2;
+  }
+  .bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: $column-gutter;
+    color: $color_label;
+    font-size: 0.9rem;
+    padding-top: 8px;
+    padding-bottom: 8px;
+
+    label:first-of-type {
+      color: $color_grey_1;
+    }
+
+    .social {
+      display: flex;
+      align-items: center;
+      .dropdown--network {
+        display: inline-block;
+        margin-left: $column-gutter * 2;
+        .dot-indicator {
+          margin-right: 8px;
+        }
+        label.small {
+          color: #ffffff;
+          margin-right: 8px;
+          font-weight: 500;
+          ::after {
+            vertical-align: middle;
+          }
+          &:hover {
+            color: $color_supply;
+          }
+        }
+
+        @media (max-width: $device-sm) {
+          margin-left: auto;
+          margin-right: 0;
+
+          .dot-indicator {
+            margin-right: 0;
+          }
+        }
+      }
+    }
+  }
+  .links {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+  .links p {
+    color: $color_light_1;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 1.2em;
+  }
+  .links a {
+    color: $color_grey_1;
+    text-transform: none;
+    font-size: 12px;
+    font-weight: 500;
+    margin-bottom: 2em;
+    letter-spacing: 0;
+
+    &:hover {
+      text-decoration: none;
+      color: $color_supply;
+    }
+  }
+
+  .dapp {
+    color: $color_supply;
+    border-color: $color_supply;
+    transition: background-color 0.2s ease-in, color 0.2s ease-in;
+
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 14px;
+
+    &:hover {
+      background-color: $color_supply;
+      color: $color_light_1;
+      border-color: $color_supply;
+    }
+  }
+
+  .icn {
+    display: inline-block;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    width: ($column-gutter * 0.75);
+    height: ($column-gutter * 0.75);
+    margin-left: ($column-gutter * 0.75);
+
+    &.discord {
+      background-image: url(/images/icn-discord-dark-grey.svg);
+    }
+
+    &.github {
+      background-image: url(/images/icn-github-dark-grey.svg);
+    }
+
+    &.medium {
+      background-image: url(/images/icn-medium-dark-grey.svg);
+    }
+
+    &.twitter {
+      background-image: url(/images/icn-twitter-dark-grey.svg);
+    }
+  }
+
+  @media (max-width: $device-sm) {
+    label {
+      margin-left: ($column-gutter * 0.75);
+    }
+
+    .top {
+      padding: 25px 0 25px;
+      margin-bottom: 0;
+    }
+
+    .links-holder {
+      margin-left: ($column-gutter * 0.25);
+    }
+
+    .links {
+      margin-top: 45px;
+    }
+
+    .links a {
+      margin-bottom: 2em;
+    }
+
+    .bottom {
+      flex-direction: column;
+      align-items: flex-start;
+      padding-top: 0;
+      margin-top: 0;
+    }
+
+    .social {
+      order: -1;
+      width: 100%;
+      padding-top: 24px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid $color_dark_2;
+      margin-bottom: 30px;
+    }
+
+    .icn {
+      width: 20px;
+      height: 20px;
+      margin-right: 25px;
+    }
+  }
+}
+
+footer.dapp {
+  background: $color_light_2;
+  position: relative;
+  bottom: 0;
+  height: 40px;
+  width: 100%;
+  padding: 0;
+  border-top: 1px solid $color_grey_3;
+
+  .brand {
+    background-image: url(/images/compound-logo-dark.svg);
+  }
+
+  label {
+    font-weight: 500;
+    margin-left: 30px;
+  }
+
+  label:first-of-type {
+    margin-left: 9px;
+  }
+
+  a {
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .top {
+    display: none;
+    border-bottom: none;
+  }
+
+  .bottom {
+    height: 100%;
+    align-items: center;
+    margin-top: 0;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    border-top: none;
+
+    label:first-of-type {
+      color: $color_grey_2;
+    }
+
+    a {
+      margin-left: 30px;
+      font-style: medium;
+      font-weight: 500;
+      font-size: 12px;
+      color: $color_grey_2;
+    }
+
+    .social {
+      padding-top: 0;
+    }
+
+    .dropdown {
+      &__option {
+        label {
+          margin-left: 0;
+
+          @media (max-width: $device-sm) {
+            margin-left: 9px;
+          }
+        }
+
+        &:hover {
+          label {
+            &.language {
+              color: $color_supply;
+            }
+          }
+        }
+      }
+    }
+
+    .icn {
+      margin-left: ($column-gutter * 0.25);
+
+      &.english {
+        background-image: url(/images/icn-english.svg);
+      }
+
+      &.spanish {
+        background-image: url(/images/icn-spanish.svg);
+      }
+
+      &.chinese {
+        background-image: url(/images/icn-chinese.svg);
+      }
+
+      &.french {
+        background-image: url(/images/icn-french.svg);
+      }
+
+      &.korean {
+        background-image: url(/images/icn-korean.svg);
+      }
+
+      @media (max-width: $device-sm) {
+        margin-right: 0;
+      }
+    }
+  }
+  .links a {
+    margin-left: 30px;
+    font-style: medium;
+    font-weight: 500;
+    font-size: 12px;
+    color: $color_grey_2;
+
+    &:hover {
+      text-decoration: none;
+      color: $color_disabled;
+    }
+  }
+  .help {
+    display: flex;
+    align-items: flex-start;
+
+    label {
+      margin-bottom: -2px;
+    }
+  }
+
+  @media (max-width: $device-sm) {
+    position: relative;
+    bottom: 0;
+    height: auto;
+    border-top: none;
+
+    .top {
+      display: block;
+      padding-bottom: 0;
+    }
+
+    .bottom {
+      align-items: flex-start;
+      padding: 24px 0;
+      border-top: 1px solid $color_grey_3;
+
+      a {
+        margin-left: ($column-gutter * 0.5);
+      }
+    }
+    .links {
+      margin-top: 25px;
+
+      a {
+        margin-left: ($column-gutter * 0.5);
+      }
+    }
+
+    .help {
+      margin-left: ($column-gutter * 0.5);
+
+      label {
+        margin-left: 0px;
+      }
+    }
+
+    .social {
+      border-bottom: 1px solid $color_grey_3;
+      margin-bottom: 24px;
+    }
+  }
+}

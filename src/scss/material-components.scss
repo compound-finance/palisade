@@ -1,0 +1,39 @@
+@import 'variables';
+
+// Override varaibles from @material themes in node_modules
+
+$mdc-ripple-dark-ink-opacities: (
+  hover: .04,
+  focus: .3,
+  press: .3,
+  selected: .08,
+  activated: .3
+) !default;
+
+$mdc-ripple-light-ink-opacities: (
+  hover: .08,
+  focus: .24,
+  press: .24,
+  selected: .16,
+  activated: .24
+) !default;
+
+$mdc-switch-track-width: 32px;
+$mdc-switch-track-height: 8px;
+$mdc-switch-thumb-diameter: 16px;
+$mdc-switch-tap-target-size: 48px;
+
+@import '@material/switch/mdc-switch.scss';
+
+.mdc-switch {
+  @include mdc-switch-toggled-on-color($color_supply);
+  @include mdc-switch-toggled-off-color($color_neutral);
+
+  @include mdc-switch-toggled-on-thumb-color($color_supply);
+  @include mdc-switch-toggled-on-track-color($color_supply);
+
+  @include mdc-switch-toggled-off-thumb-color($color_neutral);
+  @include mdc-switch-toggled-off-track-color($color_neutral);
+
+  padding-right: ($column-gutter / 2);
+}

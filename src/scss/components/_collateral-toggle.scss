@@ -1,0 +1,142 @@
+@import '../variables';
+
+@import 'node_modules/compound-components/src/scss/components/connecting-ring';
+
+.collateral-toggle {
+  h4 {
+    color: $color_dark_2;
+  }
+
+  p {
+    color: $color_grey_2;
+  }
+
+  p[class*=center-text]{
+    text-align: center;
+  }
+
+  h4 {
+    margin-top: -0.75em;
+    margin-bottom: 10px;
+  }
+
+  .container-small {
+    min-width: 34em;
+    max-width: 34em;
+
+    @media (max-width: $device-sm) {
+      min-width: 30em;
+    }
+  }
+
+  .legacy-panel {
+    .header {
+      border-bottom: none;
+
+      @media (max-width: $device-sm) {
+        margin-top: $column-gutter;
+      }
+    }
+    .enable-asset {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      margin-top: 10px;
+      align-items: center;
+      justify-content: center;
+
+      .connecting-ring {
+        margin: 40px 0;
+      }
+
+      p {
+        margin-bottom: 40px;
+      }
+
+      .submit-button {
+        width: 100%;
+      }
+    }
+    .copy {
+      margin-top: 0;
+      padding-left: ($column-gutter);
+      padding-right: ($column-gutter);
+      padding-bottom: $column-gutter;
+      margin-bottom: 0;
+
+      p {
+        margin-bottom: 40px;
+
+        a {
+          border-bottom: 1px solid transparent;
+          color: $color_supply;
+          font-family: 'Haas Grot Text R';
+          font-weight: 500;
+          font-size: 16px;
+          letter-spacing: 0;
+          padding-bottom: 0.02rem;
+          margin: 0px;
+          text-decoration: none;
+          text-transform: none;
+
+          &:hover {
+            border-bottom: 1px solid $color_supply;
+          }
+        }
+      }
+
+      .form {
+        width: 100%;
+        padding: 0;
+
+        .row {
+          margin-left: 0;
+          margin-right: 0;
+        }
+
+        .calculation:last-of-type {
+          border-bottom: none;
+          margin-bottom: 0;
+        }
+
+        span {
+          &.description {
+            color: $color_grey_2;
+          }
+        }
+      }
+
+      .arrow {
+        width: 14px;
+        height: 12px;
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-image: url(/images/icn-build-arrows-green.svg);
+        margin-right: 8px;
+        margin-left: 8px;
+        &.borrow {
+          background-image: url(/images/icn-build-arrows-purple.svg);
+        }
+      }
+
+      .market-bar {
+        width: 100%;
+        margin-top: -10px;
+        margin-bottom: 60px;
+
+        .bar {
+          width: 100%;
+          background: $color_dark_matting_clear;
+          border-radius: 100px;
+        }
+        .fill {
+          border-radius: 100px;
+        }
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+  }
+}

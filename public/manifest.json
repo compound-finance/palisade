@@ -1,0 +1,20 @@
+{
+  "short_name": "Compound",
+  "name": "Compound Finance",
+  "icons": [
+    {
+      "src": "images/compound-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "images/compound-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/",
+  "display": "minimal-ui",
+  "theme_color": "#00d395",
+  "background_color": "#070a0e"
+}

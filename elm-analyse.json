@@ -1,0 +1,9 @@
+{
+    "checks" : {
+        "UseConsOverConcat": false
+    },
+    "excludedPaths" : [
+        "src/elm-bootstrap",
+        "src/the-best-decimal"
+    ]
+}

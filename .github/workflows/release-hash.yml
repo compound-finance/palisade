@@ -1,0 +1,26 @@
+name: Release Hash
+on:
+  workflow_dispatch:
+    inputs:
+      hash:
+        description: 'IPFS Hash (CID)'
+        required: true
+        default: ''
+jobs:
+  build:
+    name: Release Hash
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: '16.x'
+
+      - name: Push IPFS Release
+        run: |
+          yarn release "${{ github.event.inputs.hash }}"
+        env:
+          IPFS_SECRET: ${{ secrets.IPFS_SECRET }}

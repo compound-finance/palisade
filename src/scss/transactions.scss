@@ -1,0 +1,82 @@
+@import 'variables';
+
+@import 'node_modules/compound-components/src/scss/components/connecting-ring';
+
+.transactions{
+  .asset{
+    display: block;
+    font-size: 0.95rem;
+    padding: 1.25rem $gov-column-gutter;
+
+    .details {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .transaction-error{
+      font-size: 0.85rem;
+      padding-top: 1rem;
+      padding-left: 2.45rem;
+    }
+  }
+  .status{
+    width: 22px;
+    height: 22px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: $color_border;
+    border-radius: 100%;
+    margin-right: 1rem;
+    background-size: 16px;
+    background-repeat: no-repeat;
+    background-position: center;
+    &.accent-bg {
+      background: $color_supply;
+      border-color: $color_supply;
+
+      &.borrow {
+        background: $color_borrow;
+        border-color: $color_borrow;
+      }
+    }
+    &.supply{
+      background-image: url(/images/icon_arrow_forward.png);
+      border-color: $color_supply;
+    }
+    &.withdraw{
+      background-image: url(/images/icon_arrow_back.png);
+    }
+    &.borrow{
+      background-image: url(/images/icon_arrow_back.png);
+      border-color: $color_borrow;
+    }
+    &.repay{
+      background-image: url(/images/icon_arrow_forward.png);
+    }
+    &.fail{
+      background-image: url(/images/icon_fail.png);
+    }
+    &.enable{
+      background-image: url(/images/icon_lock_open.png);
+    }
+    &.success{
+      background-image: url(/images/icon_success.png);
+    }
+  }
+  .timestamp{
+    color: $color_label;
+  }
+  &.failure{
+    border-bottom: none;
+  }
+
+  @media (max-width: $device-sm) {
+    .asset {
+      .transaction-error {
+        padding-top: 0.5rem;
+        padding-left: 2.86rem;
+      }
+    }
+  }
+}

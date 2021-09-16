@@ -1,0 +1,30 @@
+name: Release Branch
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    name: Release Branch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: '16.x'
+
+      - name: Download artifact
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          workflow: build-workflow.yml
+          workflow_conclusion: success
+          commit: ${{github.event.pull_request.head.sha}}
+          name: .release
+
+      - name: Push IPFS Release
+        run: |
+          yarn release
+        env:
+          IPFS_SECRET: ${{ secrets.IPFS_SECRET }}

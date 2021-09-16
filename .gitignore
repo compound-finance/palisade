@@ -1,0 +1,30 @@
+# Distribution
+build/
+
+# elm-package generated files
+elm-stuff
+
+# elm-repl generated files
+repl-temp-*
+
+# Dependency directories
+node_modules
+
+# yarn problems
+yarn-error.log
+
+# Desktop Services Store on macOS
+.DS_Store
+
+# sass build artifacts
+src/**/*.css*
+
+# generated translations
+src/elm/Strings/Translations.elm
+
+# shared assets
+public/compound-components/
+
+# IPFS release file
+.release
+.release-notes

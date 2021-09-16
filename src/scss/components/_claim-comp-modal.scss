@@ -1,0 +1,128 @@
+@import 'node_modules/compound-components/src/scss/abstracts/animations';
+
+@import '../variables';
+
+.claim-comp {
+  &__modal {
+    z-index: 99;
+    align-items: flex-start;
+
+    .legacy-panel {
+      margin-top: 9.25rem;
+      width: 28.125rem;
+      border: none;
+      z-index: 100;
+
+      .header {
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
+    }
+
+    &__body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 22.7125rem;
+      padding: 2.875rem 4rem 2rem;
+
+      &__claim-comp {
+        color: $color_dark_1;
+        line-height: 1;
+        font-weight: bold;
+        margin-right: 0.625rem;
+      }
+
+      .icon {
+        width: 4.5rem;
+        height: 4.5rem;
+      }
+
+      &__claim-comp-view {
+        display: flex;
+      }
+
+      &__balance {
+        margin: 1rem 0 0 0;
+        color: $color_dark_1;
+        font-weight: 600;
+        font-size: 1.3125rem;
+      }
+
+      @mixin sharedText() {
+        color: $color_grey_2;
+        font-size: 0.875rem;
+        font-weight: normal;
+        line-height: 1;
+      }
+
+      &__rows {
+        margin-top: 1.375rem;
+        width: 100%;
+
+        &__row {
+          border: 1px solid transparent;
+          display: flex;
+          justify-content: space-between;
+          padding: 1rem 0;
+
+          &__label {
+            @include sharedText();
+            font-size: 1rem;
+          }
+
+          &__value {
+            @include sharedText();
+            font-size: 1rem;
+            color: $color_dark_2;
+          }
+
+          &:not(:last-child) {
+            border-bottom-color: #eceff1;
+          }
+        }
+      }
+
+      &__value {
+        @include sharedText();
+        margin-top: 0.625rem;
+      }
+
+      &__title {
+        margin-top: 1.375rem;
+        color: $color_dark_1;
+      }
+
+      &__help {
+        color: $color_grey_2;
+        margin-top: 1.625rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+        font-style: normal;
+      }
+
+      &__button {
+        width: 100%;
+        margin-top: 1rem;
+        box-shadow: 0px 8px 16px rgba(17, 51, 85, 0.08);
+      }
+
+      .connecting-ring {
+        margin-top: 2rem;
+        width: 4.4375rem;
+        height: 4.4375rem;
+      }
+
+      &__success {
+        margin-top: 2rem;
+        width: 4.4375rem;
+        height: 4.4375rem;
+        background-color: $color_supply;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    }
+  }
+}

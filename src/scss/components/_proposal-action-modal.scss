@@ -1,0 +1,76 @@
+@import 'node_modules/compound-components/src/scss/abstracts/animations';
+
+@import '../variables';
+
+.proposal-action {
+  &__modal {
+    z-index: 99;
+    align-items: flex-start;
+    overflow-y: scroll;
+
+    .legacy-panel {
+      margin-top: 9.25rem;
+      width: 38.125rem;
+      border: none;
+      z-index: 100;
+
+      .header {
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
+    }
+
+    &__body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 22.7125rem;
+      padding: 2.875rem 4rem 2rem;
+
+      .__heading {
+        align-self: start;
+        font-weight: 600;
+      }
+
+      .__actions {
+        width: 100%;
+        overflow-wrap: break-word;
+      }
+
+      @mixin sharedText() {
+        color: $color_grey_2;
+        font-size: 0.875rem;
+        font-weight: normal;
+        line-height: 1;
+      }
+
+      .__rows {
+        margin-top: 1.375rem;
+        width: 100%;
+
+        .__row {
+          border: 1px solid transparent;
+          display: flex;
+          justify-content: space-between;
+          padding: 1rem 0;
+
+          .__label {
+            @include sharedText();
+            font-size: 1rem;
+          }
+
+          .__value {
+            @include sharedText();
+            font-size: 1rem;
+            color: $color_dark_2;
+            width: 90%;
+          }
+
+          &:not(:last-child) {
+            border-bottom-color: #eceff1;
+          }
+        }
+      }
+    }
+  }
+}

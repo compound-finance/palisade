@@ -1,0 +1,598 @@
+@import 'node_modules/compound-components/src/scss/components/panel';
+@import 'node_modules/compound-components/src/scss/components/progress';
+
+@import '../../variables';
+
+@mixin checkmark() {
+  content: ' ';
+  display: block;
+  width: 4.8px; // the short bar of the mark is half as long as the long bar
+  height: 9.6px;
+  border: solid white;
+  border-width: 0 1.6px 1.6px 0; // creates the inverted "L" shape
+  position: absolute;
+  margin-top: -3.2px;
+  transform: rotate(45deg);
+}
+
+@mixin x() {
+  content: ' ';
+  display: inline-block;
+  position: absolute;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  width: 10px;
+  height: 10px;
+  left: -5px;
+  top: -5px;
+  background-image: url(/images/icn-x.svg);
+  z-index: 1;
+}
+
+.proposal {
+  @include row--hover();
+  justify-content: space-between;
+
+  &:hover {
+    &.proposal--loading,
+    &.proposal--empty-vote,
+    &.proposal--empty {
+      border-left: 2px solid transparent;
+    }
+  }
+
+  &--empty {
+    justify-content: center;
+    padding-top: $gov-column-gutter;
+    padding-bottom: $gov-column-gutter;
+  }
+
+  &--empty-vote {
+    height: 5.625rem;
+  }
+
+  &__content {
+    display: flex;
+    align-items: center;
+    width: 63%;
+
+    &--header {
+      width: 100%;
+    }
+
+    &--empty {
+      font-size: 0.875rem;
+      color: $color_grey_3;
+    }
+
+    @media (min-width: $device-md) {
+      width: 28.75rem;
+
+      &--header {
+        width: 38.75rem;
+      }
+    }
+
+    &__pulsating-dot {
+      margin-left: 4px;
+      margin-right: $column-gutter;
+    }
+
+    &__description {
+      display: flex;
+      flex-direction: column;
+
+      &__title {
+        font-family: Haas Grot Text R;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 1.125rem;
+        line-height: 1.35;
+        color: $color_dark_1;
+
+        &--header {
+          font-family: 'Haas Grot Disp R';
+          font-size: 1.75rem;
+          font-weight: 700;
+          line-height: 1.15;
+          color: #ffffff;
+
+          &--loading {
+            @include animated-background--dark;
+
+            height: 1.75rem;
+            width: 20.1rem;
+          }
+        }
+
+        &--loading {
+          height: 1.125rem;
+          width: 17.5rem;
+
+          @extend .animated-background;
+        }
+      }
+
+      &__details {
+        align-items: center;
+        display: flex;
+        font-size: 0.75rem;
+        margin-top: 0.5625rem;
+
+        &--large {
+          font-size: 0.875rem;
+        }
+
+        &__tag {
+          flex-shrink: 0;
+          border: 1px solid transparent;
+          border-radius: 4px;
+          padding: 0.25rem 0;
+          color: $color_grey_1;
+          width: 4.25rem;
+          text-align: center;
+
+          &--active {
+            border-color: $color_borrow;
+            color: $color_borrow;
+          }
+
+          &--passed {
+            border-color: $color_supply;
+            color: $color_supply;
+          }
+
+          &--not-passed {
+            border-color: $color_grey_1;
+            color: $color_grey_1;
+          }
+
+          &--loading {
+            @include animated-background;
+            height: 1.375rem;
+
+            &--large {
+              @include animated-background--dark;
+              height: 1.5rem;
+            }
+          }
+        }
+
+        &__text {
+          font-style: normal;
+          font-weight: 600;
+          color: $color_grey_2;
+          margin-left: 0.625rem;
+          display: flex;
+
+          span {
+            &:not(:first-child) {
+              margin-left: 0.3125rem;
+            }
+          }
+
+          &--active {
+            color: $color_borrow;
+          }
+
+          &__proposal-id {
+            &--loading {
+              @include animated-background;
+              height: 0.75rem;
+              width: 1.125rem;
+
+              &--large {
+                @include animated-background--dark;
+                height: 0.875rem;
+              }
+            }
+          }
+
+          &__separator {
+            &--loading {
+              color: #f0f0f0;
+
+              &--large {
+                color: rgba(255, 255, 255, 0.1);
+              }
+            }
+          }
+
+          &__time {
+            &--loading {
+              @include animated-background;
+              margin-left: 0.3125rem;
+              height: 0.75rem;
+              width: 8.5rem;
+
+              &--large {
+                @include animated-background--dark;
+                height: 0.875rem;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  @mixin votebar() {
+    &__vote-bar {
+      position: relative;
+      width: 100%;
+      height: 4px;
+      background-color: #f1f3f5;
+      border-radius: 4px;
+
+      &__fill {
+        height: 4px;
+        border-radius: 4px;
+
+        &--for {
+          background-color: $color_supply;
+        }
+
+        &--against {
+          background-color: $color_red_1;
+        }
+      }
+    }
+  }
+
+  &__active-votes {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-top: 1.5rem;
+
+    @media (min-width: $device-md) {
+      margin-top: 0;
+      width: 18.125rem;
+      height: 2.8125rem;
+    }
+
+    &__row {
+      display: flex;
+      align-items: center;
+
+      &__value {
+        min-width: 2.75rem;
+        font-size: 0.75rem;
+        color: $color_dark_1;
+        margin-left: 0.725rem;
+      }
+
+      @include votebar();
+    }
+  }
+
+  &__current-state-view {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 2.4375rem;
+    margin-top: 0.4rem;
+
+    @media (min-width: $device-md) {
+      flex-direction: row;
+      margin: 0;
+      width: 9.125rem;
+    }
+
+    @media (min-width: $device-lg) {
+      width: 18.125rem;
+    }
+
+    &__state {
+      display: flex;
+      position: relative;
+      align-items: center;
+      align-content: center;
+      flex-direction: column;
+
+      @media (min-width: $device-md) {
+        flex-direction: row;
+        align-content: flex-start;
+        min-width: 5.875rem;
+      }
+
+      &--active {
+        &::before {
+          @include state-circle($color_supply);
+          transform: translate(-50%, -30%);
+          left: 50%;
+
+          @media (min-width: $device-md) {
+            transform: translate(0%, -50%);
+            left: -12px;
+            top: 6px;
+          }
+        }
+
+        &::after {
+          @include checkmark();
+          top: 2px;
+
+          @media (min-width: $device-md) {
+            left: -2px;
+            top: 3px;
+          }
+        }
+      }
+
+      &--failed {
+        &::before {
+          @include state-circle($color_grey_1);
+          transform: translate(-50%, -30%);
+          left: 50%;
+
+          @media (min-width: $device-md) {
+            transform: translate(0%, -50%);
+            left: -12px;
+            top: 6px;
+          }
+        }
+
+        &::after {
+          @include x();
+          top: 0px;
+          left: 50%;
+          transform: translateX(-50%);
+
+          @media (min-width: $device-md) {
+            left: 0%;
+            top: 1px;
+          }
+        }
+      }
+
+      &--loading {
+        &::before {
+          @include animated-background;
+          @include state-circle(#f6f6f6);
+          transform: translate(-50%, -30%);
+          left: 50%;
+
+          @media (min-width: $device-md) {
+            transform: translate(0%, -50%);
+            left: -12px;
+            top: 6px;
+          }
+        }
+      }
+
+      &__text {
+        font-size: 0.875rem;
+        line-height: 1;
+        padding-top: 2rem;
+
+        @media (min-width: $device-md) {
+          padding-top: 0;
+          padding-left: 2rem;
+        }
+
+        &--loading {
+          @include animated-background;
+          height: 0.875rem;
+          margin-top: 2rem;
+          width: 3.5rem;
+
+          @media (min-width: $device-md) {
+            margin-top: 0;
+            margin-left: 2rem;
+          }
+        }
+      }
+    }
+  }
+
+  &__receipt-votes {
+    width: 12.75rem;
+    margin-right: 2rem;
+
+    &__row {
+      @include votebar();
+
+      &:not(:first-child) {
+        margin-top: 1rem;
+      }
+    }
+  }
+
+  &__receipt-support {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    align-items: center;
+    margin-top: 0.4rem;
+    width: 4.4rem;
+
+    @media (min-width: $device-md) {
+      flex-direction: row;
+      margin-top: 0;
+      margin-left: 1rem;
+      height: 2.4rem;
+      min-width: 6rem;
+    }
+
+    &--for {
+      &::before {
+        @include state-circle($color_supply);
+        transform: translate(-50%, -30%);
+        left: 50%;
+
+        @media (min-width: $device-md) {
+          transform: translate(0%, -50%);
+          left: -12px;
+          top: 6px;
+        }
+      }
+
+      &::after {
+        @include checkmark();
+        top: 2px;
+
+        @media (min-width: $device-md) {
+          left: -2px;
+          top: 3px;
+        }
+      }
+    }
+
+    &--against {
+      &::before {
+        @include state-circle($color_red_1);
+        transform: translate(-50%, -30%);
+        left: 50%;
+
+        @media (min-width: $device-md) {
+          transform: translate(0%, -50%);
+          left: -12px;
+          top: 6px;
+        }
+      }
+
+      &::after {
+        @include x();
+        top: 0px;
+        left: 50%;
+        transform: translateX(-50%);
+
+        @media (min-width: $device-md) {
+          left: 0%;
+          top: 1px;
+        }
+      }
+    }
+
+    &--no-vote {
+      &::before {
+        @include state-circle($color_grey_1);
+        transform: translate(-50%, -30%);
+        left: 50%;
+
+        @media (min-width: $device-md) {
+          transform: translate(0%, -50%);
+          left: -12px;
+          top: 6px;
+        }
+      }
+
+      &::after {
+        content: ' ';
+        display: block;
+        width: 8.47px;
+        height: 1.6px;
+        background-color: #ffffff;
+        position: absolute;
+        margin-top: -3.2px;
+        top: 7px;
+        left: 50%;
+        transform: translateX(-50%);
+
+        @media (min-width: $device-md) {
+          left: 0%;
+          top: 8px;
+        }
+      }
+    }
+
+    &--pending-vote {
+      &::before {
+        @include state-circle($color_grey_1);
+        transform: translate(-50%, -30%);
+        left: 50%;
+
+        @media (min-width: $device-md) {
+          transform: translate(0%, -50%);
+          left: 0px;
+          top: 18px;
+        }
+      }
+
+      &::after {
+        content: '';
+        box-sizing: border-box;
+        position: absolute;
+        display: block;
+        width: 18px;
+        height: 18px;
+        left: 18px;
+        top: -4px;
+        border: 2px solid #fff;
+        border-radius: 50%;
+        animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+        border-color: #fff transparent transparent transparent;
+
+        @media (min-width: $device-md) {
+          left: 3px;
+          top: 9px;
+        }
+      }
+    }
+
+    &--view-only {
+      width: 4.3rem;
+
+      .proposal__receipt-support__text {
+        padding-top: 0;
+      }
+
+      @media (min-width: $device-md) {
+        width: 4rem;
+
+        .proposal__receipt-support__text {
+          padding-left: 0;
+          margin-left: -0.75rem;
+        }
+      }
+    }
+
+    &__text {
+      font-size: 0.75rem;
+      font-weight: 600;
+      line-height: 1;
+      text-transform: uppercase;
+      color: $color_grey_2;
+      padding-top: 2rem;
+
+      @media (min-width: $device-md) {
+        padding-top: 0;
+        padding-left: 2.5rem;
+      }
+
+      &--empty {
+        font-size: 0.875rem;
+        color: $color_grey_3;
+      }
+    }
+  }
+
+  &__queue-actions-button {
+    width: 7rem;
+    height: 2.4rem;
+    line-height: 2.4rem;
+    padding: 0;
+    font-size: 0.875rem;
+    text-transform: none;
+    letter-spacing: 0;
+    transition: color 0.15s linear, border-color 0.15s linear, background-color 0.15s linear;
+
+    &:hover {
+      background-color: $color_supply;
+      color: $color_light_1;
+      border-color: $color_supply;
+    }
+  }
+
+  &__queue-execute-button {
+    width: 7rem;
+    height: 2.4rem;
+    line-height: 2.4rem;
+    padding: 0;
+    font-size: 0.875rem;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+}

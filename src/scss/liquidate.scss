@@ -1,0 +1,53 @@
+@import 'variables';
+
+@import 'node_modules/compound-components/src/scss/components/panel';
+
+#approvals {
+  margin-top: 1rem;
+  border-bottom: 1px solid $color_border;
+  .asset {
+    background: none;
+    padding: 0 0 1rem 0;
+  }
+  .button {
+    padding: 0.4rem 0;
+    width: 100%;
+  }
+}
+
+.liquidate-container {
+  .header .row {
+    width: 100%;
+  }
+  padding-top: 2rem;
+  .address {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .account {
+    @include row--hover();
+    margin: 0;
+    padding: $column_gutter;
+    font-size: 0.9em;
+    cursor: pointer;
+    &.active {
+      background: $color_borrow;
+      color: #ffffff;
+    }
+    &:last-child {
+      border-radius: 0 0 4px 4px;
+    }
+  }
+  .content {
+    margin-top: $column_gutter;
+    margin-bottom: $column_gutter;
+  }
+  .warning {
+    color: $color_red_1;
+  }
+
+  input {
+    border: 1px solid $color_grey_1;
+    box-sizing: border-box;
+  }
+}

@@ -1,0 +1,372 @@
+@import 'variables';
+
+@mixin link-active-hover {
+  &.active {
+    color: $color_supply;
+    padding: 0.3rem 0;
+    border-bottom: 1px solid $color_supply;
+    transition: padding 0.2s ease;
+  }
+
+  &:hover {
+    color: $color_supply;
+    text-decoration: none;
+    padding-bottom: 0.5rem;
+  }
+}
+
+@mixin app-header-font {
+  letter-spacing: 1px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+header {
+  padding: 1rem 0;
+  background: $color_dark_1;
+  min-height: 80px;
+
+  &.dark-2 {
+    background-color: $color_dark_2;
+  }
+
+  .brand {
+    background-image: url(/images/compound-logo.svg);
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-color: transparent;
+    width: 127px;
+    height: 27px;
+  }
+
+  .text-center a {
+    margin: 0 ($column-gutter / 2);
+    color: $color_light_1;
+    letter-spacing: 1px;
+    @include link-active-hover;
+  }
+
+  .text-right .button {
+    padding: 1rem 1.6rem;
+  }
+
+  .hamburger {
+    display: none;
+    position: relative;
+    z-index: 25;
+    user-select: none;
+
+    span {
+      display: block;
+      margin-left: auto;
+      width: 20px;
+      height: 2px;
+      margin-bottom: 5px;
+      position: relative;
+      background: $color_light_1;
+      border-radius: 3px;
+      z-index: 1;
+      transform-origin: 4px 0px;
+      transition: transform 0.5s cubic-bezier(0.77, 0.2, 0.05, 1), opacity 0.55s ease;
+    }
+
+    &.active {
+      span {
+        opacity: 1;
+        transform: rotate(45deg) translate(0, 2px);
+      }
+
+      span:nth-child(2) {
+        opacity: 0;
+        transform: rotate(0deg) scale(0.2, 0.2);
+      }
+
+      span:nth-child(3) {
+        transform: rotate(-45deg) translate(1px, -5px);
+      }
+    }
+  }
+
+  .comp-balance {
+    background: $color_dark_2;
+    border-radius: $border-radius;
+    cursor: pointer;
+    padding: 0.43rem ($column-gutter * 0.5);
+    display: flex;
+    align-items: center;
+
+    @include app-header-font;
+    text-transform: none;
+
+    .icon {
+      margin-left: 0.25rem;
+      height: 1.25rem;
+      width: 1.25rem;
+      min-height: 1.25rem;
+      min-width: 1.25rem;
+    }
+
+    &:hover {
+      background: lighten($color_dark_2, 5%);
+    }
+  }
+
+  #account {
+    background: $color_dark_2;
+    border-radius: $border-radius;
+    padding: ($column-gutter * 0.5);
+    margin-left: $column-gutter;
+
+    &:hover {
+      background: lighten($color_dark_2, 5%);
+    }
+
+    @include app-header-font;
+    text-transform: none;
+
+    .icon {
+      flex-shrink: 0;
+      display: inline-block;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: contain;
+      width: 12px;
+      height: 12px;
+      min-width: 0;
+      min-height: 0;
+      margin-right: ($column-gutter * 0.5);
+    }
+
+    .icon.coinbase {
+      background-image: url(/images/icn-coinbase-wallet-connected.svg);
+    }
+
+    .icon.ledger.light {
+      background-image: url(/images/icn-ledger-connected-light.svg);
+    }
+
+    .icon.ledger.dark {
+      background-image: url(/images/icn-ledger-connected-dark.svg);
+    }
+
+    .icon.metamask {
+      background-image: url(/images/icn-metamask-connected.svg);
+    }
+  }
+
+  #select-currency {
+    padding-right: 0.25rem;
+  }
+
+  &.light {
+    background: $color_light_1;
+
+    .brand {
+      background-image: url(/images/compound-logo-dark.svg);
+    }
+
+    .text-center a {
+      color: $color_dark_2;
+
+      @include link-active-hover;
+
+      &.treasury {
+        color: $color_blue_3;
+        border-bottom-color: $color_blue_3;
+
+        &:hover {
+          color: $color_blue_3;
+        }
+      }
+    }
+
+    .hamburger span {
+      background-color: $color_dark_1;
+    }
+
+    #account {
+      background: $color_light_2;
+      color: $color_dark_2;
+
+      &:hover {
+        color: $color_supply;
+      }
+      &.active {
+        border-bottom: 2px solid $color_supply;
+      }
+    }
+  }
+
+  .mobile-header {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    margin: 0 auto;
+    padding-top: ($column-gutter * 6);
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 20;
+    overflow: scroll;
+    opacity: 0;
+    background-color: $color_dark_1;
+    -webkit-font-smoothing: antialiased;
+    transform: translate3d(0, -100%, 0);
+    transition: transform 0.5s cubic-bezier(0.77, 0.2, 0.05, 1), opacity 0.3s ease-in;
+
+    &.active {
+      transform: none;
+      opacity: 1;
+    }
+
+    &.light {
+      background-color: $color_light_1;
+
+      li {
+        color: $color_dark_2;
+        background-color: $color_light_1;
+      }
+    }
+
+    &.dark-2 {
+      background-color: $color_dark_2;
+    }
+
+    .links {
+      flex-grow: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    ul {
+      list-style-type: none;
+      width: 100%;
+      padding-left: 0px;
+      background-color: transparent;
+      margin-bottom: 0;
+    }
+
+    li {
+      display: flex;
+      background-color: transparent;
+      width: 100%;
+      padding-top: 22px;
+      padding-bottom: 22px;
+      color: $color_light_1;
+
+      p {
+        margin: 0 auto;
+      }
+    }
+
+    .dapp {
+      margin-bottom: 55px;
+      margin-left: 42px;
+      margin-right: 42px;
+      padding-top: 23px !important;
+      padding-bottom: 23px !important;
+    }
+  }
+
+  &.landing {
+    @media (max-width: $device-sm) {
+      .hamburger {
+        display: block;
+      }
+    }
+
+    .logo {
+      z-index: 25;
+    }
+
+    .links {
+      a {
+        text-transform: none;
+        letter-spacing: 0;
+        font-size: 14px;
+      }
+    }
+
+    .dapp {
+      color: $color_supply;
+      border-color: $color_supply;
+      transition: background-color 0.2s ease-in, color 0.2s ease-in;
+      text-transform: none;
+      letter-spacing: 0;
+      font-size: 14px;
+
+      &.treasury {
+        border-color: $color_dark_1;
+        color: $color_dark_1;
+      }
+
+      &:hover {
+        background-color: $color_supply;
+        color: $color_light_1;
+        border-color: $color_supply;
+      }
+    }
+  }
+}
+
+header.dapp {
+  #connect-wallet {
+    border-radius: $border-radius;
+    margin-left: $column-gutter;
+    padding: ($column-gutter * 0.5);
+    color: $color_supply;
+    border-color: $color_supply;
+    transition: background-color 0.2s ease-in, color 0.2s ease-in;
+    text-transform: none;
+
+    &:hover {
+      background-color: $color_supply;
+      color: $color_light_1;
+      border-color: $color_supply;
+    }
+  }
+
+  .links {
+    a {
+      @include link-active-hover();
+      text-transform: none;
+      letter-spacing: 0;
+      font-size: 14px;
+    }
+  }
+
+  .actions {
+    display: none;
+    align-items: center;
+    justify-content: flex-end;
+    min-height: 3rem;
+
+    > * {
+      user-select: none;
+      color: $color_disabled;
+    }
+    @media (min-width: $device-sm) {
+      display: flex;
+    }
+  }
+
+  .mobile-links {
+    display: flex;
+    justify-content: flex-end;
+
+    &__link {
+      border-radius: $border-radius;
+      padding: ($column-gutter * 0.75) !important;
+      color: $color_supply;
+      border-color: $color_supply;
+      text-transform: none;
+    }
+
+    @media (min-width: $device-sm) {
+      display: none;
+    }
+  }
+}

@@ -1,0 +1,95 @@
+name: Build & Push to IPFS
+on: push
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Build Note for ${{ github.ref }}
+      run: |
+        echo Building ${GITHUB_REF}...
+
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: '15.x'
+
+    - name: Cache Node Modules
+      uses: actions/cache@v2
+      env:
+        cache-name: cache-node-modules
+      with:
+        # yarn cache files are stored in `~/.cache` on Linux/macOS
+        path: ~/.cache
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-build-${{ env.cache-name }}-
+          ${{ runner.os }}-build-
+          ${{ runner.os }}-
+
+    - name: Cache Elm Stuff
+      uses: actions/cache@v2
+      env:
+        cache-name: cache-elm-stuff
+      with:
+        path: elm-stuff
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/elm.json') }}
+        restore-keys: |
+          ${{ runner.os }}-build-${{ env.cache-name }}-
+          ${{ runner.os }}-build-
+          ${{ runner.os }}-
+
+    - name: Install Yarn Dependencies
+      run: |
+        yarn install --ignore-optional --ignore-platform || ( \
+          echo "Yarn install failed, cleaning cache" && \
+          yarn cache clean && \
+          echo "Trying yarn install again..." \
+          && yarn install --ignore-optional --ignore-platform
+        )
+
+    - name: Build Translations
+      run: |
+        yarn i18n
+
+    - name: Build CSS
+      run: |
+        yarn build-css
+
+    - name: Build JavaScript
+      run:
+        yarn build
+      env:
+        DATA_PROVIDERS: ${{ secrets.DATA_PROVIDERS }}
+        BLOCKNATIVE_API_KEY: ${{ secrets.BLOCKNATIVE_API_KEY }}
+
+    - name: Archive App
+      uses: actions/upload-artifact@v1
+      with:
+        name: build
+        path: build
+
+    - name: Deploy to IPFS
+      run: |
+        yarn --silent deploy-ipfs | tee .release-notes
+      env:
+        IPFS_AUTH: ${{ secrets.IPFS_AUTH }}
+        IPFS_HOST: ${{ secrets.IPFS_HOST }}
+
+    - name: Upload IPFS Release Artifact
+      uses: actions/upload-artifact@v1
+      with:
+        name: .release
+        path: .release
+
+    - name: Add Deploy Comment
+      uses: machine-learning-apps/pr-comment@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        path: .release-notes
+      if: ${{ github.event_name == 'pull_request' }}

@@ -1,0 +1,988 @@
+@import './bootstrap.min';
+
+@import 'node_modules/compound-components/src/scss/abstracts/animations';
+@import 'node_modules/compound-components/src/scss/abstracts/mixins';
+@import 'node_modules/compound-components/src/scss/abstracts/variables';
+
+@import 'node_modules/compound-components/src/scss/components/accordian';
+@import 'node_modules/compound-components/src/scss/components/button';
+@import 'node_modules/compound-components/src/scss/components/chevron';
+@import 'node_modules/compound-components/src/scss/components/connect-wallet';
+@import 'node_modules/compound-components/src/scss/components/connecting-ring';
+@import 'node_modules/compound-components/src/scss/components/dropdown';
+@import 'node_modules/compound-components/src/scss/components/dot-indicator';
+@import 'node_modules/compound-components/src/scss/components/icon';
+@import 'node_modules/compound-components/src/scss/components/landing-panel';
+@import 'node_modules/compound-components/src/scss/components/loader';
+@import 'node_modules/compound-components/src/scss/components/line-icon';
+@import 'node_modules/compound-components/src/scss/components/modal';
+@import 'node_modules/compound-components/src/scss/components/panel';
+@import 'node_modules/compound-components/src/scss/components/parallax';
+@import 'node_modules/compound-components/src/scss/components/pie';
+@import 'node_modules/compound-components/src/scss/components/progress';
+@import 'node_modules/compound-components/src/scss/components/pulsating-dot';
+@import 'node_modules/compound-components/src/scss/components/separator';
+@import 'node_modules/compound-components/src/scss/components/tabgroup';
+@import 'node_modules/compound-components/src/scss/components/tooltip';
+
+@import 'node_modules/compound-components/src/scss/layout/assets';
+@import 'node_modules/compound-components/src/scss/layout/docs';
+@import 'node_modules/compound-components/src/scss/layout/scaffolding';
+
+@import './variables';
+@import './components';
+@import './footer';
+@import './header';
+@import './liquidate';
+@import './transactions';
+@import './typography';
+@import './material-components';
+
+@import './components/claim-comp-modal';
+@import './components/proposal-action-modal';
+@import './components/collateral-toggle';
+@import './components/ctoken';
+@import './components/gov-profile-image';
+
+@import './governance/components/proposal';
+
+@import './pages/admin';
+@import './pages/vote';
+
+@mixin pane-paddings {
+  [class*='col'] {
+    padding: 0 0;
+  }
+}
+
+@mixin mobile-container-paddings {
+  padding-right: ($column-gutter * 2 / 3);
+  padding-left: ($column-gutter * 2 / 3);
+}
+
+body {
+  background: $color_light_2;
+  -webkit-tap-highlight-color: transparent;
+  min-height: 100vh;
+}
+
+#main {
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+
+  & > div:not(.alert) {
+    flex-grow: 1;
+
+    & > :last-child:not(.docs__main-section, .legacy-panel, .call-to-action-section) {
+      padding-bottom: 10rem;
+    }
+  }
+}
+
+.mobile-only {
+  display: none;
+}
+
+.banner {
+  display: flex;
+  flex-grow: 1;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.618rem 1.995rem;
+  font-size: 0.9rem;
+  color: $color_disabled;
+  background: $color_dark_2;
+  border-radius: $border-radius;
+  .description {
+    display: block;
+    font-size: 1rem;
+    line-height: 1.1;
+  }
+  .button {
+    padding: 0.8rem 1rem;
+    font-weight: 700;
+    margin-left: ($column-gutter * 0.4);
+    &.large {
+      flex-basis: 41%;
+    }
+  }
+}
+
+#borrow-interface-root {
+  .hero {
+    margin-bottom: -3.8125rem;
+  }
+
+  .panel-label {
+    padding-left: 1rem;
+    padding-bottom: 1rem;
+
+    .dropdown-icon {
+      width: 10px;
+      height: 10px;
+      background-repeat: no-repeat;
+      background-size: contain;
+      background-image: url(/compound-components/assets/icn-drop-down-light.svg);
+      margin-left: 6px;
+      transition: all 0.2s ease-in-out;
+      transform: rotate(180deg);
+
+      &.active {
+        transform: rotate(0deg);
+      }
+    }
+  }
+
+  .panel {
+    &.hideable {
+      @keyframes bounceFade {
+        0% {
+          opacity: 0;
+          transform: translateY(-3px);
+        }
+
+        30% {
+          transform: translateY(2px);
+        }
+
+        85% {
+          transform: translateY(-1px);
+        }
+
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      animation: bounceFade 0.3s ease;
+      transition: opacity 0.2s linear;
+    }
+  }
+
+  .market-bar {
+    &.red {
+      color: $color_caution;
+      .fill {
+        background: $color_caution;
+      }
+    }
+    &.yellow {
+      color: $color_notice;
+      .fill {
+        background: $color_notice;
+      }
+    }
+    &.green {
+      color: $color_supply;
+      .fill {
+        background: $color_supply;
+      }
+    }
+  }
+
+  .modal {
+    .container {
+      max-height: 95%;
+      margin-top: $column-gutter;
+      margin-bottom: $column-gutter;
+      overflow-y: auto;
+    }
+  }
+
+  .popover {
+    display: inline-block;
+    position: absolute;
+    width: 240px;
+    background-color: $color_grey_1;
+    border-radius: 4px;
+    box-shadow: 0px 2px 4px rgba(16, 21, 24, 0.05);
+    padding: 10px;
+    transition: opacity 0.2s, visibility 0.2s;
+    --triangle-height: 8px;
+
+    &::before {
+      // tooltip triangle
+      left: calc(50% - var(--triangle-height) / 2);
+      top: calc(var(--triangle-height) * -0.5);
+      transform: rotate(135deg);
+      content: '';
+      position: absolute;
+      background-color: inherit;
+      border: inherit;
+      width: var(--triangle-height);
+      height: var(--triangle-height);
+      clip-path: polygon(0% 0%, 100% 100%, 100% 100%, 0% 100%);
+    }
+
+    p {
+      color: $color_light_2;
+      font-size: 12px;
+    }
+
+    .dot-indicator {
+      margin-left: 5px;
+      margin-top: 7px;
+      margin-right: 5px;
+    }
+  }
+}
+
+#borrow-overview {
+  .mobile-only {
+    display: none;
+
+    @media (max-width: $device-sm) {
+      display: flex;
+    }
+
+    .balance {
+      margin-left: $column-gutter;
+
+      .headline:first-of-type {
+        margin-bottom: $column-gutter;
+      }
+    }
+  }
+
+  .balance-totals {
+    position: relative;
+    max-width: $device-md;
+    margin: 0 auto;
+
+    @media (max-width: $device-sm) {
+      margin: 0 $column-gutter;
+    }
+  }
+
+  .headline {
+    font-size: 1.6rem;
+
+    &--loading {
+      height: 2.1rem;
+      width: 11.25rem;
+      transform: translateX(58%);
+
+      @extend .animated-background--super-dark;
+
+      @media (max-width: $device-sm) {
+        transform: translateX(0);
+      }
+    }
+  }
+
+  .digit {
+    width: 0.6em;
+    &.comma {
+      overflow: hidden;
+      width: 0.28em;
+    }
+    &.one {
+      width: 0.62em;
+    }
+    &.decimals {
+      color: $color_grey_1;
+    }
+  }
+  .digit-container {
+    margin-top: 0em;
+    padding-right: 0;
+    padding-left: 0;
+  }
+
+  .net-apy-wrapper {
+    height: 140px;
+    width: 140px;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+
+    @media (max-width: $device-sm) {
+      height: 120px;
+      width: 120px;
+    }
+
+    .net-apy-description {
+      display: flex;
+      flex-direction: column;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      margin: 0.1875rem;
+      background-color: $color_dark_1;
+      border-radius: 50%;
+      align-items: center;
+      justify-content: center;
+      padding: 0.25rem;
+
+      label {
+        text-align: center;
+        color: $color_grey_1;
+      }
+
+      .headline {
+        &--loading {
+          height: 1.75rem;
+          width: 4rem;
+          transform: translateX(0);
+        }
+      }
+
+      &.active {
+        background-color: $color_dark_mostly_opaque;
+
+        label {
+          color: #ffffff;
+        }
+
+        .headline {
+          color: $color_light_2;
+          font-size: 12px;
+          text-align: center;
+        }
+      }
+    }
+  }
+
+  .limit-bar {
+    display: flex;
+    margin-top: 3.25rem;
+
+    .progress-bar-wrapper {
+      position: relative;
+      flex: 1;
+    }
+
+    .progress-bar-hover-space {
+      display: inline-block;
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 10px;
+      margin-top: 1rem;
+    }
+
+    label {
+      color: $color_grey_1;
+      margin-top: 0.7rem;
+      margin-right: 0.625rem;
+    }
+
+    label:last-of-type {
+      margin-right: 0;
+      margin-left: 0.625rem;
+    }
+
+    .progress-bar-percent-label {
+      display: inline-block;
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+
+      div {
+        min-width: 1%;
+        max-width: 99%;
+
+        p {
+          position: relative;
+          float: right;
+          margin-right: -0.7rem;
+          color: #ffffff;
+          padding: 0.3rem 0.3rem 0.25rem 0.25rem;
+          background-color: $color_dark_1;
+
+          @media (max-width: $device-sm) {
+            padding: 0.2rem 0.3rem 0rem 0.25rem;
+          }
+        }
+
+        @media (max-width: $device-sm) {
+          min-width: 5%;
+        }
+      }
+    }
+  }
+}
+
+#interface-container {
+  --alertHeight: 0px;
+  &.alert-small {
+    --alertHeight: 65px;
+  }
+  &.alert-large {
+    --alertHeight: 86px;
+  }
+  min-height: calc(100vh - 82px - 23rem + 34px - var(--alertHeight));
+
+  .identity {
+    .balance {
+      flex: 1;
+      margin-right: 0.25rem;
+      overflow: hidden;
+    }
+  }
+
+  .balance {
+    > div {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .subtitle {
+      display: block;
+      margin-top: 9px;
+      color: $color_grey_2;
+      font-size: 0.9em;
+
+      //TODO: This is really funky actually but the subtitle should really be a separate
+      //      div that we show and hide rather than the changing the label into a block
+      //      but that might be a bigger change to redo that logic so this will do for now...
+      &.mobile-only {
+        display: none;
+
+        @media (max-width: $device-sm) {
+          display: block;
+        }
+      }
+    }
+  }
+
+  .panel {
+    .text-right {
+      .balance {
+        &--loading {
+          height: 1.25rem;
+          width: 55%;
+          transform: translateX(85%);
+
+          @extend .animated-background;
+        }
+      }
+    }
+
+    .asset {
+      .progress-holder {
+        &--loading {
+          position: relative;
+          height: 1rem;
+          width: 60%;
+          right: 0;
+          transform: translateX(65%);
+
+          @extend .animated-background;
+        }
+      }
+    }
+  }
+
+  .transactions {
+    .asset {
+      display: block;
+    }
+  }
+
+  @media (max-width: $device-sm) {
+    padding-top: 0.75em;
+
+    .legacy-panel .header {
+      padding: 1.2rem 1rem;
+    }
+  }
+}
+
+#collateral-pane {
+  @include pane-paddings;
+}
+
+#borrowing-pane {
+  @include pane-paddings;
+
+  .assets {
+    .progress {
+      display: flex;
+      flex-direction: row;
+      height: 5px;
+      width: 1.5rem;
+      max-width: 1.5rem;
+      overflow: hidden;
+      background-color: $color_dark_matting_clear;
+      border-radius: 100px;
+      margin-top: 0.3rem;
+    }
+    .progress-holder {
+      display: flex;
+      justify-content: flex-end;
+    }
+    .progress-bar {
+      display: flex;
+      background-color: $color_supply;
+      border-radius: 100px;
+    }
+
+    .progress + span {
+      min-width: 1.5rem;
+      margin-left: 0.3125rem;
+    }
+  }
+
+  @media (max-width: $device-sm) {
+    width: 100%;
+  }
+}
+
+#terms {
+  h2 {
+    color: $color_light_1;
+    margin-top: 0.35rem;
+  }
+
+  h3 {
+    color: $color_dark_2;
+  }
+
+  h4 {
+    color: $color_dark_2;
+  }
+
+  p {
+    color: $color_grey_1;
+    margin-top: 1rem;
+  }
+
+  ol {
+    color: $color_grey_1;
+  }
+
+  .hero {
+    padding-top: 90px;
+    padding-bottom: 109px;
+
+    p {
+      color: $color_grey_2;
+    }
+  }
+
+  #terms-items {
+    padding-top: 81px;
+    padding-bottom: 109px;
+  }
+
+  .term-item {
+    margin-top: 52px;
+  }
+}
+
+//TODO: Move into own separate component
+#inputActionPanel {
+  position: relative;
+  width: 25.5rem;
+
+  [class*='col'] {
+    padding: 0 0;
+  }
+
+  &.legacy-panel {
+    background: $color_light_2;
+
+    .icon {
+      display: inline-block;
+    }
+
+    .header {
+      .icon {
+        margin-top: auto;
+        margin-bottom: auto;
+        margin-right: 0.5rem;
+        transform: translateY(25%);
+      }
+
+      @media (max-width: $device-sm) {
+        .title {
+          top: $column-gutter/2;
+          .icon {
+            margin-top: -$column-gutter/2;
+          }
+        }
+      }
+    }
+  }
+
+  .center-icon {
+    width: 4.75rem;
+    height: 4.75rem;
+  }
+
+  .tab-group {
+    width: 100%;
+
+    .tab-group__option {
+      font-size: 0.75rem;
+      margin-left: 0;
+      text-align: center;
+      text-transform: uppercase;
+      width: 50%;
+    }
+
+    .tab-group__line {
+      background-color: rgba($color_grey_2, 0.1);
+      height: 1px;
+      margin-top: -1px;
+    }
+  }
+
+  p {
+    margin-top: 1.25rem;
+    color: $color_grey_2;
+
+    &.small {
+      font-size: 12px;
+    }
+  }
+
+  .description {
+    color: $color_grey_2;
+    text-align: center;
+  }
+
+  .enable-asset {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: ($gov-column-gutter * 2) $gov-column-gutter ($gov-column-gutter * 2) $gov-column-gutter;
+
+    &.extra-bottom-margin {
+      margin-bottom: ($gov-column-gutter * 4);
+    }
+
+    .ctoken {
+      background-repeat: no-repeat;
+    }
+
+    .etherscan-button {
+      width: 25.5rem - ($gov-column-gutter * 2);
+      position: absolute;
+      left: $gov-column-gutter;
+      bottom: ($gov-column-gutter / 2);
+    }
+  }
+
+  .input {
+    position: relative;
+    button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+    }
+  }
+
+  input {
+    width: 25.5rem - ($gov-column-gutter * 2);
+    height: 82px;
+    margin: 32px $gov-column-gutter 30px $gov-column-gutter;
+    background: $color_light_2;
+    font-size: 2.625rem; //This value is overwritten in elm based on character count
+    font-weight: 500;
+    text-align: center;
+    color: $color_dark_2;
+    &.supply {
+      caret-color: $color_supply;
+    }
+    &.borrow {
+      caret-color: $color_borrow;
+    }
+  }
+  .max {
+    display: block;
+    padding: 4.2rem ($gov-column-gutter) 4.875rem ($gov-column-gutter/2);
+    text-align: center;
+    width: auto;
+    background: $color_light_2;
+  }
+
+  .info {
+    background: $color_light_1;
+    padding-bottom: $gov-column-gutter + 7.25rem;
+  }
+
+  .form {
+    padding: 2.25rem $gov-column-gutter 0 $gov-column-gutter;
+
+    .label-link {
+      label {
+        cursor: pointer;
+        text-transform: none;
+        letter-spacing: normal;
+      }
+      .line-icon {
+        margin-left: 0.5rem;
+      }
+
+      &:hover {
+        label {
+          color: $color_supply;
+        }
+        .line-icon {
+          background-image: url('/images/icn-external-link-green.svg');
+        }
+      }
+    }
+
+    .row {
+      margin-left: 0;
+      margin-right: 0;
+    }
+
+    &:nth-of-type(2) {
+      padding-top: 1.75rem;
+    }
+  }
+
+  .calculation {
+    //color: $color_grey_1;
+    .description {
+      color: color_light_1;
+    }
+
+    .icon {
+      margin-top: -0.3rem;
+      margin-bottom: -0.45rem;
+      margin-right: 0.5rem;
+    }
+  }
+
+  .calculation:last-of-type {
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+
+  .market-bar {
+    margin: -0.75rem $gov-column-gutter 0 $gov-column-gutter;
+
+    .bar {
+      width: 25.5rem - ($gov-column-gutter * 2);
+      background: $color_dark_matting_clear;
+      border-radius: 100px;
+    }
+    .fill {
+      border-radius: 100px;
+    }
+  }
+
+  //TODO: should really have an arrow component for this I thing
+  .arrow {
+    width: 14px;
+    height: 12px;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-image: url(/images/icn-build-arrows-green.svg);
+    margin-right: 8px;
+    margin-left: 8px;
+    &.borrow {
+      background-image: url(/images/icn-build-arrows-purple.svg);
+    }
+  }
+
+  .submit-button {
+    width: 25.5rem - ($gov-column-gutter * 2);
+    position: absolute;
+    bottom: $gov-column-gutter * 2.25;
+    left: $gov-column-gutter;
+  }
+
+  .faucet-link {
+    position: absolute;
+    bottom: $gov-column-gutter/2;
+    left: 50%;
+    transform: translateX(-50%);
+
+    @media (max-width: $device-sm) {
+      bottom: 0;
+    }
+  }
+
+  .bottom-note {
+    position: absolute;
+    bottom: $gov-column-gutter;
+    left: $gov-column-gutter;
+    right: $gov-column-gutter;
+
+    .calculation {
+      padding: 0;
+      margin: 0;
+    }
+
+    @media (max-width: $device-sm) {
+      bottom: $gov-column-gutter/2;
+    }
+  }
+
+  @media (max-width: $device-sm) {
+    width: 100%;
+
+    &.legacy-panel {
+      width: 100%;
+      border-radius: $border_radius;
+    }
+
+    input {
+      width: 100%;
+      padding: 3.225rem $column-gutter 3.225rem $column-gutter;
+      margin: 0;
+    }
+    .max {
+      margin: 0.125rem 0 0.125rem 0;
+      padding: 0 ($column-gutter) ($column-gutter/2);
+    }
+
+    .action-button {
+      width: 100%;
+      padding: $gov-column-gutter;
+
+      .submit-button {
+        width: 100%;
+        position: static;
+      }
+    }
+
+    .info {
+      padding-bottom: $gov-column-gutter;
+
+      .etherscan-button {
+        width: 100%;
+        position: static;
+        padding: 0 $gov-column-gutter 0 $gov-column-gutter;
+
+        .submit-button {
+          width: 100%;
+          position: static;
+        }
+      }
+    }
+
+    .enable-asset {
+      margin-top: 3.125rem;
+      margin-bottom: $column-gutter;
+
+      &.extra-bottom-margin {
+        margin-bottom: ($gov-column-gutter * 2.75);
+      }
+
+      .etherscan-button {
+        width: auto;
+        position: absolute;
+        left: $gov-column-gutter;
+        right: $gov-column-gutter;
+        bottom: ($gov-column-gutter / 2);
+      }
+    }
+
+    .action-selector {
+      .button {
+        height: auto;
+      }
+    }
+
+    .market-bar {
+      .bar {
+        width: 100%;
+      }
+    }
+  }
+}
+
+.liquidate-container {
+  margin: 0 0;
+}
+
+@media (max-width: $device-sm) {
+  .mobile-hide {
+    display: none;
+  }
+  .mobile-only {
+    display: block;
+
+    &.logo {
+      display: block;
+    }
+  }
+  .container-large {
+    @include mobile-container-paddings();
+  }
+  .container {
+    @include mobile-container-paddings();
+  }
+  .container-small {
+    @include mobile-container-paddings();
+  }
+  .legacy-panel {
+    .header {
+      font-size: 1.2rem;
+      padding-top: $column-gutter;
+      padding-bottom: $column-gutter;
+    }
+    .header,
+    .content {
+      padding-right: 0.75rem;
+      padding-left: 0.75rem;
+    }
+    .labels,
+    .asset {
+      padding-right: 0.25rem;
+      padding-left: 0.25rem;
+    }
+  }
+  #terms {
+    .hero {
+      padding-right: ($column-gutter / 2);
+      padding-left: ($column-gutter / 2);
+    }
+    #terms-items {
+      padding-right: ($column-gutter / 2);
+      padding-left: ($column-gutter / 2);
+    }
+  }
+  .banner {
+    display: block;
+    margin-top: $column-gutter;
+    padding: $column-gutter 0.75rem 0.75rem;
+    .description {
+      display: block;
+      margin-bottom: $column-gutter;
+      text-align: center;
+      font-size: 1rem;
+      line-height: 1.1;
+    }
+    .button.large {
+      margin: 0;
+      width: 100%;
+    }
+  }
+  .modal {
+    .container {
+      width: 95%;
+      .title {
+        top: $column-gutter/2;
+      }
+      .close-x {
+        top: $column-gutter/6;
+      }
+      .copy {
+        margin: $column-gutter;
+      }
+      .form {
+        padding: 0 $column-gutter $column-gutter;
+      }
+    }
+  }
+  .button {
+    padding-top: 1.2rem !important;
+    padding-bottom: 1.2rem !important;
+  }
+}
