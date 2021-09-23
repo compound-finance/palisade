@@ -36,7 +36,7 @@
     "chalk": "^4.0.0",
     "clean-webpack-plugin": "^3.0.0",
     "cli-table": "0.3.1",
-    "compound-components": "https://github.com/compound-finance/compound-components.git#a87f20af244578ffa6533af4fa92abddfc41d8be",
+    "compound-components": "https://github.com/compound-finance/compound-components.git#45cc85e82eefacc3e6912d22873c25185397dfdb",
     "compound-config": "https://github.com/compound-finance/compound-config.git#314bda33096f971fc5ff263f90ab33992ba768d9",
     "connect-history-api-fallback": "^1.5.0",
     "core-js": "3",

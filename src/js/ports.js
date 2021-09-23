@@ -1469,6 +1469,8 @@ function subscribeToEtherPorts(app, eth, blockNativeApiKey) {
                   txModule,
                   txId,
                 });
+              } else {
+                console.log("Error sending transaction: ", e);
               }
             });
         });
