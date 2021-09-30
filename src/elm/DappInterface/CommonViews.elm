@@ -245,7 +245,7 @@ compBalanceView : Account -> GovernanceState -> Html Msg
 compBalanceView account governanceState =
     case account of
         Acct customer _ ->
-            case ( getCompoundGovernanceTokenBalance customer governanceState, getCompAccruedBalance customer governanceState ) of
+            case ( Nothing, getCompAccruedBalance customer governanceState ) of
                 ( Just balance, Just accrued ) ->
                     let
                         total =
