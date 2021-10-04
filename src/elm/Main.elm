@@ -1340,7 +1340,7 @@ highGasAlert userLanguage gasPrice =
             Decimal.fromInt 100000000000
     in
     if Decimal.gt gasPrice hundredGwei then
-        div [ class "alert alert--dark2" ] [ text (Translations.high_gas_alert_1 userLanguage), span [] [ a ([ class "inline", target "__blank" ] ++ href External "https://www.gasnow.org/") [ text (Translations.high_gas_alert_link userLanguage) ] ], text (Translations.high_gas_alert_2 userLanguage) ]
+        div [ class "alert alert--dark2" ] [ text (Translations.high_gas_alert_1 userLanguage), span [] [ a ([ class "inline", target "__blank" ] ++ href External "https://www.blocknative.com/gas-estimator") [ text (Translations.high_gas_alert_link userLanguage) ] ], text (Translations.high_gas_alert_2 userLanguage) ]
 
     else
         text ""
