@@ -243,25 +243,33 @@ pageFooter userLanguage maybeBlockNumber preferences model =
 
 compBalanceView : Account -> GovernanceState -> Html Msg
 compBalanceView account governanceState =
+    let
+        balanceView value attrs =
+            div (class "comp-balance" :: attrs)
+                [ text value
+                , div [ class "icon icon--COMP" ] []
+                ]
+    in
     case account of
         Acct customer _ ->
             case ( getCompoundGovernanceTokenBalance customer governanceState, getCompAccruedBalance customer governanceState ) of
                 ( Just balance, Just accrued ) ->
                     let
+                        claimCompThreshold =
+                            Decimal.fromInt 500
+
                         total =
                             Decimal.add balance accrued
                                 |> formatToDecimalPlaces 4 False
                     in
-                    div [ class "comp-balance", onClick (ForParent CompButtonClicked) ]
-                        [ text total
-                        , div [ class "icon icon--COMP" ] []
-                        ]
+                    if Decimal.lt accrued claimCompThreshold then
+                        balanceView total [ onClick (ForParent CompButtonClicked) ]
+
+                    else
+                        balanceView "—" []
 
                 _ ->
-                    div [ class "comp-balance" ]
-                        [ text "—"
-                        , div [ class "icon icon--COMP" ] []
-                        ]
+                    balanceView "—" []
 
         _ ->
             text ""
