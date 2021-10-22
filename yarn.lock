@@ -3408,9 +3408,9 @@ component-emitter@^1.2.1:
     webpack-dev-server "^3.7.2"
     yargs "^16.2.0"
 
-"compound-config@https://github.com/compound-finance/compound-config.git#314bda33096f971fc5ff263f90ab33992ba768d9":
+"compound-config@https://github.com/compound-finance/compound-config.git#e4f50326275fea33632b2a45cb66011e40a43929":
   version "0.0.0"
-  resolved "https://github.com/compound-finance/compound-config.git#314bda33096f971fc5ff263f90ab33992ba768d9"
+  resolved "https://github.com/compound-finance/compound-config.git#e4f50326275fea33632b2a45cb66011e40a43929"
 
 compressible@~2.0.16:
   version "2.0.18"
