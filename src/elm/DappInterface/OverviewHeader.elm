@@ -244,11 +244,11 @@ netAPYView maybeConfig maybeEtherUsdPrice ({ userLanguage } as mainModel) =
                                                 cTokenMetadata.totalBorrows
                                                     |> Decimal.mul tokenValueUsd
 
-                                            compRate marketTotalUSDValue =
-                                                Utils.CompAPYHelper.compRate compUSDPrice cTokenMetadata.compSpeedPerDay marketTotalUSDValue
+                                            compRate marketTotalUSDValue compSpeedPerDayValue =
+                                                Utils.CompAPYHelper.compRate compUSDPrice compSpeedPerDayValue marketTotalUSDValue
                                                     |> Maybe.withDefault Decimal.zero
                                         in
-                                        ( compRate totalSupplyUsd, compRate totalBorrowUsd )
+                                        ( compRate totalSupplyUsd cTokenMetadata.compSupplySpeedPerDay, compRate totalBorrowUsd cTokenMetadata.compBorrowSpeedPerDay )
 
                                     _ ->
                                         ( Decimal.zero, Decimal.zero )
