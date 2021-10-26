@@ -554,8 +554,14 @@ assetAndCompRateForm userLanguage config maybeEtherUsdPrice ({ chosenAsset, prim
                                 else
                                     cTokenMetadata.totalBorrows
                                         |> Decimal.mul tokenValueUsd
+
+                            compSpeedPerDayForAction =
+                                if primaryActionType == MintAction || primaryActionType == RedeemAction then
+                                    cTokenMetadata.compSupplySpeedPerDay
+                                else
+                                    cTokenMetadata.compBorrowSpeedPerDay
                         in
-                        ( marketTotalUsdForAction, cTokenMetadata.compSpeedPerDay )
+                        ( marketTotalUsdForAction, compSpeedPerDayForAction )
                     )
                 |> Maybe.withDefault ( Decimal.zero, Decimal.zero )
 
