@@ -255,18 +255,11 @@ compBalanceView account governanceState =
             case ( getCompoundGovernanceTokenBalance customer governanceState, getCompAccruedBalance customer governanceState ) of
                 ( Just balance, Just accrued ) ->
                     let
-                        claimCompThreshold =
-                            Decimal.fromInt 500
-
                         total =
                             Decimal.add balance accrued
                                 |> formatToDecimalPlaces 4 False
                     in
-                    if Decimal.lt accrued claimCompThreshold then
-                        balanceView total [ onClick (ForParent CompButtonClicked) ]
-
-                    else
-                        balanceView "—" []
+                    balanceView total [ onClick (ForParent CompButtonClicked) ]
 
                 _ ->
                     balanceView "—" []
