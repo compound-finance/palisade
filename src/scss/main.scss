@@ -9,6 +9,7 @@
 @import 'node_modules/compound-components/src/scss/components/chevron';
 @import 'node_modules/compound-components/src/scss/components/connect-wallet';
 @import 'node_modules/compound-components/src/scss/components/connecting-ring';
+@import 'node_modules/compound-components/src/scss/components/ctoken';
 @import 'node_modules/compound-components/src/scss/components/dropdown';
 @import 'node_modules/compound-components/src/scss/components/dot-indicator';
 @import 'node_modules/compound-components/src/scss/components/icon';
@@ -41,7 +42,6 @@
 @import './components/claim-comp-modal';
 @import './components/proposal-action-modal';
 @import './components/collateral-toggle';
-@import './components/ctoken';
 @import './components/gov-profile-image';
 
 @import './governance/components/proposal';
