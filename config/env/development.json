@@ -1,6 +1,6 @@
 {
   "API_BASE_URL_MAP": {
-    "development": "http://localhost:4000/",
+    "dev": "https://api.compound.finance/api/",
     "goerli": "https://api.stage.compound.finance/api/",
     "kovan": "https://api.stage.compound.finance/api/",
     "rinkeby": "https://api.stage.compound.finance/api/",
@@ -8,12 +8,12 @@
     "mainnet": "https://api.compound.finance/api/"
   },
   "DATA_PROVIDERS": {
-    "development": "http://localhost:8545",
+    "dev": "http://localhost:8545/",
     "goerli": "https://infura.io/goerli",
     "rinkeby": "https://infura.io/rinkeby",
     "kovan": "https://infura.io/kovan",
     "ropsten": "https://infura.io/ropsten",
-    "mainnet": "https://infura.io/mainnet"
+    "mainnet": "http://localhost:8545/"
   },
   "NETWORK_MAP": {
     "mainnet": 1,
@@ -21,8 +21,8 @@
     "rinkeby": 4,
     "goerli": 5,
     "kovan": 42,
-    "development": 999
+    "dev": 1337
   },
-  "DEFAULT_NETWORK": "mainnet",
+  "DEFAULT_NETWORK": "dev",
   "BLOCKNATIVE_API_KEY": null
 }
