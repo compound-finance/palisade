@@ -121,6 +121,11 @@
     "ledger_live": "Ledger Live",
     "select": "选择",
     "none": "没有",
+    "tally": "相符",
+    "unlock_tally_wallet": "解锁 Tally 钱包",
+    "click_tally_extension": "提示：如果您更喜欢使用 Tally，请下载 Tally 或确保将其设置为默认值",
+    "decline_unlock_tally_wallet": "我们检测到您安装了 MetaMask。",
+
   
     "queued_transactions": "排队的交易",
     "executed_transactions": "已执行交易",

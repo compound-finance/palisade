@@ -1,0 +1,12 @@
+.arrow {
+  width: 14px;
+  height: 12px;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-image: url(/images/icn-build-arrows-green.svg);
+  margin-right: 8px;
+  margin-left: 8px;
+  &.borrow {
+    background-image: url(/images/icn-build-arrows-purple.svg);
+  }
+}

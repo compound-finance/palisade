@@ -121,6 +121,11 @@
     "ledger_live": "Ledger Live",
     "select": "선택",
     "none": "없음",
+    "tally": "계정",
+    "unlock_tally_wallet": "탈리 지갑 잠금 해제",
+    "click_tally_extension": "팁: Tally를 대신 사용하려면 Tally를 다운로드하거나 기본값으로 설정되어 있는지 확인하십시오.",
+    "decline_unlock_tally_wallet": "MetaMask가 설치되어 있음을 감지했습니다.",
+
   
     "queued_transactions": "대기 중인 트랜잭션",
     "executed_transactions": "실행된 트랜잭션",

@@ -121,6 +121,11 @@
     "ledger_live": "Ledger Live",
     "select": "Seleccionar",
     "none": "Ninguna",
+    "tally": "Cuenta",
+    "unlock_tally_wallet": "Desbloquear billetera Tally",
+    "click_tally_extension": "Sugerencia: si prefiere usar Tally en su lugar, descargue Tally o asegúrese de que esté configurado de forma predeterminada",
+    "decline_unlock_tally_wallet": "Hemos detectado que tienes MetaMask instalado.",
+
   
     "queued_transactions": "Transacciones en cola",
     "executed_transactions": "Transacciones ejecutadas",

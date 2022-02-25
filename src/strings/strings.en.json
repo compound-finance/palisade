@@ -121,6 +121,11 @@
   "ledger_live": "Ledger Live",
   "select": "Select",
   "none": "None",
+  "tally": "Tally",
+  "unlock_tally_wallet": "Unlock Tally Wallet",
+  "click_tally_extension": "Tip: If you would prefer to use Tally instead, please download Tally or ensure it is set to default",
+  "decline_unlock_tally_wallet": "We have detected that you have MetaMask installed.",
+
   
   "queued_transactions": "Queued Transactions",
   "executed_transactions": "Executed Transactions",
