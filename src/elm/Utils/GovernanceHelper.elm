@@ -32,7 +32,7 @@ import Utils.ABIHelper exposing (ABIInputOutputType, ABIValue)
 proposalThreshold : Network -> Decimal
 proposalThreshold network =
     if network == Network.MainNet then
-        Decimal.fromInt 65000
+        Decimal.fromInt 25000
 
     else
         Decimal.fromInt 100000
