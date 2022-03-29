@@ -3366,9 +3366,9 @@ component-emitter@^1.2.1:
   resolved "https://registry.yarnpkg.com/component-emitter/-/component-emitter-1.3.0.tgz#16e4070fba8ae29b679f2215853ee181ab2eabc0"
   integrity sha512-Rd3se6QB+sO1TwqZjscQrurpEPIfO0/yYnSin6Q/rD3mOutHvUrCAhJub3r90uNb+SESBuE0QYoB90YdfatsRg==
 
-"compound-components@https://github.com/compound-finance/compound-components.git#8f975b3baf904eb9069e3ff5638d21bd37e060c4":
+"compound-components@https://github.com/compound-finance/compound-components.git#75fa6c7a1515722ee788a585836ccc7407dd7598":
   version "1.0.0"
-  resolved "https://github.com/compound-finance/compound-components.git#8f975b3baf904eb9069e3ff5638d21bd37e060c4"
+  resolved "https://github.com/compound-finance/compound-components.git#75fa6c7a1515722ee788a585836ccc7407dd7598"
   dependencies:
     "@babel/core" "^7.0.0"
     "@babel/preset-env" "^7.0.0"
