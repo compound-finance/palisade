@@ -124,7 +124,10 @@
   "tally": "Tally",
   "unlock_tally_wallet": "Unlock Tally Wallet",
   "click_tally_extension": "Tip: If you would prefer to use Tally instead, please download Tally or ensure it is set to default",
+  "click_mm_extension": "Tip: If you would prefer to use Metamask instead, please ensure Tally is not set as default",
   "decline_unlock_tally_wallet": "We have detected that you have MetaMask installed.",
+  "decline_unlock_mm_wallet": "We have detected that you have Tally installed.",
+
 
   
   "queued_transactions": "Queued Transactions",
