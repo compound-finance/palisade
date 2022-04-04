@@ -124,7 +124,10 @@
     "tally": "Cuenta",
     "unlock_tally_wallet": "Desbloquear billetera Tally",
     "click_tally_extension": "Sugerencia: si prefiere usar Tally en su lugar, descargue Tally o asegúrese de que esté configurado de forma predeterminada",
+    "click_mm_extension": "Consejo: si prefiere usar Metamask en su lugar, asegúrese de que Tally no esté configurado como predeterminado",
     "decline_unlock_tally_wallet": "Hemos detectado que tienes MetaMask instalado.",
+    "decline_unlock_mm_wallet": "Hemos detectado que tienes Tally instalado.",
+
 
   
     "queued_transactions": "Transacciones en cola",
