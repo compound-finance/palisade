@@ -973,3 +973,164 @@ body {
     padding-bottom: 1.2rem !important;
   }
 }
+
+#david-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
+  &.dark-theme {
+    background-color: #070a0e;
+    color: $color_light_2;
+  }
+  &.light-theme {
+    background-color: #f9fafb;
+    color: black;
+    .dot-grid {
+      background-image: url(/images/pattern-large-black-dots.svg);
+    }
+    .david-brand {
+      background-image: url(/images/compound-logo-dark.svg);
+    }
+    .david-theme-toggle {
+      .theme-toggle-bar {
+        background-color: #070a0e;
+      }
+      .theme-toggle-thumb {
+        transform: translateX(30px);
+      }
+      .sun-icon {
+        display: flex;
+      }
+      .moon-icon {
+        display: none;
+      }
+    }
+  }
+  .dot-grid {
+    width: 100%;
+    height: 100%;
+    background-image: url(/images/pattern-large-white-dots.svg);
+    background-repeat: repeat-x;
+    background-position: top 80px left 40px;
+    position: absolute;
+    z-index: -1;
+  }
+  .dot-grid-commet {
+    transform: rotate(45deg);
+    position: absolute;
+    top: 20vh;
+    left: 33vw;
+    width: 1px;
+    height: 60px;
+    background: linear-gradient(30deg, rgba(0, 211, 149, 0), #00d395);
+  }
+  .david-container {
+    width: 1300px;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+  .david-header {
+    background: inherit;
+    padding: 1.5rem 0 1rem;
+  }
+  .david-brand {
+    display: inline-block;
+    width: 121px;
+    height: 27px;
+    background-image: url(/images/compound-logo.svg);
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-color: transparent;
+  }
+  .david-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .david-theme-toggle {
+    display: inline-block;
+    height: 24px;
+    max-width: 100%;
+    line-height: 24px;
+    white-space: nowrap;
+    outline: none;
+    .david-theme-toggle-label {
+      user-select: none;
+      display: flex;
+      flex: 1;
+      flex-direction: row;
+      align-items: center;
+      height: inherit;
+      cursor: pointer;
+    }
+    &:hover {
+      .theme-toggle-thumb {
+        background-color: #00f6ae;
+      }
+    }
+    .theme-toggle-bar {
+      position: relative;
+      width: 58px;
+      height: 24px;
+      flex-shrink: 0;
+      border-radius: 12px;
+      background-color: #f9fafb;
+    }
+    .theme-toggle-input {
+      border: 0;
+      clip: rect(0 0 0 0);
+      height: 1px;
+      margin: -1px;
+      overflow: hidden;
+      padding: 0;
+      position: absolute;
+      width: 1px;
+      white-space: nowrap;
+      outline: 0;
+      -webkit-appearance: none;
+    }
+    .theme-toggle-thumb {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background-color: $color_supply;
+      position: absolute;
+      z-index: 1;
+      width: 30px;
+      height: 30px;
+      top: -3px;
+      left: 0;
+      transform: translateX(0);
+      transition: all 80ms linear;
+      box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.15), 0 1px 1px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.15);
+    }
+    .theme-toggle-thumb-image {
+      width: 20px;
+    }
+    .sun-icon {
+      display: none;
+    }
+  }
+  .david-masthead {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    padding: 0;
+  }
+  .david-headline {
+    max-width: 900px;
+    margin-top: 5rem;
+  }
+  .david-headline-accent-text {
+    color: $color_supply;
+    font-weight: 700;
+  }
+}

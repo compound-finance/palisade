@@ -30,6 +30,7 @@ import DappInterface.CommonViews as CommonViews
 import DappInterface.Page exposing (Page(..))
 import DappInterface.Propose as Propose
 import DappInterface.Vote as Vote
+import DappInterface.David as David
 import Decimal exposing (Decimal)
 import Dict exposing (Dict)
 import Eth.Compound exposing (CompoundMsg(..), CompoundState)
@@ -162,6 +163,7 @@ type alias Model =
     , maybeGasPrice : Maybe Decimal
     , userLanguage : Translations.Lang
     , repl : Repl.Model
+    , david : David.Model
     }
 
 

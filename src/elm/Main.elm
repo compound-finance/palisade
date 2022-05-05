@@ -28,6 +28,7 @@ import DappInterface.PrimaryActionModal
 import DappInterface.Propose as Propose
 import DappInterface.Terms as DappTerms
 import DappInterface.Vote as Vote
+import DappInterface.David as David
 import Decimal exposing (Decimal)
 import Dict exposing (Dict)
 import Eth.Compound exposing (CompoundMsg(..), clearCompoundState, compoundInit, compoundNewBlockCmd, compoundSubscriptions, compoundUpdate)
@@ -78,6 +79,7 @@ type Msg
     | WrappedOracleMsg OracleMsg
     | AdminMsg Admin.InternalMsg
     | ReplMsg Repl.InternalMsg
+    | DavidMsg David.InternalMsg
     | WrappedPreferencesMsg PreferencesMsg
     | LiquidateMsg Liquidate.InternalMsg
     | WrappedGovernanceMsg GovernanceMsg
@@ -154,6 +156,11 @@ proposeTranslator =
         { onInternalMessage = ProposeMsg
         }
 
+davidTranslator : David.Translator Msg
+davidTranslator =
+    David.translator
+        { onInternalMessage = DavidMsg
+        }
 
 voteTranslator : Vote.Translator Msg
 voteTranslator =
@@ -282,6 +289,7 @@ init { path, configurations, configAbiFiles, dataProviders, apiBaseUrlMap, userA
       , maybeGasPrice = Nothing
       , userLanguage = initPreferences.userLanguage
       , repl = Repl.emptyState
+      , david = David.emptyState
       }
     , Cmd.batch
         [ setTitle (getPageTitle initPreferences.userLanguage initialPage)
@@ -1053,6 +1061,13 @@ update msg ({ page, configs, apiBaseUrlMap, account, transactionState, bnTransac
             in
             ( { model | repl = updatedRepl }, Cmd.map replTranslator cmd )
 
+        DavidMsg internal ->
+            let
+                ( updatedDavid, cmd ) =
+                    David.update internal model.david
+            in
+            ( { model | david = updatedDavid }, Cmd.map davidTranslator cmd )
+
         WrappedPreferencesMsg preferencesMsg ->
             let
                 ( updatedPreferences, preferencesCmd ) =
@@ -1220,6 +1235,9 @@ viewFull ({ page, liquidateModel, transactionState, compoundState, tokenState, o
             , claimCompView
             , replFooter
             ]
+
+        David ->
+            [ Html.map davidTranslator (David.view model.david) ]
 
 
 alertView : Model -> Html Msg
