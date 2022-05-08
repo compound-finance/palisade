@@ -8,11 +8,11 @@
   },
   "DATA_PROVIDERS": {
     "development": "http://localhost:8545",
-    "goerli": "https://infura.io/goerli",
-    "rinkeby": "https://infura.io/rinkeby",
-    "kovan": "https://infura.io/kovan",
-    "ropsten": "https://infura.io/ropsten",
-    "mainnet": "https://infura.io/mainnet"
+    "goerli": "https://goerli.infura.io/v3/5be96ba6581947a9bb2a35b403c0c141",
+    "rinkeby": "https://rinkeby.infura.io/v3/5be96ba6581947a9bb2a35b403c0c141",
+    "kovan": "https://kovan.infura.io/v3/5be96ba6581947a9bb2a35b403c0c141",
+    "ropsten": "https://ropsten.infura.io/v3/5be96ba6581947a9bb2a35b403c0c141",
+    "mainnet": "https://mainnet.infura.io/v3/5be96ba6581947a9bb2a35b403c0c141"
   },
   "NETWORK_MAP": {
     "mainnet": 1,

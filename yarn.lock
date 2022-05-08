@@ -3408,9 +3408,9 @@ component-emitter@^1.2.1:
     webpack-dev-server "^3.7.2"
     yargs "^16.2.0"
 
-"compound-config@https://github.com/compound-finance/compound-config.git#b6cbc8bbfb8df201dc9e3e5860ae68dea84c4c9b":
+"compound-config@https://github.com/0xAppo/agartha-dao-config.git#ace18658b936cf7977da8fcc4339354e29496ac7":
   version "0.0.0"
-  resolved "https://github.com/compound-finance/compound-config.git#b6cbc8bbfb8df201dc9e3e5860ae68dea84c4c9b"
+  resolved "https://github.com/0xAppo/agartha-dao-config.git#ace18658b936cf7977da8fcc4339354e29496ac7"
 
 compressible@~2.0.16:
   version "2.0.18"
