@@ -1660,7 +1660,6 @@ function subscribe(
   subscribeToGasService(app);
   subscribeToRepl(app, eth, configFiles, configAbiFiles, connectedWalletPorts.showAccount);
   subscribeToAdminDashboard(app, eth);
-  subscribeToGovernancePorts(app, eth);
   subscribeToFlywheelPorts(app, eth);
 
   // TODO: Do we want to reduce the globalness of these vars?

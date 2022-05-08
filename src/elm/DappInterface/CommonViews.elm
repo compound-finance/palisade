@@ -158,25 +158,20 @@ pageHeader userLanguage page connectedWallet account preferences governanceState
 
         links =
             let
-                { homeClass, voteClass } =
+                { homeClass } =
                     let
                         emptyClasses =
                             { homeClass = ""
-                            , voteClass = ""
                             }
                     in
                     case page of
                         Home ->
                             { emptyClasses | homeClass = "active" }
 
-                        Vote ->
-                            { emptyClasses | voteClass = "active" }
-
                         _ ->
                             emptyClasses
             in
             [ a (class homeClass :: href PageNavigation (getHrefUrl Home)) [ text (Translations.dashboard userLanguage) ]
-            , a (class voteClass :: href PageNavigation (getHrefUrl Vote)) [ text (Translations.vote userLanguage) ]
             ]
     in
     header [ class "dapp" ]
