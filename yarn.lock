@@ -3408,9 +3408,9 @@ component-emitter@^1.2.1:
     webpack-dev-server "^3.7.2"
     yargs "^16.2.0"
 
-"compound-config@https://github.com/0xAppo/agartha-dao-config.git#34a5b969a921247ef614ff2ee7ae230dc5e94a2f":
+"compound-config@https://github.com/0xAppo/agartha-dao-config.git#bde0b77ef38255912eebb00bd8f50bfb1cfd0a8b":
   version "0.0.0"
-  resolved "https://github.com/0xAppo/agartha-dao-config.git#34a5b969a921247ef614ff2ee7ae230dc5e94a2f"
+  resolved "https://github.com/0xAppo/agartha-dao-config.git#bde0b77ef38255912eebb00bd8f50bfb1cfd0a8b"
 
 compressible@~2.0.16:
   version "2.0.18"

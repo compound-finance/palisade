@@ -229,6 +229,8 @@ function subscribeToCTokenPorts(app, eth) {
   // port askCTokenMetadataAllPort : { blockNumber : Int, comptrollerAddress : String, cTokenAddress : String, underlyingAssetAddress : String, cTokenDecimals : Int, underlyingDecimals : Int, isCEther : Bool } -> Cmd msg
   app.ports.askCTokenMetadataAllPort.subscribe(({ blockNumber, cTokens, compoundLens }) => {
     const CompoundLens = getContractJsonByName(eth, 'CompoundLens');
+    console.log('CompoundLens', CompoundLens);
+    console.log('cToken', cTokens);
 
     wrapCall(app, eth, [[CompoundLens, compoundLens, 'cTokenMetadataAll', [cTokens]]], blockNumber)
       .then(([results]) => {
@@ -258,6 +260,32 @@ function subscribeToCTokenPorts(app, eth) {
             const oneCTokenInUnderlying = exchangeRateCurrent / Math.pow(10, mantissa);
             const totalSupplyScaled = parseWeiStr(totalSupplyResult) / Math.pow(10, cTokenDecimals);
 
+            console.log('inside askCTokenMetadataAllPort ports.js');
+            console.log('raw data dump')
+            console.log('cTokenAddress', cTokenAddress);
+            console.log('exchangeRateResult', exchangeRateResult);
+            console.log('supplyRateResult', supplyRateResult);
+            console.log('borrowRateResult', borrowRateResult);
+            console.log('reserveFactorResult', reserveFactorResult);
+            console.log('totalBorrowsResult', totalBorrowsResult);
+            console.log('totalReservesResult', totalReservesResult);
+            console.log('totalSupplyResult', totalSupplyResult);
+            console.log('totalCashResult', totalCashResult);
+            console.log('isListedResult', isListedResult);
+            console.log('totalReservesResult', totalReservesResult);
+            console.log('collateralFactorMantissaResult', collateralFactorMantissaResult);
+            console.log('underlyingAssetAddress', underlyingAssetAddress);
+            console.log('cTokenDecimals', cTokenDecimals);
+            console.log('underlyingDecimals', underlyingDecimals);
+            console.log('borrowCapResult', borrowCapResult);
+
+            console.log('compiled data dump');
+            console.log('exchangeRateCurrent', exchangeRateCurrent);
+            console.log('mantissa', mantissa);
+            console.log('totalCash', totalCash);
+            console.log('oneCTokenInUnderlying', oneCTokenInUnderlying);
+            console.log('totalSupplyScaled', totalSupplyScaled);
+
             // APY daily compounding formula : ( 1 + 5760 * supplyRatePerBlock / 1e18 )^365 - 1
             // BN.js only handles ints so we will need to return
             // 5760 * supplyRatePerBlock / 1e18
@@ -281,6 +309,7 @@ function subscribeToCTokenPorts(app, eth) {
 
         //TODO: Change me to giveCTokenMetadataAllPort
         app.ports.giveCTokenMetadataPort.send(cTokenMetadataList);
+        console.log('cTokenMetadataList', cTokenMetadataList);
       })
       .catch(reportError(app));
   });
