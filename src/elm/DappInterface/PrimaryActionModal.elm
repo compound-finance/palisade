@@ -540,7 +540,7 @@ assetAndCompRateForm userLanguage config maybeEtherUsdPrice ({ chosenAsset, prim
         cTokenAddressString =
             Ethereum.getContractAddressString primaryActionModalState.chosenAsset.contractAddress
 
-        ( marketTotalUSDValue, compSpeedPerDay ) =
+        ( marketTotalUSDValue ) =
             mainModel.compoundState.cTokensMetadata
                 |> Dict.get cTokenAddressString
                 |> Maybe.map
@@ -555,36 +555,10 @@ assetAndCompRateForm userLanguage config maybeEtherUsdPrice ({ chosenAsset, prim
                                     cTokenMetadata.totalBorrows
                                         |> Decimal.mul tokenValueUsd
 
-                            compSpeedPerDayForAction =
-                                if primaryActionType == MintAction || primaryActionType == RedeemAction then
-                                    cTokenMetadata.compSupplySpeedPerDay
-                                else
-                                    cTokenMetadata.compBorrowSpeedPerDay
                         in
-                        ( marketTotalUsdForAction, compSpeedPerDayForAction )
+                        ( marketTotalUsdForAction )
                     )
-                |> Maybe.withDefault ( Decimal.zero, Decimal.zero )
-
-        distributionApyText =
-            case maybeCompUSDPrice of
-                Just compUSDPrice ->
-                    let
-                        maybeDistributionCompAPY =
-                            compRate compUSDPrice compSpeedPerDay marketTotalUSDValue
-                    in
-                    case maybeDistributionCompAPY of
-                        Just distributionCompAPY ->
-                            if Decimal.gt distributionCompAPY (Decimal.fromInt 1000000) then
-                                "– %"
-
-                            else
-                                formatPercentageWithDots maybeDistributionCompAPY
-
-                        Nothing ->
-                            "– %"
-
-                Nothing ->
-                    "– %"
+                |> Maybe.withDefault ( Decimal.zero )
     in
     div [ class "form" ]
         [ a ([ class "label-link", target "__blank" ] ++ href External (marketDetailPageUrl chosenAsset))
@@ -607,7 +581,6 @@ assetAndCompRateForm userLanguage config maybeEtherUsdPrice ({ chosenAsset, prim
                     [ text (Translations.distribution_apy userLanguage)
                     ]
                 ]
-            , span [] [ text distributionApyText ]
             ]
         ]
 

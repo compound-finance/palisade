@@ -248,8 +248,6 @@ function subscribeToCTokenPorts(app, eth) {
             underlyingAssetAddress: underlyingAssetAddress,
             cTokenDecimals: cTokenDecimals,
             underlyingDecimals: underlyingDecimals,
-            compSupplySpeed: compSupplySpeedResult,
-            compBorrowSpeed: compBorrowSpeedResult,
             borrowCap: borrowCapResult
           }) => {
             const totalCash = toScaledDecimal(parseWeiStr(totalCashResult), underlyingDecimals);
@@ -276,10 +274,6 @@ function subscribeToCTokenPorts(app, eth) {
               totalSupply: toScaledDecimal(parseWeiStr(totalSupplyResult), cTokenDecimals),
               totalSupplyUnderlying: toScaledDecimal(totalSupplyScaled * oneCTokenInUnderlying, 0),
               totalUnderlyingCash: totalCash,
-              compSupplySpeedPerBlock: toScaledDecimal(parseWeiStr(compSupplySpeedResult), EXP_DECIMALS),
-              compSupplySpeedPerDay: toScaledDecimal(parseWeiStr(compSupplySpeedResult).mul(BLOCKS_PER_DAY), EXP_DECIMALS),
-              compBorrowSpeedPerBlock: toScaledDecimal(parseWeiStr(compBorrowSpeedResult), EXP_DECIMALS),
-              compBorrowSpeedPerDay: toScaledDecimal(parseWeiStr(compBorrowSpeedResult).mul(BLOCKS_PER_DAY), EXP_DECIMALS),
               borrowCap: toScaledDecimal(parseWeiStr(borrowCapResult), underlyingDecimals)
             };
           }

@@ -29,6 +29,6 @@
     "arbitrum_testnet": 421611,
     "arbitrum": 42161
   },
-  "DEFAULT_NETWORK": "mainnet",
+  "DEFAULT_NETWORK": "rinkeby",
   "BLOCKNATIVE_API_KEY": null
 }
