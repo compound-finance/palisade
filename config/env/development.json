@@ -11,7 +11,7 @@
     "development": "http://localhost:8545",
     "goerli": "https://infura.io/goerli",
     "rinkeby": "https://infura.io/rinkeby",
-    "kovan": "https://infura.io/kovan",
+    "kovan": "https://kovan.infura.io/v3/e6f25ede6f7d4633b72deefdba4c1169",
     "ropsten": "https://infura.io/ropsten",
     "mainnet": "https://infura.io/mainnet"
   },
