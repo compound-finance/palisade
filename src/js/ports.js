@@ -230,6 +230,9 @@ function subscribeToCTokenPorts(app, eth) {
   app.ports.askCTokenMetadataAllPort.subscribe(({ blockNumber, cTokens, compoundLens }) => {
     const CompoundLens = getContractJsonByName(eth, 'CompoundLens');
     console.log('CompoundLens', CompoundLens);
+    console.log(compoundLens);
+    const Comptroller = getContractJsonByName(eth, 'Comptroller');
+    console.log('Comptroller', Comptroller);
     console.log('cToken', cTokens);
 
     wrapCall(app, eth, [[CompoundLens, compoundLens, 'cTokenMetadataAll', [cTokens]]], blockNumber)

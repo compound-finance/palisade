@@ -10,13 +10,13 @@
   },
   "DATA_PROVIDERS": {
     "development": "http://localhost:8545",
-    "goerli": "https://goerli.infura.io/v3/5be96ba6581947a9bb2a35b403c0c141",
-    "rinkeby": "https://rinkeby.infura.io/v3/5be96ba6581947a9bb2a35b403c0c141",
-    "kovan": "https://kovan.infura.io/v3/5be96ba6581947a9bb2a35b403c0c141",
-    "ropsten": "https://ropsten.infura.io/v3/5be96ba6581947a9bb2a35b403c0c141",
-    "mainnet": "https://mainnet.infura.io/v3/5be96ba6581947a9bb2a35b403c0c141",
-    "arbitrum_testnet": "https://arbitrum-rinkeby.infura.io/v3/5be96ba6581947a9bb2a35b403c0c141",
-    "arbitrum": "https://arbitrum-mainnet.infura.io/v3/5be96ba6581947a9bb2a35b403c0c141"
+    "goerli": "https://goerli.infura.io/v3/448697ced2cd4adeb091d14fce4f0681",
+    "rinkeby": "https://rinkeby.infura.io/v3/448697ced2cd4adeb091d14fce4f0681",
+    "kovan": "https://kovan.infura.io/v3/448697ced2cd4adeb091d14fce4f0681",
+    "ropsten": "https://ropsten.infura.io/v3/448697ced2cd4adeb091d14fce4f0681",
+    "mainnet": "https://mainnet.infura.io/v3/448697ced2cd4adeb091d14fce4f0681",
+    "arbitrum_testnet": "https://arbitrum-rinkeby.infura.io/v3/448697ced2cd4adeb091d14fce4f0681",
+    "arbitrum": "https://arbitrum-mainnet.infura.io/v3/448697ced2cd4adeb091d14fce4f0681"
   },
   "NETWORK_MAP": {
     "mainnet": 1,

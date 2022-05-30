@@ -33,7 +33,7 @@ function buildIpfsClient() {
   function progress(size, path) {
     console.log(`Sent ${Math.round(size / 1000)}KB for ${path}`);
   }
-  let app = await ipfs.add(ipfsClient.globSource('build', { recursive: true, progress }), { timeout: 600000 });
+  let app = await ipfs.add(ipfsClient.globSource('build', { recursive: true, progress }));
   if (app === null) {
     throw new Error("Missing core application cid");
   }
