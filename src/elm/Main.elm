@@ -322,11 +322,6 @@ newBlockCmd apiBaseUrlMap maybeNetwork blockNumber previousBlockNumber ({ dataPr
                                     [ Cmd.map WrappedGovernanceMsg (Eth.Governance.newBlockCmd config blockNumber model.account Nothing)
                                     ]
 
-                                Vote ->
-                                    [ Vote.getVoteDashboardData configs (Just network) (Just blockNumber) model.account
-                                    , Cmd.map WrappedGovernanceMsg (Eth.Governance.newBlockCmd config blockNumber model.account Nothing)
-                                    ]
-
                                 _ ->
                                     []
 
@@ -458,17 +453,6 @@ handleUpdatesFromEthConnectedWallet maybeConfig connectedEthWalletMsg model =
                                 _ ->
                                     Cmd.none
 
-                        Vote ->
-                            case ( maybeConfig, model.blockNumber ) of
-                                ( Just config, Just blockNumber ) ->
-                                    Cmd.batch
-                                        [ Vote.getVoteDashboardData model.configs model.network (Just blockNumber) model.account
-                                        , Cmd.map WrappedGovernanceMsg (Eth.Governance.newBlockCmd config blockNumber model.account Nothing)
-                                        ]
-
-                                _ ->
-                                    Cmd.none
-
                         Admin ->
                             Admin.getQueuedTransactions model.configs model.network
 
@@ -554,17 +538,6 @@ update msg ({ page, configs, apiBaseUrlMap, account, transactionState, bnTransac
                     , case newPage of
                         Admin ->
                             Admin.getQueuedTransactions configs network
-
-                        Vote ->
-                            case ( maybeConfig, model.blockNumber ) of
-                                ( Just config, Just blockNumber ) ->
-                                    Cmd.batch
-                                        [ Vote.getVoteDashboardData configs network model.blockNumber account
-                                        , Cmd.map WrappedGovernanceMsg (Eth.Governance.newBlockCmd config blockNumber model.account Nothing)
-                                        ]
-
-                                _ ->
-                                    Vote.getVoteDashboardData configs network model.blockNumber account
 
                         _ ->
                             Cmd.none
@@ -1208,16 +1181,6 @@ viewFull ({ page, liquidateModel, transactionState, compoundState, tokenState, o
             , chooseWalletModal userLanguage model
             , claimCompView
             , footer
-            , replFooter
-            ]
-
-        Vote ->
-            [ alertView model
-            , header
-            , Html.map voteTranslator (Vote.view userLanguage maybeConfig network model.currentTimeZone model.currentTime account model.transactionState model.governanceState model.tokenState model.voteModel)
-            , footer
-            , chooseWalletModal userLanguage model
-            , claimCompView
             , replFooter
             ]
 

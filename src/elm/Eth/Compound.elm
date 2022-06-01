@@ -82,10 +82,6 @@ type alias CTokenMetadata =
     , totalReserves : Decimal
     , totalSupply : Decimal
     , totalSupplyUnderlying : Decimal
-    , compSupplySpeedPerBlock : Decimal
-    , compSupplySpeedPerDay : Decimal
-    , compBorrowSpeedPerBlock: Decimal
-    , compBorrowSpeedPerDay : Decimal
     , borrowCap : Decimal
     }
 
@@ -123,10 +119,6 @@ type alias CTokenMetadataUpdate =
     , totalReserves : Decimal
     , totalSupply : Decimal
     , totalSupplyUnderlying : Decimal
-    , compSupplySpeedPerBlock : Decimal
-    , compSupplySpeedPerDay : Decimal
-    , compBorrowSpeedPerBlock: Decimal
-    , compBorrowSpeedPerDay : Decimal
     , borrowCap : Decimal
     }
 
@@ -260,7 +252,7 @@ compoundUpdate config tokenState oracleState msg ( state, bnState ) =
                 updatedMetaData =
                     cTokenMetadataList
                         |> List.foldl
-                            (\{ cTokenAddress, exchangeRate, supplyRatePerDay, borrowRatePerDay, collateralFactor, reserveFactor, totalBorrows, totalUnderlyingCash, totalReserves, totalSupply, totalSupplyUnderlying, compSupplySpeedPerBlock, compSupplySpeedPerDay, compBorrowSpeedPerBlock, compBorrowSpeedPerDay, borrowCap } acc ->
+                            (\{ cTokenAddress, exchangeRate, supplyRatePerDay, borrowRatePerDay, collateralFactor, reserveFactor, totalBorrows, totalUnderlyingCash, totalReserves, totalSupply, totalSupplyUnderlying, borrowCap } acc ->
                                 Dict.insert
                                     (getContractAddressString cTokenAddress)
                                     { exchangeRate = exchangeRate
@@ -273,10 +265,6 @@ compoundUpdate config tokenState oracleState msg ( state, bnState ) =
                                     , totalReserves = totalReserves
                                     , totalSupply = totalSupply
                                     , totalSupplyUnderlying = totalSupplyUnderlying
-                                    , compSupplySpeedPerBlock = compSupplySpeedPerBlock
-                                    , compSupplySpeedPerDay = compSupplySpeedPerDay
-                                    , compBorrowSpeedPerBlock = compBorrowSpeedPerBlock
-                                    , compBorrowSpeedPerDay = compBorrowSpeedPerDay
                                     , borrowCap = borrowCap
                                     }
                                     acc
@@ -671,22 +659,18 @@ giveCTokenMetadata wrapper =
                 (field "totalUnderlyingCash" decimal)
 
         stage2 =
-            (Json.Decode.map6
+            (Json.Decode.map4
                 (<|)
                 stage1
                 (field "totalReserves" decimal)
                 (field "totalSupply" decimal)
                 (field "totalSupplyUnderlying" decimal)
-                (field "compSupplySpeedPerBlock" decimal)
-                (field "compSupplySpeedPerDay" decimal)
             )
         decoder =
             Json.Decode.list
-                (Json.Decode.map4
+                (Json.Decode.map2
                     (<|)
                     stage2
-                    (field "compBorrowSpeedPerBlock" decimal)
-                    (field "compBorrowSpeedPerDay" decimal)
                     (field "borrowCap" decimal)
                 )
     in

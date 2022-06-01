@@ -5,15 +5,19 @@
     "kovan": "https://api.stage.compound.finance/api/",
     "rinkeby": "https://api.stage.compound.finance/api/",
     "ropsten": "https://api.stage.compound.finance/api/",
-    "mainnet": "https://api.compound.finance/api/"
+    "mainnet": "https://api.compound.finance/api/",
+    "arbitrum_testnet": "https://api.compound.finance/api/",
+    "arbitrum": "https://api.compound.finance/api/"
   },
   "DATA_PROVIDERS": {
     "development": "http://localhost:8545",
-    "goerli": "https://infura.io/goerli",
-    "rinkeby": "https://infura.io/rinkeby",
-    "kovan": "https://infura.io/kovan",
-    "ropsten": "https://infura.io/ropsten",
-    "mainnet": "https://infura.io/mainnet"
+    "goerli": "https://goerli.infura.io/v3/448697ced2cd4adeb091d14fce4f0681",
+    "rinkeby": "https://rinkeby.infura.io/v3/448697ced2cd4adeb091d14fce4f0681",
+    "kovan": "https://kovan.infura.io/v3/448697ced2cd4adeb091d14fce4f0681",
+    "ropsten": "https://ropsten.infura.io/v3/448697ced2cd4adeb091d14fce4f0681",
+    "mainnet": "https://mainnet.infura.io/v3/448697ced2cd4adeb091d14fce4f0681",
+    "arbitrum_testnet": "https://arbitrum-rinkeby.infura.io/v3/448697ced2cd4adeb091d14fce4f0681",
+    "arbitrum": "https://arbitrum-mainnet.infura.io/v3/448697ced2cd4adeb091d14fce4f0681"
   },
   "NETWORK_MAP": {
     "mainnet": 1,
@@ -21,8 +25,10 @@
     "rinkeby": 4,
     "goerli": 5,
     "kovan": 42,
-    "development": 999
+    "development": 999,
+    "arbitrum_testnet": 421611,
+    "arbitrum": 42161
   },
-  "DEFAULT_NETWORK": "mainnet",
+  "DEFAULT_NETWORK": "rinkeby",
   "BLOCKNATIVE_API_KEY": null
 }
