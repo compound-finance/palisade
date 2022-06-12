@@ -37,7 +37,7 @@
     "clean-webpack-plugin": "^3.0.0",
     "cli-table": "0.3.1",
     "compound-components": "https://github.com/compound-finance/compound-components.git#e07cd9f7f4a55c81c630481b8dba761faa3c4c8a",
-    "compound-config": "https://github.com/0xAppo/agartha-dao-config.git#590cea9d876bdc90ea36dd35bba58c6d78ead941",
+    "compound-config": "https://github.com/0xAppo/agartha-dao-config.git#17a61fb2706574bf0684baec08d6126eeef7ad2a",
     "connect-history-api-fallback": "^1.5.0",
     "core-js": "3",
     "cross-spawn": "^7.0.2",
