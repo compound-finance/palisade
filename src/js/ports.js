@@ -169,7 +169,7 @@ function subscribeToCTokenPorts(app, eth) {
       desiredAssetDecimals,
       isCEther,
     }) => {
-      const CEther = getContractJsonByName(eth, 'cETH');
+      const CEther = getContractJsonByName(eth, 'lETH');
       const CToken = getContractJsonByAddress(eth, cTokenAddress);
       const closeAmountWei = parseWeiStr(borrowedAssetAmountWeiStr);
 
@@ -234,6 +234,7 @@ function subscribeToCTokenPorts(app, eth) {
     const Comptroller = getContractJsonByName(eth, 'Comptroller');
     console.log('Comptroller', Comptroller);
     console.log('cToken', cTokens);
+    console.log('ctoken array', [cTokens]);
 
     wrapCall(app, eth, [[CompoundLens, compoundLens, 'cTokenMetadataAll', [cTokens]]], blockNumber)
       .then(([results]) => {
@@ -348,7 +349,7 @@ function subscribeToCTokenPorts(app, eth) {
               const tokenBalance = toScaledDecimal(tokenBalanceResult, underlyingDecimals);
               const tokenAllowance = toScaledDecimal(tokenAllowanceResult, underlyingDecimals);
 
-              if (cTokenSymbol == 'cETH') {
+              if (cTokenSymbol == 'lETH') {
                 // Since we're on eth anyway
                 app.ports.giveAccountBalancePort.send({
                   balance: tokenBalance,
@@ -423,6 +424,9 @@ function subscribeToComptrollerPorts(app, eth) {
             value: toScaledDecimal(underlyingPrice, EXP_DECIMALS)
           };
         });
+        
+        console.log('inside oracle');
+        console.log(allPricesList);
 
         app.ports.giveOraclePricesAllPort.send(allPricesList);
       })

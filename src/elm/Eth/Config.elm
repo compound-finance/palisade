@@ -138,7 +138,7 @@ loadConfig networkName ({ contracts, cTokensRaw, tokens, blocks } as basicConfig
             Dict.get "Maximillion" contracts
 
         maybeCEtherTokenRaw =
-            Dict.get "cETH" cTokensRaw
+            Dict.get "lETH" cTokensRaw
 
         maybeFauceteer =
             Dict.get "Fauceteer" contracts

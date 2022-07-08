@@ -27,6 +27,8 @@ window.addEventListener('load', function () {
   const configFiles = process.env.CONFIG_FILES;
   const configAbiFiles = process.env.CONFIG_ABI_FILES;
 
+  console.log(configFiles);
+
   let configNameToAddressMappings = {};
   for (let [network, networkConfig] of Object.entries(configFiles)) {
     const contracts = networkConfig['Contracts'];
@@ -38,6 +40,8 @@ window.addEventListener('load', function () {
     }
     configNameToAddressMappings[network] = contractsWithLowerCaseAddresses;
   }
+
+  console.log(configNameToAddressMappings);
 
   const url = new URL(window.location);
 
@@ -73,6 +77,19 @@ window.addEventListener('load', function () {
       dataProviders: process.env.DATA_PROVIDERS,
     },
   });
+
+  console.log(
+    process.env.API_BASE_URL_MAP,
+    configFiles,
+    configAbiFiles,
+    langFromURL(url, window.navigator.language),
+    stripHref(window.location.href),
+    providerType(globEthereum),
+    navigator.userAgent,
+    process.env.DATA_PROVIDERS,
+    );
+
+
 
   function findParent(tagname, el) {
     if (!el) {
