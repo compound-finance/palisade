@@ -46,6 +46,7 @@ import Repl
 import Strings.Translations as Translations
 import Time
 import Utils.BrowserInfo
+import CompoundComponents.Eth.ConnectedEthWallet exposing (UNSData)
 
 
 type alias ScreenPosition =
@@ -162,6 +163,8 @@ type alias Model =
     , maybeGasPrice : Maybe Decimal
     , userLanguage : Translations.Lang
     , repl : Repl.Model
+    , unsDomains: Dict String String 
+    , userData: Maybe UNSData
     }
 
 

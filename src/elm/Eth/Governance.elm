@@ -89,7 +89,7 @@ newBlockCmd config blockNumber maybeAccount maybeBrowsedAddress =
             let
                 userBalCmd =
                     case maybeAccount of
-                        Acct account _ ->
+                        Acct account _ _ ->
                             [ askGovernanceData blockNumber config.compoundLens compToken.address account compToken.decimals
                             ]
                                 ++ (if config.maybeReservoir /= Nothing then

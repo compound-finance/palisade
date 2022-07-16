@@ -101,7 +101,7 @@ collateralListOrAllMarketsPanel maybeConfig maybeEtherUsdPrice ({ account, userL
     in
     if areAllAssetsLoaded model then
         case ( maybeConfig, account ) of
-            ( Just config, Acct customerAddress maybeEtherBalance ) ->
+            ( Just config, Acct customerAddress maybeEtherBalance _ ) ->
                 if List.length suppliedAndReadyCollateralAssets > 0 then
                     section [ class "asset-list" ]
                         [ columnLabels
@@ -187,7 +187,7 @@ allMarketsListPanel maybeConfig maybeEtherUsdPrice ({ account, compoundState, pr
             getReadyCollateralAssets model True
     in
     case ( maybeConfig, account ) of
-        ( Just config, Acct _ _ ) ->
+        ( Just config, Acct _ _ _ ) ->
             if List.length suppliedAndReadyCollateralAssets == 0 then
                 text ""
 
@@ -238,7 +238,7 @@ getAllMarketsPanelContent config maybeEtherUsdPrice addPanelClass allReadyCollat
                 [ class "asset-list" ]
     in
     case account of
-        Acct customerAddress maybeEthBalance ->
+        Acct customerAddress maybeEthBalance _ ->
             div parentDivAttributes
                 [ columnLabels
                 , div [ class "assets" ]
@@ -261,7 +261,7 @@ getAllMarketsPanelContent config maybeEtherUsdPrice addPanelClass allReadyCollat
 
 
 collateralAssetRow : Bool -> Config -> ( Maybe CustomerAddress, Maybe Decimal ) -> Maybe Decimal -> Model -> ReadyCollateralAsset -> Html Msg
-collateralAssetRow isAllMarketsRow config ( maybeCustomerAddress, maybeEtherBalance ) maybeEtherUsdPrice { compoundState, tokenState, preferences, userLanguage } { cToken, supplyBalance, tokenValueUsd, maybeSupplyInterestEarned, supplyInterestRate } =
+collateralAssetRow isAllMarketsRow config ( maybeCustomerAddress, maybeEtherBalance) maybeEtherUsdPrice { compoundState, tokenState, preferences, userLanguage } { cToken, supplyBalance, tokenValueUsd, maybeSupplyInterestEarned, supplyInterestRate } =
     let
         supplyBalanceUsd =
             Decimal.mul supplyBalance tokenValueUsd
@@ -270,7 +270,7 @@ collateralAssetRow isAllMarketsRow config ( maybeCustomerAddress, maybeEtherBala
             maybeCustomerAddress
                 |> Maybe.map
                     (\customerAddress ->
-                        Balances.getWalletBalanceNonSafeEther config (Acct customerAddress maybeEtherBalance) compoundState cToken
+                        Balances.getWalletBalanceNonSafeEther config (Acct customerAddress maybeEtherBalance Nothing) compoundState cToken
                     )
                 |> Functions.demaybeify
                 |> Maybe.withDefault Decimal.zero

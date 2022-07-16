@@ -122,6 +122,7 @@
     "select": "Sélectionner",
     "none": "Aucun",
     "tally": "Pointage",
+    "unstoppable_domains": "Unstoppable Domains",
     "unlock_tally_wallet": "Déverrouiller le portefeuille Tally",
     "click_tally_extension": "Conseil : Si vous préférez utiliser Tally à la place, veuillez télécharger Tally ou assurez-vous qu'il est défini par défaut",
     "click_mm_extension": "Conseil : Si vous préférez utiliser Metamask à la place, assurez-vous que Tally n'est pas défini par défaut.",

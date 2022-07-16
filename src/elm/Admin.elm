@@ -468,7 +468,7 @@ timelockView configs abiFilesRaw account maybeNetwork timezone maybeCurrentTime 
 
         actionButton =
             case ( account, maybeNetworkConfig ) of
-                ( Acct adminAddress _, Just config ) ->
+                ( Acct adminAddress _ _ , Just config ) ->
                     case config.maybeTimelock of
                         Just timelock ->
                             case ( model.maybeTarget, model.maybeFunction, model.maybeDataArg ) of
@@ -638,7 +638,7 @@ timelockView configs abiFilesRaw account maybeNetwork timezone maybeCurrentTime 
                                         ( Just time, Just eta ) ->
                                             if CompoundComponents.Utils.Time.posixToSeconds time > eta then
                                                 case ( account, maybeNetworkConfig ) of
-                                                    ( Acct adminAddress _, Just config ) ->
+                                                    ( Acct adminAddress _ _ , Just config ) ->
                                                         case config.maybeTimelock of
                                                             Just timelock ->
                                                                 button

@@ -625,7 +625,7 @@ enableAssetView userLanguage config maybeEtherUsdPrice ({ chosenAsset, primaryAc
                         " borrow"
             in
             case ( mainModel.network, mainModel.account ) of
-                ( Just network, Acct customerAddress _ ) ->
+                ( Just network, Acct customerAddress _  _ ) ->
                     let
                         enableClickAction =
                             Eth.Token.FaucetTokenApprove
@@ -927,7 +927,7 @@ getSubmitButton userLanguage config ({ chosenAsset, inputValue, primaryActionTyp
 
         actionConstructor panelMessage amount =
             case ( mainModel.network, mainModel.account ) of
-                ( Just actualNetwork, Acct customerAddress _ ) ->
+                ( Just actualNetwork, Acct customerAddress _  _ ) ->
                     WrappedCompoundMsg <| Eth.Compound.Web3TransactionMsg <| panelMessage actualNetwork chosenAsset.contractAddress chosenAsset.underlying.decimals customerAddress amount
 
                 _ ->
@@ -936,7 +936,7 @@ getSubmitButton userLanguage config ({ chosenAsset, inputValue, primaryActionTyp
 
         redeemConstructor panelMessage amount =
             case ( mainModel.network, mainModel.account, Dict.get (Ethereum.getContractAddressString chosenAsset.contractAddress) mainModel.compoundState.cTokensMetadata ) of
-                ( Just actualNetwork, Acct customerAddress _, Just cTokenMetadata ) ->
+                ( Just actualNetwork, Acct customerAddress _ _, Just cTokenMetadata ) ->
                     WrappedCompoundMsg <| Eth.Compound.Web3TransactionMsg <| panelMessage actualNetwork chosenAsset.contractAddress cTokenMetadata.exchangeRate chosenAsset.decimals chosenAsset.underlying.decimals customerAddress amount
 
                 _ ->
@@ -1164,7 +1164,7 @@ bottomBalanceView userLanguage config { chosenAsset, primaryActionType } mainMod
 faucetAllocateButton : Config -> Model -> CToken -> Html Msg
 faucetAllocateButton config { account, network, userLanguage } chosenAsset =
     case ( network, account, config.maybeFauceteer ) of
-        ( Just actualNetwork, Acct customerAddress _, Just fauceteerAddress ) ->
+        ( Just actualNetwork, Acct customerAddress _ _, Just fauceteerAddress ) ->
             if config.cEtherToken.address /= chosenAsset.contractAddress && actualNetwork /= Network.MainNet then
                 a [ class "faucet-link", onClick <| WrappedTokenMsg <| Eth.Token.Web3TransactionMsg (Eth.Token.FauceteerDrip actualNetwork fauceteerAddress chosenAsset.contractAddress chosenAsset.underlying.assetAddress customerAddress) ]
                     [ text (Translations.faucet userLanguage) ]
@@ -1172,7 +1172,7 @@ faucetAllocateButton config { account, network, userLanguage } chosenAsset =
             else
                 text ""
 
-        ( Just actualNetwork, Acct customerAddress _, Nothing ) ->
+        ( Just actualNetwork, Acct customerAddress _ _, Nothing ) ->
             if
                 (config.cEtherToken.address /= chosenAsset.contractAddress && actualNetwork /= Network.MainNet)
                     && not (actualNetwork == Network.Kovan && (chosenAsset.symbol == "cSAI" || chosenAsset.symbol == "cDAI"))
@@ -1202,7 +1202,7 @@ getMostRecentAssetPendingTransaction config { chosenAsset } { currentTime, netwo
         -- Any transaction for the asset will block the whole input view.
         pendingAssetTransactions =
             case ( network, account ) of
-                ( Just actualNetwork, Acct customerAddress _ ) ->
+                ( Just actualNetwork, Acct customerAddress _  _ ) ->
                     Eth.Transaction.filteredTransactionsByCToken pendingRecentTransactions config actualNetwork customerAddress tokenState.cTokens chosenAsset
 
                 _ ->
@@ -1243,7 +1243,7 @@ getAvailableTokensForAction maybeConfig { chosenAsset, primaryActionType } { acc
 
         ( supplyBalance, borrowBalance ) =
             case account of
-                Acct _ _ ->
+                Acct _ _ _ ->
                     ( Maybe.map .underlyingSupplyBalance underlyingBalances
                         |> Maybe.withDefault Decimal.zero
                     , Maybe.map .underlyingBorrowBalance underlyingBalances

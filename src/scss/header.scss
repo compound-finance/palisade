@@ -116,7 +116,7 @@ header {
     border-radius: $border-radius;
     padding: ($column-gutter * 0.5);
     margin-left: $column-gutter;
-
+    display: flex;
     &:hover {
       background: lighten($color_dark_2, 5%);
     }
@@ -151,6 +151,10 @@ header {
 
     .icon.metamask {
       background-image: url(/images/icn-metamask-connected.svg);
+    }
+
+    .icon.uns {
+      background-image: url(/images/icn-uns.svg);
     }
   }
 

@@ -426,7 +426,7 @@ governanceView userLanguage isCrowdProposal config ( governorAddress, isBravo ) 
 
         proposalActionButton =
             case account of
-                Acct adminAddress _ ->
+                Acct adminAddress _ _ ->
                     case ( model.maybeProposalTitle, List.length model.actions > 0 ) of
                         ( Just _, True ) ->
                             case ( isCrowdProposal, maybeCrowdFactoryAddress ) of
