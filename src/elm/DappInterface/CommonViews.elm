@@ -10,6 +10,7 @@ module DappInterface.CommonViews exposing
     , pageHeader
     , translator
     , update
+    
     )
 
 import CompoundComponents.DisplayCurrency exposing (DisplayCurrency(..))
@@ -24,6 +25,7 @@ import Html exposing (Html, a, div, footer, header, img, label, span, text)
 import Html.Events exposing (onClick)
 import Preferences exposing (Preferences, PreferencesMsg(..))
 import Strings.Translations as Translations exposing (Lang(..))
+import CompoundComponents.Eth.ConnectedEthWallet exposing (UNSData)
 
 
 type alias Model =
@@ -110,19 +112,27 @@ update msg model =
             ( { model | languageDropdownActive = dropdownState }, Cmd.none )
 
 
-pageHeader : Translations.Lang -> Page -> EthConnectedWallet.Model -> Account -> Preferences -> GovernanceState -> Model -> Html Msg
-pageHeader userLanguage page connectedWallet account preferences governanceState model =
+pageHeader : Translations.Lang -> Page -> EthConnectedWallet.Model -> Account -> Preferences -> GovernanceState -> Maybe UNSData -> Model -> Html Msg
+pageHeader userLanguage page connectedWallet account preferences governanceState unsData model =
     let
         accountAddress =
-            case account of
-                UnknownAcct ->
-                    ""
+            case unsData of
+                Nothing ->
+                    case account of
+                        UnknownAcct ->
+                            ""
 
-                NoAccount ->
-                    Translations.no_account userLanguage
+                        NoAccount ->
+                            Translations.no_account userLanguage
 
-                Acct (Customer customerAddress) _ ->
-                    shortenedAddressString 2 4 customerAddress
+                        Acct (Customer customerAddress) _ unsDomain ->
+                            case unsDomain of
+                                Nothing ->
+                                    shortenedAddressString 2 4 customerAddress
+                                Just domain ->
+                                    domain
+                Just user ->
+                        user.domain
 
         connectedWalletIconClass =
             case connectedWallet.selectedProvider of
@@ -135,14 +145,21 @@ pageHeader userLanguage page connectedWallet account preferences governanceState
                 Just EthConnectedWallet.Ledger ->
                     "icon ledger dark"
 
+                Just EthConnectedWallet.UnstoppableDomains ->
+                    "icon uns"
+
                 _ ->
                     ""
 
         accountButton =
-            if connectedWallet.selectedProvider == Nothing || connectedWallet.selectedProvider == Just EthConnectedWallet.None then
+            if unsData /= Nothing then
+                a [ id "account", onClick (ForParent AccountAddressClicked) ]
+                    [ span [ class "icon uns" ] []
+                    , text accountAddress
+                    ]
+            else if (connectedWallet.selectedProvider == Nothing || connectedWallet.selectedProvider == Just EthConnectedWallet.None) && unsData == Nothing then
                 a [ id "connect-wallet", class "dapp button hollow", onClick (ForParent AccountAddressClicked) ]
                     [ text (Translations.connect_wallet userLanguage) ]
-
             else
                 a [ id "account", onClick (ForParent AccountAddressClicked) ]
                     [ span [ class connectedWalletIconClass ] []
@@ -189,6 +206,7 @@ pageHeader userLanguage page connectedWallet account preferences governanceState
                 , div [ class "col-xs-9 col-sm-3 text-right actions" ]
                     [ compBalanceView account governanceState
                     , accountButton
+                    , text ""
                     ]
                 , div [ class "col-xs-9 mobile-links actions" ] mobileLinks
                 ]
@@ -251,7 +269,7 @@ compBalanceView account governanceState =
                 ]
     in
     case account of
-        Acct customer _ ->
+        Acct customer _ _ ->
             case ( getCompoundGovernanceTokenBalance customer governanceState, getCompAccruedBalance customer governanceState ) of
                 ( Just balance, Just accrued ) ->
                     let

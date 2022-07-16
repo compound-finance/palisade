@@ -167,7 +167,7 @@ view mainModel =
                 |> Maybe.andThen (\config -> Eth.Oracle.getEtherPrice config mainModel.tokenState mainModel.oracleState)
     in
     case ( ( maybeConfig, mainModel.network ), ( mainModel.account, mainModel.collateralToggleModalState ) ) of
-        ( ( Just config, Just actualNetwork ), ( Acct customerAddress _, Just visibleCollateralModalState ) ) ->
+        ( ( Just config, Just actualNetwork ), ( Acct customerAddress _ _ , Just visibleCollateralModalState ) ) ->
             div [ class "collateral-toggle modal" ]
                 [ div [ class "cover active", onClick (ForParent DismissAndResetCollateralModal) ] []
                 , div [ class "container-small" ]
@@ -502,7 +502,7 @@ getMostRecentAssetPendingTransaction config { chosenAsset } { currentTime, netwo
         -- Any transaction for the asset will block the whole input view.
         pendingAssetTransactions =
             case ( network, account ) of
-                ( Just actualNetwork, Acct customerAddress _ ) ->
+                ( Just actualNetwork, Acct customerAddress _ _ ) ->
                     Eth.Transaction.filteredTransactionsByCToken pendingRecentTransactions config actualNetwork customerAddress tokenState.cTokens chosenAsset
 
                 _ ->

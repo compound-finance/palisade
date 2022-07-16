@@ -122,6 +122,7 @@
     "select": "선택",
     "none": "없음",
     "tally": "계정",
+    "unstoppable_domains": "Unstoppable Domains",
     "unlock_tally_wallet": "탈리 지갑 잠금 해제",
     "click_tally_extension": "팁: Tally를 대신 사용하려면 Tally를 다운로드하거나 기본값으로 설정되어 있는지 확인하십시오.",
     "click_mm_extension": "팁: 메타마스크를 대신 사용하려면 Tally가 기본값으로 설정되어 있지 않은지 확인하십시오.",

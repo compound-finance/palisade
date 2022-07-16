@@ -103,7 +103,7 @@ borrowedListOrAllMarketsPanel maybeConfig maybeEtherUsdPrice ({ account, userLan
     in
     if areAllAssetsLoaded model then
         case ( maybeConfig, account ) of
-            ( Just config, Acct customerAddress maybeEtherBalance ) ->
+            ( Just config, Acct customerAddress maybeEtherBalance _ ) ->
                 if List.length borrowedAssets > 0 then
                     section [ class "asset-list" ]
                         [ columnLabels
@@ -186,7 +186,7 @@ allMarketsListPanel maybeConfig maybeEtherUsdPrice ({ account, compoundState, pr
             getReadyBorrowedAssets model True
     in
     case ( maybeConfig, account ) of
-        ( Just config, Acct _ _ ) ->
+        ( Just config, Acct _ _ _ ) ->
             if List.length borrowedAndReadyAssets == 0 then
                 text ""
 
@@ -237,7 +237,7 @@ getAllMarketsPanelContent config maybeEtherUsdPrice addPanelClass allBorrowableA
                 [ class "asset-list" ]
     in
     case account of
-        Acct customerAddress maybeEtherBalance ->
+        Acct customerAddress maybeEtherBalance _ ->
             div parentDivAttributes
                 [ columnLabels
                 , div [ class "assets" ]
@@ -293,7 +293,7 @@ borrowedAssetRow isAllMarketsRow config ( maybeCustomerAddress, maybeEtherBalanc
             maybeCustomerAddress
                 |> Maybe.map
                     (\customerAddress ->
-                        Balances.getWalletBalanceNonSafeEther config (Acct customerAddress maybeEtherBalance) compoundState cToken
+                        Balances.getWalletBalanceNonSafeEther config (Acct customerAddress maybeEtherBalance Nothing ) compoundState cToken
                     )
                 |> Functions.demaybeify
                 |> Maybe.withDefault Decimal.zero

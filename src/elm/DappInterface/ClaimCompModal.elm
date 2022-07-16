@@ -85,7 +85,7 @@ updateClaimModalStep newStep oldState =
 handleTransactionUpdate : Maybe Config -> Maybe Network -> Account -> TransactionState -> TransactionMsg -> Model -> Model
 handleTransactionUpdate maybeConfig maybeNetwork account transactionState transactionMsg model =
     case ( maybeConfig, maybeNetwork, account ) of
-        ( Just config, Just actualNetwork, Acct customer _ ) ->
+        ( Just config, Just actualNetwork, Acct customer _ _ ) ->
             case transactionMsg of
                 Eth.Transaction.NewTransaction transaction ->
                     if
@@ -150,7 +150,7 @@ update internalMsg maybeConfig account compoundState model =
     case internalMsg of
         ClaimCompClicked estimateComp ->
             case ( maybeConfig, account ) of
-                ( Just config, Acct customer _ ) ->
+                ( Just config, Acct customer _ _ ) ->
                     let
                         marketsWithBalances =
                             Dict.toList compoundState.balances
@@ -193,7 +193,7 @@ update internalMsg maybeConfig account compoundState model =
 view : Translations.Lang -> Maybe Config -> Maybe Network -> Account -> TokenState -> OracleState -> TransactionState -> GovernanceState -> Preferences -> Model -> Html Msg
 view userLanguage maybeConfig maybeNetwork account tokenState oracleState transactionState governanceState preferences model =
     case ( account, maybeNetwork ) of
-        ( Acct accountAddress _, Just network ) ->
+        ( Acct accountAddress _ _ , Just network ) ->
             let
                 maybeEtherUsdPrice =
                     maybeConfig

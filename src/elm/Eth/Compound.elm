@@ -200,7 +200,7 @@ compoundNewBlockCmd blockNumber apiBaseUrlMap network comptroller account config
 
         accountRequiredCmds =
             case account of
-                Acct customerAddress _ ->
+                Acct customerAddress _ _ ->
                     [ askCustomerBalances apiBaseUrlMap (Just network) blockNumber customerAddress cTokenConfigs config.compoundLens
                     , askAccountLimits blockNumber comptroller customerAddress config.compoundLens
                     ]
@@ -210,6 +210,7 @@ compoundNewBlockCmd blockNumber apiBaseUrlMap network comptroller account config
 
                 NoAccount ->
                     []
+
     in
     Cmd.batch <|
         askCTokenMetadata blockNumber config cTokenConfigs

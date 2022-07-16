@@ -10,7 +10,7 @@ import CompoundApi.GasService.Urls
 import CompoundComponents.Console as Console
 import CompoundComponents.DisplayCurrency exposing (DisplayCurrency(..))
 import CompoundComponents.Eth.ConnectedEthWallet as ConnectedEthWallet exposing (tryConnect)
-import CompoundComponents.Eth.Ethereum as Ethereum exposing (Account(..), AssetAddress(..), ContractAddress(..), CustomerAddress(..))
+import CompoundComponents.Eth.Ethereum as Ethereum exposing (Account(..), AssetAddress(..), ContractAddress(..), CustomerAddress(..), getCustomerAddressString)
 import CompoundComponents.Eth.Ledger exposing (LedgerAccount(..))
 import CompoundComponents.Eth.Network as Network exposing (Network(..), networkId, networkName)
 import CompoundComponents.Ether.BNTransaction as BNTransaction exposing (BNTransactionMsg)
@@ -42,7 +42,7 @@ import Http
 import Json.Decode
 import Json.Encode
 import Liquidate
-import Port exposing (askNetwork, askNewBlock, askSetBlockNativeNetworkPort, giveAccountBalance, giveError, giveNewBlock, setGasPrice, setTitle)
+import Port exposing (askNetwork, askNewBlock, askSetBlockNativeNetworkPort, giveAccountBalance, giveError, giveNewBlock, setGasPrice, setTitle, sendUNSAddress, receiveUNSAddress)
 import Preferences exposing (PreferencesMsg(..), preferencesInit, preferencesSubscriptions, preferencesUpdate)
 import Repl
 import Strings.Translations as Translations
@@ -87,6 +87,7 @@ type Msg
     | CheckVersion Time.Posix
     | CheckedVersion (Result Http.Error Float)
     | RefreshGasPrice (Result Http.Error CompoundApi.GasService.Models.API_GasPriceResponse)
+    | ReceiveUNSDomain (String, String)
 
 
 type alias Flags =
@@ -282,6 +283,8 @@ init { path, configurations, configAbiFiles, dataProviders, apiBaseUrlMap, userA
       , maybeGasPrice = Nothing
       , userLanguage = initPreferences.userLanguage
       , repl = Repl.emptyState
+      , unsDomains = Dict.empty
+      , userData = Nothing
       }
     , Cmd.batch
         [ setTitle (getPageTitle initPreferences.userLanguage initialPage)
@@ -332,7 +335,7 @@ newBlockCmd apiBaseUrlMap maybeNetwork blockNumber previousBlockNumber ({ dataPr
 
                         compAllowanceCmd =
                             case ( config.maybeCompToken, config.maybeCrowdProposalFactory, model.account ) of
-                                ( Just compToken, Just capFactory, Acct customerAddress _ ) ->
+                                ( Just compToken, Just capFactory, Acct customerAddress _  _ ) ->
                                     Cmd.map WrappedTokenMsg (Eth.Token.askCompCapFactoryAllowance blockNumber customerAddress capFactory compToken.address)
 
                                 _ ->
@@ -427,16 +430,15 @@ handleUpdatesFromEthConnectedWallet maybeConfig connectedEthWalletMsg model =
             let
                 -- If this is an account switching and we have an existing block and network we want to clear some
                 -- internal models and trigger a newBlockCmd to refresh everything immediately.
-                ( isAccountSwitch, updatedModelFromSetAccount ) =
+                ( isAccountSwitch, updatedModelFromSetAccount  ) =
                     let
                         newAccountModel =
-                            { model | account = Acct newAccount Nothing }
+                            { model | account = Acct newAccount Nothing (Dict.get (Ethereum.getCustomerAddressString newAccount) model.unsDomains) }
                     in
                     case ( model.account, model.blockNumber ) of
-                        ( Acct existingAccount _, Just currentBlockNumber ) ->
+                        ( Acct existingAccount _ _, Just currentBlockNumber ) ->
                             if Ethereum.getCustomerAddressString existingAccount /= Ethereum.getCustomerAddressString newAccount then
                                 ( True, { newAccountModel | compoundState = clearCompoundState model.compoundState, tokenState = clearTokenState model.tokenState } )
-
                             else
                                 ( False, newAccountModel )
 
@@ -490,6 +492,15 @@ handleUpdatesFromEthConnectedWallet maybeConfig connectedEthWalletMsg model =
                         _ ->
                             Cmd.none
 
+                sendAddress = 
+                    let unsDomain = Dict.get (Ethereum.getCustomerAddressString newAccount) model.unsDomains 
+                    in 
+                    case unsDomain of
+                        Nothing ->
+                            sendUNSAddress (Ethereum.getCustomerAddressString newAccount )
+                        Just _ ->
+                            Cmd.none
+                
                 ( updatedRepl, replCmd ) =
                     Repl.update (Repl.SetAccount newAccount) model.repl
 
@@ -498,6 +509,7 @@ handleUpdatesFromEthConnectedWallet maybeConfig connectedEthWalletMsg model =
                         [ syncBlockCmd
                         , Cmd.map replTranslator replCmd
                         , pageCmd
+                        , sendAddress
                         ]
             in
             ( { updatedModelFromSetAccount
@@ -529,13 +541,18 @@ handleUpdatesFromEthConnectedWallet maybeConfig connectedEthWalletMsg model =
               }
             , Cmd.none
             )
+        ConnectedEthWallet.SetUNSUser data ->
+            ( {model | userData = Just data},  Cmd.none)
+
+        ConnectedEthWallet.LogoutUNSUser  ->
+            ( {model | userData = Nothing},  Cmd.none)
 
         _ ->
             ( model, Cmd.none )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update msg ({ page, configs, apiBaseUrlMap, account, transactionState, bnTransactionState, tokenState, compoundState, oracleState, network } as model) =
+update msg ({ page, configs, apiBaseUrlMap, account, transactionState, bnTransactionState, tokenState, compoundState, oracleState, network, unsDomains } as model) =
     let
         maybeConfig =
             getCurrentConfig model
@@ -643,7 +660,7 @@ update msg ({ page, configs, apiBaseUrlMap, account, transactionState, bnTransac
 
                 nextModalStep =
                     case ( network, account ) of
-                        ( Just actualNetwork, Acct customer _ ) ->
+                        ( Just actualNetwork, Acct customer _ _ ) ->
                             case ClaimCompModal.getPendingClaimCompTransaction actualNetwork customer transactionState of
                                 Just _ ->
                                     ClaimCompModal.AwaitingClaimTransactionMined
@@ -740,8 +757,8 @@ update msg ({ page, configs, apiBaseUrlMap, account, transactionState, bnTransac
 
         SetAccountBalance balance ->
             case model.account of
-                Acct account_ _ ->
-                    ( { model | account = Acct account_ (Just balance) }, Cmd.none )
+                Acct account_ _ domain ->
+                    ( { model | account = Acct account_ (Just balance) domain }, Cmd.none )
 
                 _ ->
                     ( model, Cmd.none )
@@ -1119,6 +1136,17 @@ update msg ({ page, configs, apiBaseUrlMap, account, transactionState, bnTransac
         Error error ->
             ( { model | errors = model.errors }, Console.log error )
 
+        ReceiveUNSDomain (domainOwner,domain) ->
+            
+            case account of
+            Acct customerAddress maybeDecimal _ ->
+                if Ethereum.getCustomerAddressString customerAddress == domainOwner then
+                    ( {model | account = Acct customerAddress maybeDecimal (Just domain), unsDomains = Dict.insert domainOwner domain model.unsDomains}, Cmd.none)
+                else 
+                    ( {model | unsDomains = Dict.insert domainOwner domain model.unsDomains},  Cmd.none)
+            _ ->
+                ( {model | unsDomains = Dict.insert domainOwner domain model.unsDomains},  Cmd.none)
+
 
 
 ---- VIEW ----
@@ -1137,7 +1165,7 @@ viewFull ({ page, liquidateModel, transactionState, compoundState, tokenState, o
             getCurrentConfig model
 
         header =
-            Html.map commonViewsTranslator (pageHeader userLanguage page model.connectedEthWalletModel account model.preferences model.governanceState model.commonViewsModel)
+            Html.map commonViewsTranslator (pageHeader userLanguage page model.connectedEthWalletModel account model.preferences model.governanceState model.userData model.commonViewsModel)
 
         replFooter =
             Html.map replTranslator (Repl.view model.repl)
@@ -1235,7 +1263,7 @@ alertView ({ account, maybeGasPrice, network, userLanguage } as model) =
             NoAccount ->
                 text ""
 
-            Acct (Customer address) maybeBalance ->
+            Acct (Customer address) maybeBalance _ ->
                 let
                     hasZeroEthBalance =
                         case maybeBalance of
@@ -1260,6 +1288,7 @@ alertView ({ account, maybeGasPrice, network, userLanguage } as model) =
 
                     _ ->
                         text ""
+
 
 
 chooseWalletModal : Translations.Lang -> Model -> Html Msg
@@ -1428,6 +1457,7 @@ subscriptions model =
         , Time.every (1000.0 * 1.0 * toFloat CompoundComponents.Utils.Time.seconds) Tick
         , Time.every (1000.0 * 4.0 * toFloat CompoundComponents.Utils.Time.hours) CheckVersion
         , onUrlChange (Url.fromString >> UrlChange)
+        , receiveUNSAddress ReceiveUNSDomain
         ]
 
 
