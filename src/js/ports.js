@@ -87,6 +87,7 @@ function getContractJsonByAddress(eth, contractAddress) {
   return getContractJsonByName(eth, contractName);
 }
 
+// TODO: MOVE AWAY FROM COMPOUND API?
 async function getBlockTimestamps(blockNumbers, network) {
   if (blockNumbers.length === 0) {
     return {};
@@ -114,6 +115,51 @@ function buildBlockNative(networkId) {
       });
       blockNativeNetwork[networkId] = blockNative;
     }
+  }
+}
+
+async function get(endpoint) {
+  // Pipe in data list object to db for overall deployed contracts
+  console.log('---------------------')
+  console.log('| FETCHING FROM API |')
+  console.log('---------------------')
+  console.log(`Trying to fetch from url: http://localhost:5000/${endpoint}`)
+  let response = await fetch(`http://localhost:5000/${endpoint}`, {
+      method: 'GET'
+  })
+
+  console.log('Response status: ', response.status); // 200
+  console.log('Response status text: ', response.statusText); // OK
+
+  if (response.status === 200) {
+      let data = await response.json();
+      return data;
+  }
+}
+
+async function post(data, endpoint) {
+  // Pipe in data list object to db for overall deployed contracts
+  console.log('------------------')
+  console.log('| POSTING TO API |')
+  console.log('------------------')
+  console.log(`Trying to post to url: http://localhost:5000/${endpoint}`)
+  // console.log(`Trying to post data: ${JSON.stringify({data})}`)
+  let response = await fetch(`http://localhost:5000/${endpoint}`, {
+      method: 'POST', // or 'PUT'
+      headers: {
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({data}),
+      // TODO: we may need this in the future?
+      mode: 'cors', // no-cors, *cors, same-origin
+  })
+
+  console.log('Response status: ', response.status); // 200
+  console.log('Response status text: ', response.statusText); // OK
+
+  if (response.status === 200) {
+      let data = await response.text();
+      return data;
   }
 }
 
@@ -229,12 +275,11 @@ function subscribeToCTokenPorts(app, eth) {
   // port askCTokenMetadataAllPort : { blockNumber : Int, comptrollerAddress : String, cTokenAddress : String, underlyingAssetAddress : String, cTokenDecimals : Int, underlyingDecimals : Int, isCEther : Bool } -> Cmd msg
   app.ports.askCTokenMetadataAllPort.subscribe(({ blockNumber, cTokens, compoundLens }) => {
     const CompoundLens = getContractJsonByName(eth, 'CompoundLens');
-    console.log('CompoundLens', CompoundLens);
-    console.log(compoundLens);
+    // console.log('CompoundLens', CompoundLens);
     const Comptroller = getContractJsonByName(eth, 'Comptroller');
-    console.log('Comptroller', Comptroller);
-    console.log('cToken', cTokens);
-    console.log('ctoken array', [cTokens]);
+    // console.log('Comptroller', Comptroller);
+    // console.log('cToken', cTokens);
+    // console.log('cToken array', [cTokens]);
 
     wrapCall(app, eth, [[CompoundLens, compoundLens, 'cTokenMetadataAll', [cTokens]]], blockNumber)
       .then(([results]) => {
@@ -264,37 +309,11 @@ function subscribeToCTokenPorts(app, eth) {
             const oneCTokenInUnderlying = exchangeRateCurrent / Math.pow(10, mantissa);
             const totalSupplyScaled = parseWeiStr(totalSupplyResult) / Math.pow(10, cTokenDecimals);
 
-            console.log('inside askCTokenMetadataAllPort ports.js');
-            console.log('raw data dump')
-            console.log('cTokenAddress', cTokenAddress);
-            console.log('exchangeRateResult', exchangeRateResult);
-            console.log('supplyRateResult', supplyRateResult);
-            console.log('borrowRateResult', borrowRateResult);
-            console.log('reserveFactorResult', reserveFactorResult);
-            console.log('totalBorrowsResult', totalBorrowsResult);
-            console.log('totalReservesResult', totalReservesResult);
-            console.log('totalSupplyResult', totalSupplyResult);
-            console.log('totalCashResult', totalCashResult);
-            console.log('isListedResult', isListedResult);
-            console.log('totalReservesResult', totalReservesResult);
-            console.log('collateralFactorMantissaResult', collateralFactorMantissaResult);
-            console.log('underlyingAssetAddress', underlyingAssetAddress);
-            console.log('cTokenDecimals', cTokenDecimals);
-            console.log('underlyingDecimals', underlyingDecimals);
-            console.log('borrowCapResult', borrowCapResult);
-
-            console.log('compiled data dump');
-            console.log('exchangeRateCurrent', exchangeRateCurrent);
-            console.log('mantissa', mantissa);
-            console.log('totalCash', totalCash);
-            console.log('oneCTokenInUnderlying', oneCTokenInUnderlying);
-            console.log('totalSupplyScaled', totalSupplyScaled);
-
             // APY daily compounding formula : ( 1 + 5760 * supplyRatePerBlock / 1e18 )^365 - 1
             // BN.js only handles ints so we will need to return
             // 5760 * supplyRatePerBlock / 1e18
             // from the port and have the Elm side do the fancier math with Decimal.
-            return {
+            const data = {
               cTokenAddress: cTokenAddress,
               exchangeRate: toScaledDecimal(parseWeiStr(exchangeRateResult), EXP_DECIMALS),
               supplyRatePerDay: toScaledDecimal(parseWeiStr(supplyRateResult).mul(BLOCKS_PER_DAY), EXP_DECIMALS),
@@ -306,14 +325,17 @@ function subscribeToCTokenPorts(app, eth) {
               totalSupply: toScaledDecimal(parseWeiStr(totalSupplyResult), cTokenDecimals),
               totalSupplyUnderlying: toScaledDecimal(totalSupplyScaled * oneCTokenInUnderlying, 0),
               totalUnderlyingCash: totalCash,
-              borrowCap: toScaledDecimal(parseWeiStr(borrowCapResult), underlyingDecimals)
+              borrowCap: toScaledDecimal(parseWeiStr(borrowCapResult), underlyingDecimals),
+              blockNumber: blockNumber
             };
+
+            return data
           }
         );
 
         //TODO: Change me to giveCTokenMetadataAllPort
         app.ports.giveCTokenMetadataPort.send(cTokenMetadataList);
-        console.log('cTokenMetadataList', cTokenMetadataList);
+        post(cTokenMetadataList, 'cTokenMetadata');
       })
       .catch(reportError(app));
   });
@@ -356,7 +378,7 @@ function subscribeToCTokenPorts(app, eth) {
                 });
               }
 
-              return {
+              const data = {
                 cTokenAddress: cTokenAddress,
                 customerAddress: customerAddress,
                 cTokenWalletBalance: walletBalance,
@@ -366,14 +388,24 @@ function subscribeToCTokenPorts(app, eth) {
                 underlyingTokenWalletBalance: tokenBalance,
                 underlyingTokenAllowance: tokenAllowance,
               };
+
+              // TODO: check cToken address and user address and timestamp and ensure we havent inserted 
+              // COME BACK AND ITERATE/CHECK HERE FOR INSERTIONS?
+              // cTokenState = lDPX,0xACE893EaD9b96f9f5639A652fAc4Ebb562fF9E83,lETH,0x5e334aE3a33BC836FF420132607eed7076b7106D,lMAGIC,0x79446f2936d97be973568fe6988C6aBDd7497167,lMIM,0x97296cc263f35d0EEbDd87e04154Cb3F86022c4D,lSPELL,0xEeF878acf100e9F6EbFf43A07C97DeEA39175655,lUSDC,0x3b61A766e24984606f8c6a5FC3A7398cfc94eC3E,lUSDT,0xe6d2b52058F5Db43AFE21BA3B670784df7b15660,lWBTC,0x30F7160Ed24Fe0644B143e90C246964638A14D26,
+              // console.log(`cTokenState: ${Object.entries(cTokenState)}, data: ${Object.entries(data)}`);
+              // console.log(`cTokenState: ${cTokenState[cTokenSymbol]}, data: ${data['cTokenAddress']}`);
+              // if (cTokenState[cTokenSymbol] === data['cTokenAddress']) {
+              //   console.log('ITS A MATCH!!!!!!!!')
+              // }
+
+              return data;
             }
           );
 
           app.ports.giveCTokenBalancesAllPort.send(cTokenBalancesList);
         })
         .catch(reportError(app));
-    }
-  );
+    });
 }
 
 function subscribeToComptrollerPorts(app, eth) {
@@ -426,7 +458,7 @@ function subscribeToComptrollerPorts(app, eth) {
         });
         
         console.log('inside oracle');
-        console.log(allPricesList);
+        console.log('prices to insert to db?', allPricesList);
 
         app.ports.giveOraclePricesAllPort.send(allPricesList);
       })

@@ -154,7 +154,7 @@ pageHeader userLanguage page connectedWallet account preferences governanceState
                 [ accountButton ]
 
             else
-                [ compBalanceView account governanceState ]
+                []
 
         links =
             let
@@ -178,12 +178,12 @@ pageHeader userLanguage page connectedWallet account preferences governanceState
         [ div [ class "container-large" ]
             [ div [ class "row align-middle" ]
                 [ div [ class "col-xs-3" ]
-                    [ a (class "brand" :: href External "https://compound.finance") []
+                    [ a (class "brand" :: href External "https://lodestarfinance.io") []
                     ]
                 , div [ class "col-xs-6 mobile-hide text-center links" ] links
                 , div [ class "col-xs-9 col-sm-3 text-right actions" ]
-                    [ compBalanceView account governanceState
-                    , accountButton
+                    [
+                        accountButton
                     ]
                 , div [ class "col-xs-9 mobile-links actions" ] mobileLinks
                 ]
@@ -209,8 +209,6 @@ pageFooter userLanguage maybeBlockNumber preferences model =
                     [ a ([ class "brand" ] |> List.append (href PageNavigation "/")) [] ]
                 , div [ class "col-xs-12 col-sm-10 links" ]
                     [ a (target "_blank" :: href External "https://compound.finance/markets") [ text (Translations.markets userLanguage) ]
-                    , a (target "_blank" :: href External "https://compound.finance/governance") [ text (Translations.governance userLanguage) ]
-                    , a (target "_blank" :: href External "https://compound.finance/governance/comp") [ text (Translations.comp userLanguage) ]
                     , a (href PageNavigation (getHrefUrl TermsOfService)) [ text (Translations.terms userLanguage) ]
                     , a (target "_blank" :: href External "https://medium.com/compound-finance/the-compound-guide-to-supplying-borrowing-crypto-assets-94821f2950a0") [ text (Translations.support userLanguage) ]
                     ]
@@ -221,8 +219,6 @@ pageFooter userLanguage maybeBlockNumber preferences model =
                         [ span [ class ("dot-indicator" ++ indicatorColorClass) ] []
                         , label [ class "small" ] [ text (Translations.latest_block userLanguage (formatBlockNumber maybeBlockNumber)) ]
                         , a (target "_blank" :: href External "https://compound.finance/markets") [ text (Translations.markets userLanguage) ]
-                        , a (target "_blank" :: href External "https://compound.finance/governance") [ text (Translations.governance userLanguage) ]
-                        , a (target "_blank" :: href External "https://compound.finance/governance/comp") [ text (Translations.comp userLanguage) ]
                         , a (target "_blank" :: href External "https://medium.com/compound-finance/the-compound-guide-to-supplying-borrowing-crypto-assets-94821f2950a0") [ text (Translations.support userLanguage) ]
                         , a (href PageNavigation (getHrefUrl TermsOfService)) [ text (Translations.terms userLanguage) ]
                         ]
@@ -234,33 +230,6 @@ pageFooter userLanguage maybeBlockNumber preferences model =
                 ]
             ]
         ]
-
-
-compBalanceView : Account -> GovernanceState -> Html Msg
-compBalanceView account governanceState =
-    let
-        balanceView value attrs =
-            div (class "comp-balance" :: attrs)
-                [ text value
-                , div [ class "icon icon--COMP" ] []
-                ]
-    in
-    case account of
-        Acct customer _ ->
-            case ( getCompoundGovernanceTokenBalance customer governanceState, getCompAccruedBalance customer governanceState ) of
-                ( Just balance, Just accrued ) ->
-                    let
-                        total =
-                            Decimal.add balance accrued
-                                |> formatToDecimalPlaces 4 False
-                    in
-                    balanceView total [ onClick (ForParent CompButtonClicked) ]
-
-                _ ->
-                    balanceView "—" []
-
-        _ ->
-            text ""
 
 
 getCurrencyTextAndMsg : DisplayCurrency -> ( String, Msg )
