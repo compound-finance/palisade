@@ -219,6 +219,8 @@ function subscribeToCTokenPorts(app, eth) {
       const CToken = getContractJsonByAddress(eth, cTokenAddress);
       const closeAmountWei = parseWeiStr(borrowedAssetAmountWeiStr);
 
+      console.log('[askLiquidatePort] inside x1')
+
       if (isCEther) {
         wrapSend(
           app,
@@ -236,6 +238,12 @@ function subscribeToCTokenPorts(app, eth) {
           }
         )
           .then((trxHash) => {
+            console.log('[giveLiquidatePort] This is where we would be posting : ', {
+              borrowerAddress: borrowerAddress,
+              borrowedAssetAddress: cTokenAddress,
+              borrowedAmount: toScaledDecimal(closeAmountWei, borrowedAssetDecimals),
+              desiredCollateralAddress: desiredAssetAddress,
+            })
             app.ports.giveLiquidatePort.send({
               borrowerAddress: borrowerAddress,
               borrowedAssetAddress: cTokenAddress,
@@ -260,6 +268,12 @@ function subscribeToCTokenPorts(app, eth) {
           }
         )
           .then((trxHash) => {
+            console.log('[giveLiquidatePort] This is where we would be posting : ', {
+              borrowerAddress: borrowerAddress,
+              borrowedAssetAddress: cTokenAddress,
+              borrowedAmount: toScaledDecimal(closeAmountWei, borrowedAssetDecimals),
+              desiredCollateralAddress: desiredAssetAddress,
+            })
             app.ports.giveLiquidatePort.send({
               borrowerAddress: borrowerAddress,
               borrowedAssetAddress: cTokenAddress,
@@ -280,6 +294,8 @@ function subscribeToCTokenPorts(app, eth) {
     // console.log('Comptroller', Comptroller);
     // console.log('cToken', cTokens);
     // console.log('cToken array', [cTokens]);
+
+    console.log('[askCTokenMetadataAllPort] inside x2')
 
     wrapCall(app, eth, [[CompoundLens, compoundLens, 'cTokenMetadataAll', [cTokens]]], blockNumber)
       .then(([results]) => {
@@ -314,7 +330,7 @@ function subscribeToCTokenPorts(app, eth) {
             // 5760 * supplyRatePerBlock / 1e18
             // from the port and have the Elm side do the fancier math with Decimal.
             const data = {
-              cTokenAddress: cTokenAddress,
+              cTokenAddress: cTokenAddress.toUpperCase(),
               exchangeRate: toScaledDecimal(parseWeiStr(exchangeRateResult), EXP_DECIMALS),
               supplyRatePerDay: toScaledDecimal(parseWeiStr(supplyRateResult).mul(BLOCKS_PER_DAY), EXP_DECIMALS),
               borrowRatePerDay: toScaledDecimal(parseWeiStr(borrowRateResult).mul(BLOCKS_PER_DAY), EXP_DECIMALS),
@@ -335,6 +351,8 @@ function subscribeToCTokenPorts(app, eth) {
 
         //TODO: Change me to giveCTokenMetadataAllPort
         app.ports.giveCTokenMetadataPort.send(cTokenMetadataList);
+        // TODO: ENABLE ME WHEN WE WANT TO INSERT ON A PER SECOND BASIS
+        console.log('DONE - [giveCTokenMetadataPort] This is where we would be posting: ', cTokenMetadataList);
         post(cTokenMetadataList, 'cTokenMetadata');
       })
       .catch(reportError(app));
@@ -345,6 +363,8 @@ function subscribeToCTokenPorts(app, eth) {
     ({ blockNumber, customerAddress, cTokens: cTokenEntries, compoundLens }) => {
       const CompoundLens = getContractJsonByName(eth, 'CompoundLens');
       let cTokens = supportFromEntries(cTokenEntries);
+
+      console.log('[askCTokenGetBalancesPort] inside x3')
 
       wrapCall(
         app,
@@ -379,30 +399,23 @@ function subscribeToCTokenPorts(app, eth) {
               }
 
               const data = {
-                cTokenAddress: cTokenAddress,
-                customerAddress: customerAddress,
+                cTokenAddress: cTokenAddress.toUpperCase(),
+                customerAddress: customerAddress.toUpperCase(),
                 cTokenWalletBalance: walletBalance,
-                underlyingAssetAddress: underlyingAssetAddress,
+                underlyingAssetAddress: underlyingAssetAddress.toUpperCase(),
                 underlyingBorrowBalance: borrowBalance,
                 underlyingSupplyBalance: supplyBalance,
                 underlyingTokenWalletBalance: tokenBalance,
                 underlyingTokenAllowance: tokenAllowance,
+                blockNumber: blockNumber
               };
-
-              // TODO: check cToken address and user address and timestamp and ensure we havent inserted 
-              // COME BACK AND ITERATE/CHECK HERE FOR INSERTIONS?
-              // cTokenState = lDPX,0xACE893EaD9b96f9f5639A652fAc4Ebb562fF9E83,lETH,0x5e334aE3a33BC836FF420132607eed7076b7106D,lMAGIC,0x79446f2936d97be973568fe6988C6aBDd7497167,lMIM,0x97296cc263f35d0EEbDd87e04154Cb3F86022c4D,lSPELL,0xEeF878acf100e9F6EbFf43A07C97DeEA39175655,lUSDC,0x3b61A766e24984606f8c6a5FC3A7398cfc94eC3E,lUSDT,0xe6d2b52058F5Db43AFE21BA3B670784df7b15660,lWBTC,0x30F7160Ed24Fe0644B143e90C246964638A14D26,
-              // console.log(`cTokenState: ${Object.entries(cTokenState)}, data: ${Object.entries(data)}`);
-              // console.log(`cTokenState: ${cTokenState[cTokenSymbol]}, data: ${data['cTokenAddress']}`);
-              // if (cTokenState[cTokenSymbol] === data['cTokenAddress']) {
-              //   console.log('ITS A MATCH!!!!!!!!')
-              // }
-
               return data;
             }
           );
 
           app.ports.giveCTokenBalancesAllPort.send(cTokenBalancesList);
+          console.log('NOT DONE - [giveCTokenBalancesAllPort] This is where we would be posting: ', cTokenBalancesList);
+          post(cTokenBalancesList, 'cTokenBalances');
         })
         .catch(reportError(app));
     });
@@ -413,6 +426,8 @@ function subscribeToComptrollerPorts(app, eth) {
   app.ports.askAccountLimitsPort.subscribe(({ blockNumber, comptrollerAddress, customerAddress, compoundLens }) => {
     const CompoundLens = getContractJsonByName(eth, 'CompoundLens');
     const Comptroller = getContractJsonByName(eth, 'Comptroller');
+
+    console.log('[askAccountLimitsPort] inside x4')
 
     Promise.all([
       getTransactionCount(eth, customerAddress),
@@ -427,7 +442,7 @@ function subscribeToComptrollerPorts(app, eth) {
     ])
       .then(
         ([trxCount, [{ markets, liquidity, shorthall }], [closeFactorMantissa], [liquidationIncentiveMantissa]]) => {
-          app.ports.giveAccountLimitsPort.send({
+          let data = {
             customerAddress: customerAddress,
             accountLiquidity: toScaledDecimal(parseWeiStr(liquidity), EXP_DECIMALS),
             accountShortfall: toScaledDecimal(parseWeiStr(shorthall), EXP_DECIMALS),
@@ -435,7 +450,10 @@ function subscribeToComptrollerPorts(app, eth) {
             trxCount: trxCount,
             closeFactor: toScaledDecimal(parseWeiStr(closeFactorMantissa), EXP_DECIMALS),
             liquidationIncentive: toScaledDecimal(parseWeiStr(liquidationIncentiveMantissa), EXP_DECIMALS),
-          });
+          }
+
+          app.ports.giveAccountLimitsPort.send(data);
+          console.log('NOT DONE - [askAccountLimitsPort] This is where we would be posting: ', data);
         }
       )
       .catch(reportError(app));
@@ -445,6 +463,8 @@ function subscribeToComptrollerPorts(app, eth) {
   app.ports.askOraclePricesAllPort.subscribe(({ blockNumber, cTokens: cTokenEntries, compoundLens }) => {
     const CompoundLens = getContractJsonByName(eth, 'CompoundLens');
     let cTokens = supportFromEntries(cTokenEntries);
+
+    console.log('[askOraclePricesAllPort] inside x5')
 
     wrapCall(app, eth, [[CompoundLens, compoundLens, 'cTokenUnderlyingPriceAll', [Object.keys(cTokens)]]], blockNumber)
       .then(([results]) => {
@@ -457,9 +477,7 @@ function subscribeToComptrollerPorts(app, eth) {
           };
         });
         
-        console.log('inside oracle');
-        console.log('prices to insert to db?', allPricesList);
-
+        console.log('NOT DONE - [askOraclePricesAllPort] This is where we would be posting: ', allPricesList);
         app.ports.giveOraclePricesAllPort.send(allPricesList);
       })
       .catch(reportError(app));
@@ -475,12 +493,17 @@ function subscribeToAskTokenAllowance(app, eth) {
         .then(([result]) => {
           const allowance = toScaledDecimal(result, decimals);
 
-          app.ports.giveTokenAllowanceTokenPort.send({
+          console.log('[askTokenAllowanceTokenPort] inside x6')
+
+          let data = {
             assetAddress: assetAddress,
             contractAddress: contractAddress,
             customerAddress: customerAddress,
             allowance: allowance,
-          });
+          }
+          console.log('NOT DONE - [askOraclePricesAllPort] This is where we would be posting: ', data);
+
+          app.ports.giveTokenAllowanceTokenPort.send(data);
         })
         .catch(reportError(app));
     }
@@ -516,7 +539,8 @@ function subscribeToCheckTrxStatus(app, eth) {
   // port checkTrxStatusPort : { blockNumber : Int, trxHash : String } -> Cmd msg
   app.ports.checkTrxStatusPort.subscribe(({ blockNumber, trxHash }) => {
     Promise.all([getTransaction(eth, trxHash), getTransactionReceipt(eth, trxHash)])
-      .then(([transaction, receipt]) => handleReceipt(app, eth, trxHash, blockNumber, receipt, transaction.nonce))
+      .then(
+        ([transaction, receipt]) => handleReceipt(app, eth, trxHash, blockNumber, receipt, transaction.nonce))
       .catch(reportError(app));
   });
 }

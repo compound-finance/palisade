@@ -37,7 +37,7 @@
     "clean-webpack-plugin": "^3.0.0",
     "cli-table": "0.3.1",
     "compound-components": "https://github.com/0xAppo/lodestar-components.git#ba3b165fa1fac22d66480a963412875928a4bb61",
-    "compound-config": "https://github.com/0xAppo/lodestar-config.git#41d4a4ec7314c094dfba14efaa46cf111a2e506a",
+    "compound-config": "https://github.com/0xAppo/lodestar-config.git#3e4ecd4fdd22dd8e5f6494e3cf05e40dc2892d9f",
     "connect-history-api-fallback": "^1.5.0",
     "core-js": "3",
     "cross-spawn": "^7.0.2",
