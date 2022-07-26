@@ -353,7 +353,7 @@ function subscribeToCTokenPorts(app, eth) {
         app.ports.giveCTokenMetadataPort.send(cTokenMetadataList);
         // TODO: ENABLE ME WHEN WE WANT TO INSERT ON A PER SECOND BASIS
         console.log('DONE - [giveCTokenMetadataPort] This is where we would be posting: ', cTokenMetadataList);
-        post(cTokenMetadataList, 'cTokenMetadata');
+        // post(cTokenMetadataList, 'cTokenMetadata');
       })
       .catch(reportError(app));
   });
@@ -414,8 +414,8 @@ function subscribeToCTokenPorts(app, eth) {
           );
 
           app.ports.giveCTokenBalancesAllPort.send(cTokenBalancesList);
-          console.log('NOT DONE - [giveCTokenBalancesAllPort] This is where we would be posting: ', cTokenBalancesList);
-          post(cTokenBalancesList, 'cTokenBalances');
+          console.log('DONE - [giveCTokenBalancesAllPort] This is where we would be posting: ', cTokenBalancesList);
+          // post(cTokenBalancesList, 'cTokenBalances');
         })
         .catch(reportError(app));
     });
@@ -450,10 +450,12 @@ function subscribeToComptrollerPorts(app, eth) {
             trxCount: trxCount,
             closeFactor: toScaledDecimal(parseWeiStr(closeFactorMantissa), EXP_DECIMALS),
             liquidationIncentive: toScaledDecimal(parseWeiStr(liquidationIncentiveMantissa), EXP_DECIMALS),
+            blockNumber: blockNumber
           }
 
           app.ports.giveAccountLimitsPort.send(data);
-          console.log('NOT DONE - [askAccountLimitsPort] This is where we would be posting: ', data);
+          console.log('DONE - [askAccountLimitsPort] This is where we would be posting: ', data);
+          // post(data, 'accounts');
         }
       )
       .catch(reportError(app));
@@ -473,11 +475,13 @@ function subscribeToComptrollerPorts(app, eth) {
 
           return {
             underlyingAssetAddress: underlyingAssetAddress,
-            value: toScaledDecimal(underlyingPrice, EXP_DECIMALS)
+            value: toScaledDecimal(underlyingPrice, EXP_DECIMALS),
+            blockNumber: blockNumber
           };
         });
         
-        console.log('NOT DONE - [askOraclePricesAllPort] This is where we would be posting: ', allPricesList);
+        console.log('DONE - [askOraclePricesAllPort] This is where we would be posting: ', allPricesList);
+        // post(allPricesList, 'oraclePrices');
         app.ports.giveOraclePricesAllPort.send(allPricesList);
       })
       .catch(reportError(app));
@@ -501,7 +505,7 @@ function subscribeToAskTokenAllowance(app, eth) {
             customerAddress: customerAddress,
             allowance: allowance,
           }
-          console.log('NOT DONE - [askOraclePricesAllPort] This is where we would be posting: ', data);
+          console.log('NOT DONE - [askTokenAllowanceTokenPort] This is where we would be posting: ', data);
 
           app.ports.giveTokenAllowanceTokenPort.send(data);
         })
