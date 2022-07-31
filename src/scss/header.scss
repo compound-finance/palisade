@@ -2,9 +2,9 @@
 
 @mixin link-active-hover {
   &.active {
-    color: $color_supply;
+    color: $color_lodestar_navy;
     padding: 0.3rem 0;
-    border-bottom: 1px solid $color_supply;
+    border-bottom: 1px solid $color_lodestar_navy;
     transition: padding 0.2s ease;
   }
 
@@ -31,12 +31,12 @@ header {
   }
 
   .brand {
-    background-image: url(/images/compound-logo.svg);
+    background-image: url(/images/lodestar-logo.svg);
     background-repeat: no-repeat;
     background-size: contain;
     background-color: transparent;
-    width: 127px;
-    height: 27px;
+    width: 1000px;
+    height: 200px;
   }
 
   .text-center a {
@@ -87,29 +87,6 @@ header {
     }
   }
 
-  .comp-balance {
-    background: $color_dark_2;
-    border-radius: $border-radius;
-    cursor: pointer;
-    padding: 0.43rem ($column-gutter * 0.5);
-    display: flex;
-    align-items: center;
-
-    @include app-header-font;
-    text-transform: none;
-
-    .icon {
-      margin-left: 0.25rem;
-      height: 1.25rem;
-      width: 1.25rem;
-      min-height: 1.25rem;
-      min-width: 1.25rem;
-    }
-
-    &:hover {
-      background: lighten($color_dark_2, 5%);
-    }
-  }
 
   #account {
     background: $color_dark_2;
@@ -291,8 +268,8 @@ header {
     }
 
     .dapp {
-      color: $color_supply;
-      border-color: $color_supply;
+      color: $color_lodestar_navy;
+      border-color: $color_lodestar_navy;
       transition: background-color 0.2s ease-in, color 0.2s ease-in;
       text-transform: none;
       letter-spacing: 0;
@@ -317,8 +294,8 @@ header.dapp {
     border-radius: $border-radius;
     margin-left: $column-gutter;
     padding: ($column-gutter * 0.5);
-    color: $color_supply;
-    border-color: $color_supply;
+    color: $color_lodestar_navy;
+    border-color: $color_lodestar_navy;
     transition: background-color 0.2s ease-in, color 0.2s ease-in;
     text-transform: none;
 

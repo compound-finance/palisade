@@ -574,14 +574,6 @@ assetAndCompRateForm userLanguage config maybeEtherUsdPrice ({ chosenAsset, prim
                 ]
             , span [] [ text (formatPercentageWithDots interestRate) ]
             ]
-        , div [ class "calculation" ]
-            [ span []
-                [ span [ class "icon icon--COMP" ] []
-                , span [ class "description" ]
-                    [ text (Translations.distribution_apy userLanguage)
-                    ]
-                ]
-            ]
         ]
 
 

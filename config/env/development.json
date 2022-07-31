@@ -6,7 +6,7 @@
     "rinkeby": "https://api.stage.compound.finance/api/",
     "ropsten": "https://api.stage.compound.finance/api/",
     "mainnet": "https://api.compound.finance/api/",
-    "arbitrumtest": "https://api.compound.finance/api/",
+    "arbitrumtest": "",
     "arbitrum": "https://api.compound.finance/api/"
   },
   "DATA_PROVIDERS": {
@@ -16,7 +16,7 @@
     "kovan": "https://kovan.infura.io/v3/448697ced2cd4adeb091d14fce4f0681",
     "ropsten": "https://ropsten.infura.io/v3/448697ced2cd4adeb091d14fce4f0681",
     "mainnet": "https://mainnet.infura.io/v3/448697ced2cd4adeb091d14fce4f0681",
-    "arbitrumtest": "https://arbitrum-rinkeby.infura.io/v3/448697ced2cd4adeb091d14fce4f0681",
+    "arbitrumtest": "https://arb-rinkeby.g.alchemy.com/v2/NNJOpL_ovto0usK_VDyhjvzJCc1WziiK",
     "arbitrum": "https://arbitrum-mainnet.infura.io/v3/448697ced2cd4adeb091d14fce4f0681"
   },
   "NETWORK_MAP": {
