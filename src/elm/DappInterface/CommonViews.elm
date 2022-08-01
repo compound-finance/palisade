@@ -185,9 +185,10 @@ pageHeader userLanguage page connectedWallet account preferences governanceState
                 [ div [ class "col-xs-3" ]
                     [ a (class "brand" :: href External "https://compound.finance") []
                     ]
-                , div [ class "col-xs-6 mobile-hide text-center links" ] links
-                , div [ class "col-xs-9 col-sm-3 text-right actions" ]
-                    [ compBalanceView account governanceState
+                , div [ class "col-xs-5 mobile-hide text-center links" ] links
+                , div [ class "col-xs-9 col-sm-4 text-right actions" ]
+                    [ compound3Button
+                    , compBalanceView account governanceState
                     , accountButton
                     ]
                 , div [ class "col-xs-9 mobile-links actions" ] mobileLinks
@@ -239,6 +240,11 @@ pageFooter userLanguage maybeBlockNumber preferences model =
                 ]
             ]
         ]
+
+
+compound3Button : Html Msg
+compound3Button =
+    a ([ target "_blank", class "compound-3-button" ] ++ href External "https://compound.finance/markets") [ text "Compound 3", span [ class "arrow" ] [] ]
 
 
 compBalanceView : Account -> GovernanceState -> Html Msg
