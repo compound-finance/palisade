@@ -284,7 +284,6 @@ init { path, configurations, configAbiFiles, dataProviders, apiBaseUrlMap, userA
       , userLanguage = initPreferences.userLanguage
       , repl = Repl.emptyState
       , unsDomains = Dict.empty
-      , userData = Nothing
       }
     , Cmd.batch
         [ setTitle (getPageTitle initPreferences.userLanguage initialPage)
@@ -541,11 +540,6 @@ handleUpdatesFromEthConnectedWallet maybeConfig connectedEthWalletMsg model =
               }
             , Cmd.none
             )
-        ConnectedEthWallet.SetUNSUser data ->
-            ( {model | userData = Just data},  Cmd.none)
-
-        ConnectedEthWallet.LogoutUNSUser  ->
-            ( {model | userData = Nothing},  Cmd.none)
 
         _ ->
             ( model, Cmd.none )
@@ -1165,7 +1159,7 @@ viewFull ({ page, liquidateModel, transactionState, compoundState, tokenState, o
             getCurrentConfig model
 
         header =
-            Html.map commonViewsTranslator (pageHeader userLanguage page model.connectedEthWalletModel account model.preferences model.governanceState model.userData model.commonViewsModel)
+            Html.map commonViewsTranslator (pageHeader userLanguage page model.connectedEthWalletModel account model.preferences model.governanceState model.commonViewsModel)
 
         replFooter =
             Html.map replTranslator (Repl.view model.repl)

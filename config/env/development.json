@@ -13,7 +13,7 @@
     "rinkeby": "https://infura.io/rinkeby",
     "kovan": "https://infura.io/kovan",
     "ropsten": "https://infura.io/ropsten",
-    "mainnet": "https://infura.io/mainnet"
+    "mainnet": "https://mainnet.infura.io/v3/dc6607314ecd4fab97514370c623259a"
   },
   "NETWORK_MAP": {
     "mainnet": 1,
@@ -24,5 +24,5 @@
     "development": 999
   },
   "DEFAULT_NETWORK": "mainnet",
-  "BLOCKNATIVE_API_KEY": null
+  "BLOCKNATIVE_API_KEY": "70a5e5a7-09ac-45e5-9dd7-4bfc804038ed"
 }
