@@ -35,6 +35,8 @@ type Msg
     = ForPreferences PreferencesMsg
     | ForParent ParentMsg
 
+-- type Message
+--     = ConsoleLogStatement PreferencesMsg
 
 view : Maybe Config -> Maybe Decimal -> Model -> Html Msg
 view maybeConfig maybeEtherUsdPrice ({ compoundState, oracleState, tokenState, userLanguage } as model) =
@@ -322,6 +324,15 @@ borrowedAssetRow isAllMarketsRow config ( maybeCustomerAddress, maybeEtherBalanc
             DisplayCurrency.formatMarketSize preferences.displayCurrency maybeEtherUsdPrice
                 >> Maybe.withDefault "―"
 
+        -- update : Message -> Model -> ( Model, Cmd Message )
+        -- update msg model =
+        --     case msg of
+        --         CardButtonClicked ->
+        --             let
+        --                 _ = Debug.log "WE ARE DEEP IN THE ELM BOOTY TRYING TO LOG SOME LIFE OUT (o)<(*.*<)" msg
+        --             in
+        --             ( model, Cmd.none )
+
         borrowInterestAccruedSubtitle =
             case maybeBorrowInterestAccrued of
                 Just borrowInterestAccrued ->
@@ -362,6 +373,7 @@ borrowedAssetRow isAllMarketsRow config ( maybeCustomerAddress, maybeEtherBalanc
                     ]
                 )
     in
+
     a [ class "asset", onClick (ForParent <| BorrowedAssetClicked cToken) ]
         [ div [ class "col-xs-4 col-sm-4 identity" ]
             [ span [ class ("icon icon--" ++ cToken.underlying.symbol) ] []

@@ -7,4 +7,4 @@ import Dict exposing (Dict)
 
 getGasPriceUrl : Dict String String -> Network -> Maybe String
 getGasPriceUrl apiBaseUrlMap network =
-    CompoundApi.Common.Url.buildApiUrl apiBaseUrlMap network "gas_prices/get_gas_price" []
+    CompoundApi.Common.Url.buildApiUrl apiBaseUrlMap network "getGasPrices" []

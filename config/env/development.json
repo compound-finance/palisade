@@ -6,7 +6,7 @@
     "rinkeby": "https://api.stage.compound.finance/api/",
     "ropsten": "https://api.stage.compound.finance/api/",
     "mainnet": "https://api.compound.finance/api/",
-    "arbitrumtest": "https://api.compound.finance/api/",
+    "arbitrumtest": "https://api.lodestarfinance.io/",
     "arbitrum": "https://api.compound.finance/api/"
   },
   "DATA_PROVIDERS": {
