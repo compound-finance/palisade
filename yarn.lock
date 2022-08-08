@@ -3385,9 +3385,15 @@ component-emitter@^1.2.1:
     webpack-dev-server "^3.7.2"
     yargs "^16.2.0"
 
+"compound-config@https://github.com/0xAppo/lodestar-config.git#e1050042eeb279adaf4fb69772bc6af492a0502d":
+  version "0.0.0"
+  resolved "https://github.com/0xAppo/lodestar-config.git#e1050042eeb279adaf4fb69772bc6af492a0502d"
+
+compressible@~2.0.16:
   version "2.0.18"
   resolved "https://registry.yarnpkg.com/compressible/-/compressible-2.0.18.tgz#af53cca6b070d4c3c0750fbd77286a6d7cc46fba"
   integrity sha512-AF3r7P5dWxL8MxyITRMlORQNaOA2IkAFaTr4k7BUumjPtRpGDTZpl0Pb1XCO6JeDCBdp126Cgs9sMxqSjgYyRg==
+  dependencies:
     mime-db ">= 1.43.0 < 2"
 
 compression@^1.7.4:
