@@ -1,0 +1,26 @@
+server {
+    listen 80;
+    server_name app.lodestarfinance.io www.app.lodestarfinance.io;
+    location / {
+        proxy_pass http://lodestar-finance.infura-ipfs.io/ipfs/QmS2dtuvjzNZMkjgYwqs7eNLSceqCg4K3y5fUBqkR4QKEK;
+        proxy_redirect off;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}
+
+above config returns:
+https://app.lodestarfinance.io/ipfs/QmS2dtuvjzNZMkjgYwqs7eNLSceqCg4K3y5fUBqkR4QKEK when you hit app.lodestarfinance.io
+
+
+server {
+    listen 80;
+    server_name app.lodestarfinance.io www.app.lodestarfinance.io;
+    location / {
+        proxy_pass http://lodestar-finance.infura-ipfs.io/ipfs/QmS2dtuvjzNZMkjgYwqs7eNLSceqCg4K3y5fUBqkR4QKEK;
+        proxy_set_header Host $host;
+    }
+}
+
+above config returns:
+https://app.lodestarfinance.io/ipfs/QmS2dtuvjzNZMkjgYwqs7eNLSceqCg4K3y5fUBqkR4QKEK when you hit app.lodestarfinance.io

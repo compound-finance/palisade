@@ -154,7 +154,7 @@ pageHeader userLanguage page connectedWallet account preferences governanceState
                 [ accountButton ]
 
             else
-                [ compBalanceView account governanceState ]
+                []
 
         links =
             let
@@ -229,33 +229,6 @@ pageFooter userLanguage maybeBlockNumber preferences model =
                 ]
             ]
         ]
-
-
-compBalanceView : Account -> GovernanceState -> Html Msg
-compBalanceView account governanceState =
-    let
-        balanceView value attrs =
-            div (class "comp-balance" :: attrs)
-                [ text value
-                , div [ class "icon icon--COMP" ] []
-                ]
-    in
-    case account of
-        Acct customer _ ->
-            case ( getCompoundGovernanceTokenBalance customer governanceState, getCompAccruedBalance customer governanceState ) of
-                ( Just balance, Just accrued ) ->
-                    let
-                        total =
-                            Decimal.add balance accrued
-                                |> formatToDecimalPlaces 4 False
-                    in
-                    balanceView total [ onClick (ForParent CompButtonClicked) ]
-
-                _ ->
-                    balanceView "—" []
-
-        _ ->
-            text ""
 
 
 getCurrencyTextAndMsg : DisplayCurrency -> ( String, Msg )
