@@ -43,8 +43,8 @@ const PROVIDER_TYPE_SHOW_ACCOUNT = 3;
 
 const ACCOUNT_CHECK_INTERVAL_MS = 2000;
 const NETWORK_CHECK_INTERVAL_MS = 4000;
-const NEW_BLOCK_CHECK_INTERVAL_MS = 5000;
-const BLOCKS_PER_DAY = new BN(6570); // 13.15 seconds per block
+const NEW_BLOCK_CHECK_INTERVAL_MS = 500;
+const BLOCKS_PER_DAY = new BN(86400); // 13.15 seconds per block
 const EXP_DECIMALS = 18;
 const CALCULATE_ACCOUNT_VALUES_DECIMALS = 36;
 const EXP_SCALE_BN = new BN(10).pow(new BN(18)); // 1e18 used for BN.div
@@ -169,7 +169,7 @@ function subscribeToCTokenPorts(app, eth) {
       desiredAssetDecimals,
       isCEther,
     }) => {
-      const CEther = getContractJsonByName(eth, 'cETH');
+      const CEther = getContractJsonByName(eth, 'lETH');
       const CToken = getContractJsonByAddress(eth, cTokenAddress);
       const closeAmountWei = parseWeiStr(borrowedAssetAmountWeiStr);
 
@@ -234,6 +234,7 @@ function subscribeToCTokenPorts(app, eth) {
     const Comptroller = getContractJsonByName(eth, 'Comptroller');
     console.log('Comptroller', Comptroller);
     console.log('cToken', cTokens);
+    console.log('ctoken array', [cTokens]);
 
     wrapCall(app, eth, [[CompoundLens, compoundLens, 'cTokenMetadataAll', [cTokens]]], blockNumber)
       .then(([results]) => {
@@ -348,7 +349,7 @@ function subscribeToCTokenPorts(app, eth) {
               const tokenBalance = toScaledDecimal(tokenBalanceResult, underlyingDecimals);
               const tokenAllowance = toScaledDecimal(tokenAllowanceResult, underlyingDecimals);
 
-              if (cTokenSymbol == 'cETH') {
+              if (cTokenSymbol == 'lETH') {
                 // Since we're on eth anyway
                 app.ports.giveAccountBalancePort.send({
                   balance: tokenBalance,
@@ -423,6 +424,9 @@ function subscribeToComptrollerPorts(app, eth) {
             value: toScaledDecimal(underlyingPrice, EXP_DECIMALS)
           };
         });
+        
+        console.log('inside oracle');
+        console.log(allPricesList);
 
         app.ports.giveOraclePricesAllPort.send(allPricesList);
       })

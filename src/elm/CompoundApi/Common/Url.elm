@@ -28,6 +28,9 @@ buildApiUrl apiBaseUrlMap network apiEndpoint endpointQueryParams =
                 Kovan ->
                     True
 
+                Arbitrumtest ->
+                    True
+
                 _ ->
                     False
 

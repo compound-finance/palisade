@@ -357,7 +357,7 @@ timelockView configs abiFilesRaw account maybeNetwork timezone maybeCurrentTime 
                     in
                     [ ( "Comptroller", getContractAddressString config.comptroller )
                     , ( "PriceOracle", getContractAddressString config.priceOracle )
-                    , ( "cETH", getContractAddressString config.cEtherToken.address )
+                    , ( "lETH", getContractAddressString config.cEtherToken.address )
                     ]
                         ++ (config.cTokens
                                 |> Dict.toList

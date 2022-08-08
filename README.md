@@ -122,7 +122,7 @@ Alternatively, you may wish to deploy to an IPFS hosting service like [Infura IP
 
 To deploy a build to Infura IPFS:
 ```bash
-IPFS_AUTH="PROJECT_ID:PROJECT_SECRET" \
+IPFS_AUTH="28gkmNA5arLNcR9GaHqoOJcT4tX:23a2480ffe637d766b13d55fadc3c8f6" \
   IPFS_HOST="ipfs.infura.io" \
   IPFS_PORT=5001 \
   yarn deploy-ipfs
