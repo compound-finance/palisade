@@ -49,4 +49,4 @@ accountsRequestUrl apiBaseUrlMap network accountsRequest =
                             []
                    )
     in
-    CompoundApi.Common.Url.buildApiUrl apiBaseUrlMap network "v2/account" finalQueryParams
+    CompoundApi.Common.Url.buildApiUrl apiBaseUrlMap network "account" finalQueryParams
