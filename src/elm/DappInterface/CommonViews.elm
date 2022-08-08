@@ -182,8 +182,7 @@ pageHeader userLanguage page connectedWallet account preferences governanceState
                     ]
                 , div [ class "col-xs-6 mobile-hide text-center links" ] links
                 , div [ class "col-xs-9 col-sm-3 text-right actions" ]
-                    [
-                        accountButton
+                    [accountButton
                     ]
                 , div [ class "col-xs-9 mobile-links actions" ] mobileLinks
                 ]

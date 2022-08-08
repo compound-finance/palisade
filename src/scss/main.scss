@@ -62,7 +62,7 @@
 }
 
 body {
-  background: $color_light_2;
+  background: $color_lodestar_gray;
   -webkit-tap-highlight-color: transparent;
   min-height: 100vh;
 }
@@ -95,7 +95,7 @@ body {
   padding: 1.618rem 1.995rem;
   font-size: 0.9rem;
   color: $color_disabled;
-  background: $color_dark_2;
+  background: $color_dark_1;
   border-radius: $border-radius;
   .description {
     display: block;

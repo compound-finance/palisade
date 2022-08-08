@@ -25,4 +25,4 @@ cTokenRequestUrl apiBaseUrlMap network requestOptions =
                 _ ->
                     queryMeta
     in
-    CompoundApi.Common.Url.buildApiUrl apiBaseUrlMap network "v2/ctoken" queryFinal
+    CompoundApi.Common.Url.buildApiUrl apiBaseUrlMap network "" queryFinal
