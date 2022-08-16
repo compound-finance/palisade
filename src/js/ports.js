@@ -123,8 +123,8 @@ async function get(endpoint) {
   console.log('---------------------')
   console.log('| FETCHING FROM API |')
   console.log('---------------------')
-  console.log(`Trying to fetch from url: http://localhost:5000/${endpoint}`)
-  let response = await fetch(`http://localhost:5000/${endpoint}`, {
+  console.log(`Trying to fetch from url: https://api.lodestarfinance.io/${endpoint}`)
+  let response = await fetch(`https://https://api.lodestarfinance.io/${endpoint}`, {
       method: 'GET'
   })
 
@@ -142,9 +142,9 @@ async function post(data, endpoint) {
   console.log('------------------')
   console.log('| POSTING TO API |')
   console.log('------------------')
-  console.log(`Trying to post to url: http://localhost:5000/${endpoint}`)
+  console.log(`Trying to post to url: https://api.lodestarfinance.io/${endpoint}`)
   // console.log(`Trying to post data: ${JSON.stringify({data})}`)
-  let response = await fetch(`http://localhost:5000/${endpoint}`, {
+  let response = await fetch(`https://api.lodestarfinance.io/${endpoint}`, {
       method: 'POST', // or 'PUT'
       headers: {
           'Content-Type': 'application/json',
@@ -344,7 +344,7 @@ function subscribeToCTokenPorts(app, eth) {
               borrowCap: toScaledDecimal(parseWeiStr(borrowCapResult), underlyingDecimals),
               blockNumber: blockNumber
             };
-
+            console.log(data);
             return data
           }
         );
@@ -353,7 +353,9 @@ function subscribeToCTokenPorts(app, eth) {
         app.ports.giveCTokenMetadataPort.send(cTokenMetadataList);
         // TODO: ENABLE ME WHEN WE WANT TO INSERT ON A PER SECOND BASIS
         console.log('DONE - [giveCTokenMetadataPort] This is where we would be posting: ', cTokenMetadataList);
-        // post(cTokenMetadataList, 'cTokenMetadata');
+        post(cTokenMetadataList, 'cTokenMetadata');
+        console.log("After Post Function");
+        console.log(cTokenMetadataList);
       })
       .catch(reportError(app));
   });
@@ -415,7 +417,7 @@ function subscribeToCTokenPorts(app, eth) {
 
           app.ports.giveCTokenBalancesAllPort.send(cTokenBalancesList);
           console.log('DONE - [giveCTokenBalancesAllPort] This is where we would be posting: ', cTokenBalancesList);
-          // post(cTokenBalancesList, 'cTokenBalances');
+          post(cTokenBalancesList, 'cTokenBalances');
         })
         .catch(reportError(app));
     });
@@ -455,7 +457,7 @@ function subscribeToComptrollerPorts(app, eth) {
 
           app.ports.giveAccountLimitsPort.send(data);
           console.log('DONE - [askAccountLimitsPort] This is where we would be posting: ', data);
-          // post(data, 'accounts');
+          post(data, 'accounts');
         }
       )
       .catch(reportError(app));
@@ -481,7 +483,7 @@ function subscribeToComptrollerPorts(app, eth) {
         });
         
         console.log('DONE - [askOraclePricesAllPort] This is where we would be posting: ', allPricesList);
-        // post(allPricesList, 'oraclePrices');
+        post(allPricesList, 'oraclePrices');
         app.ports.giveOraclePricesAllPort.send(allPricesList);
       })
       .catch(reportError(app));

@@ -344,7 +344,7 @@ borrowedAssetRow isAllMarketsRow config ( maybeCustomerAddress, maybeEtherBalanc
                         "–"
 
                     else
-                        Translations.tbd userLanguage
+                        ""
 
         ( balanceColumnContents, percentOfBorrowColumnContents ) =
             if isAllMarketsRow then

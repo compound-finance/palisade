@@ -292,7 +292,7 @@ collateralAssetRow isAllMarketsRow config ( maybeCustomerAddress, maybeEtherBala
                         "–"
 
                     else
-                        Translations.tbd userLanguage
+                        ""
 
         ( onClickMsg, switchClass, inputExtraMarkup ) =
             case maybeCustomerAddress of
