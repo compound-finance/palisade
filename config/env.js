@@ -72,15 +72,15 @@ if (fs.existsSync(overrideNetworksPath)) {
   const overriddenNetworkAbiConfigFiles = getConfigFiles(overrideNetworksPath, overrideAllFiles, fileAbiRegex);
 
   Object.entries(overriddenNetworkConfigFiles).forEach(([overriddenKey, overriddenValue]) => {
-    if (networkConfigFiles.hasOwnProperty(overriddenKey)) {
-      networkConfigFiles[overriddenKey] = overriddenValue;
-    }
+    //if (networkConfigFiles.hasOwnProperty(overriddenKey)) {
+    networkConfigFiles[overriddenKey] = overriddenValue;
+    //}
   });
 
   Object.entries(overriddenNetworkAbiConfigFiles).forEach(([overriddenKey, overriddenValue]) => {
-    if (networkAbiConfigFiles.hasOwnProperty(overriddenKey)) {
-      networkAbiConfigFiles[overriddenKey] = overriddenValue;
-    }
+    //if (networkAbiConfigFiles.hasOwnProperty(overriddenKey)) {
+    networkAbiConfigFiles[overriddenKey] = overriddenValue;
+    //}
   });
 }
 
@@ -96,10 +96,10 @@ if (process.env['DATA_PROVIDERS']) {
   try {
     envConfig.DATA_PROVIDERS = JSON.parse(process.env['DATA_PROVIDERS']);
   } catch (e) {
-    console.error("");
-    console.error("Error: DATA_PROVIDERS provided but is not valid JSON");
-    console.error("");
-    console.error("");
+    console.error('');
+    console.error('Error: DATA_PROVIDERS provided but is not valid JSON');
+    console.error('');
+    console.error('');
     throw e;
   }
 }

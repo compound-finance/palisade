@@ -23,6 +23,6 @@
     "kovan": 42,
     "development": 999
   },
-  "DEFAULT_NETWORK": "mainnet",
+  "DEFAULT_NETWORK": "development",
   "BLOCKNATIVE_API_KEY": null
 }
