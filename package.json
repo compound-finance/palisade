@@ -78,9 +78,11 @@
   "devDependencies": {
     "elm-format": "=0.8.5",
     "elm-test": "0.19.1-revision2",
+    "ethers": "^5.6.9",
     "express": "^4.17.1",
     "google-translate": "^3.0.0",
     "ipfs-http-client": "^52.0.1",
+    "node-fetch": "2",
     "postcss-url": "^8.0.0",
     "puppeteer": "^9.1.1"
   },
