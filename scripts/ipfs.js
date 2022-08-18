@@ -12,13 +12,15 @@ if (!ipfsHost) {
   process.exit(1);
 }
 
+let authorization = `Basic ${Buffer.from(ipfsAuth).toString('base64')}`;
+
 function buildIpfsClient() {
   return ipfsClient.create({
     host: ipfsHost,
     port: ipfsPort,
     protocol: ipfsProtocol,
     headers: {
-      authorization: ipfsAuth
+      authorization
     },
     apiPath: '/api/v0',
     agent: new Agent({
