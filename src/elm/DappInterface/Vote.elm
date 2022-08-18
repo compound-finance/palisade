@@ -482,8 +482,28 @@ update internalMsg maybeConfig maybeNetwork apiBaseUrlMap account model =
                                         )
                                     |> List.sortBy .id
                                     |> List.reverse
+
+                            fixedV3MainnetProposals =
+                                if network == MainNet then
+                                    sortedProposals
+                                    |> List.foldl
+                                        (\proposal acc ->
+                                            let
+                                                updatedProposal =
+                                                    if proposal.id == 116 then
+                                                        { proposal | title = "Initialize Compound III (USDC on Ethereum)"}
+                                                    else
+                                                        proposal
+                                            in
+                                            updatedProposal :: acc
+                                        )
+                                        []
+                                    |> List.sortBy .id
+                                    |> List.reverse
+                                else
+                                    sortedProposals
                         in
-                        ( { model | proposals = Just sortedProposals, proposalVoteReceipts = data.proposalVoteReceipts, priorVotes = data.priorVotes }, Cmd.none )
+                        ( { model | proposals = Just fixedV3MainnetProposals, proposalVoteReceipts = data.proposalVoteReceipts, priorVotes = data.priorVotes }, Cmd.none )
 
                     else
                         ( model, Cmd.none )
