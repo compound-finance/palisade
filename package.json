@@ -36,7 +36,7 @@
     "chalk": "^4.0.0",
     "clean-webpack-plugin": "^3.0.0",
     "cli-table": "0.3.1",
-    "compound-components": "https://github.com/0xAppo/lodestar-components.git#202f93dcc75df2e972bfba8099587a03b86cdb95",
+    "compound-components": "https://github.com/0xAppo/lodestar-components.git#6dba5252610c399a86f9f58cf7b4725484381c79",
     "compound-config": "https://github.com/0xAppo/lodestar-config.git#775119b5e30259bfeda9a8fc4d3b14a07ebe99c3",
     "connect-history-api-fallback": "^1.5.0",
     "core-js": "3",

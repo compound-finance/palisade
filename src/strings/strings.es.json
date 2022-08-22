@@ -159,7 +159,7 @@
     "no_executed_transactions": "No hay transacciones ejecutadas",
     "locked_until": "Bloqueado hasta {{date}}",
 
-    "site_title": "Compound",
+    "site_title": "Lodestar",
     "site_title_liquidate": "Liquidar",
     "site_title_terms": "Condiciones",
     "site_title_dashboard": "Tablero",

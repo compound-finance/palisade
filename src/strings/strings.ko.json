@@ -159,7 +159,7 @@
     "no_executed_transactions": "실행된 트랜잭션이 없습니다.",
     "locked_until": "{{date}}까지 잠김",
 
-    "site_title": "Compound",
+    "site_title": "Lodestar",
     "site_title_liquidate": "청산",
     "site_title_terms": "약관",
     "site_title_dashboard": "대시보드",
