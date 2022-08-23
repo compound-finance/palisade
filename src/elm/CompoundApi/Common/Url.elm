@@ -31,6 +31,9 @@ buildApiUrl apiBaseUrlMap network apiEndpoint endpointQueryParams =
                 Arbitrumtest ->
                     True
 
+                Arbitrum ->
+                    True
+
                 _ ->
                     False
 

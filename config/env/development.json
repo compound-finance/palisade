@@ -7,7 +7,7 @@
     "ropsten": "https://api.stage.compound.finance/api/",
     "mainnet": "https://api.compound.finance/api/",
     "arbitrumtest": "https://api.lodestarfinance.io/",
-    "arbitrum": "https://api.compound.finance/api/"
+    "arbitrum": "https://api.lodestarfinance.io/"
   },
   "DATA_PROVIDERS": {
     "development": "http://localhost:8545",

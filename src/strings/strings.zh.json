@@ -1,10 +1,10 @@
 {
     "no_account": "无账户",
 
-    "bad_network_alert": "此网络不支持 Compound Presidio。请切换到主网。",
+    "bad_network_alert": "此网络不支持 Lodestar。请切换到主网。",
     "no_account_alert": "请启用 MetaMask 或者在 Web3 浏览器中访问该页面",
     "testnet_alert": "注意：您正连接至 {{network}} 测试网络",
-    "no_ether_alert": "您的账户中没有可用于与 Compound 交互的 ETH",
+    "no_ether_alert": "您的账户中没有可用于与 Lodestar 交互的 ETH",
     "high_gas_alert_1": "以太坊区块链目前很拥挤;交易更多",
     "high_gas_alert_link": "昂贵的",
     "high_gas_alert_2": "比平常。考虑等待使用化合物。",
@@ -101,9 +101,9 @@
     "liquidation_occurs_if_decline_part2": "{{amount}}的流动性缓冲",
 
     "connect_wallet": "连接钱包",
-    "to_start_using_compound": "开始使用 Compound",
+    "to_start_using_compound": "开始使用 Lodestar",
     "metamask": "Metamask",
-    "choose_wallet_terms_part1": "通过连接，我接受 Compound 的 ",
+    "choose_wallet_terms_part1": "通过连接，我接受 Lodestar 的 ",
     "choose_wallet_terms_part2": "服务条款",
     "follow_wallet_link_instructions": "关注 Coinbase 的说明",
     "scan_qr_code": "您需要扫描钱包链接的二维码。",
