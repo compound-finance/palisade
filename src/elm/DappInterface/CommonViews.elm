@@ -182,10 +182,10 @@ pageHeader userLanguage page connectedWallet account preferences governanceState
     header [ class "dapp" ]
         [ div [ class "container-large" ]
             [ div [ class "row align-middle" ]
-                [ div [ class "col-xs-3" ]
+                [ div [ class "col-xs-3 col-sm-4" ]
                     [ a (class "brand" :: href External "https://compound.finance") []
                     ]
-                , div [ class "col-xs-5 mobile-hide text-center links" ] links
+                , div [ class "col-xs-5 col-sm-4 mobile-hide text-center links" ] links
                 , div [ class "col-xs-9 col-sm-4 text-right actions" ]
                     [ compound3Button
                     , compBalanceView account governanceState
