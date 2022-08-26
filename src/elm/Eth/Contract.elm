@@ -22,6 +22,11 @@ contractList maybeNetworkConfig =
                             , Maybe.map (namedContract "CDaiDelegate") config.maybeCDaiDelegate
                             , Maybe.map (namedContract "StdComptrollerG3") config.maybeComptrollerG3
                             , Maybe.map (namedContract "Starport") config.maybeStarport
+                            , Maybe.map (namedContract "cUSDCv3") config.maybeCUSDCv3
+                            , Maybe.map (namedContract "Configurator (v3)") config.maybeCUSDCv3Configurator
+                            , Maybe.map (namedContract "Compoundv3Admin") config.maybeCUSDCv3Admin
+                            , Maybe.map (namedContract "Compoundv3Rewards") config.maybeCUSDCv3Rewards
+                            , Maybe.map (namedContract "Bulker") config.maybeCUSDCv3Bulker
                             , Maybe.map
                                 (\( contractAddress, isBravo ) ->
                                     if isBravo then

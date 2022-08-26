@@ -76,6 +76,11 @@ type alias Config =
     , maybeCrowdProposalFactory : Maybe ContractAddress
     , blocks : Dict String Int
     , basicConfig : BasicConfig
+    , maybeCUSDCv3 : Maybe ContractAddress
+    , maybeCUSDCv3Configurator: Maybe ContractAddress
+    , maybeCUSDCv3Admin : Maybe ContractAddress
+    , maybeCUSDCv3Rewards : Maybe ContractAddress
+    , maybeCUSDCv3Bulker : Maybe ContractAddress
     }
 
 
@@ -282,6 +287,21 @@ loadConfig networkName ({ contracts, cTokensRaw, tokens, blocks } as basicConfig
                     ( cTokensWithoutCEth
                     , Nothing
                     )
+
+        maybeCUSDCv3 =
+            Dict.get "cUSDCv3" contracts
+
+        maybeCUSDCv3Configurator =
+            Dict.get "Configurator" contracts
+
+        maybeCUSDCv3Admin =
+            Dict.get "Compoundv3Admin" contracts
+
+        maybeCUSDCv3Rewards =
+            Dict.get "Compoundv3Rewards" contracts
+
+        maybeCUSDCv3Bulker =
+            Dict.get "Bulker" contracts
     in
     Functions.map5
         maybeComptroller
@@ -310,6 +330,11 @@ loadConfig networkName ({ contracts, cTokensRaw, tokens, blocks } as basicConfig
             , maybeCrowdProposalFactory = maybeCrowdProposalFactory
             , blocks = blocks
             , basicConfig = basicConfig
+            , maybeCUSDCv3 = maybeCUSDCv3
+            , maybeCUSDCv3Configurator = maybeCUSDCv3Configurator
+            , maybeCUSDCv3Admin = maybeCUSDCv3Admin
+            , maybeCUSDCv3Rewards = maybeCUSDCv3Rewards
+            , maybeCUSDCv3Bulker = maybeCUSDCv3Bulker
             }
         )
 
