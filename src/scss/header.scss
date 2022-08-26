@@ -87,6 +87,28 @@ header {
     }
   }
 
+  .compound-3-button {
+    background: $color_dark_2;
+    border-radius: $border-radius;
+    cursor: pointer;
+    padding: ($column-gutter * 0.5);
+    display: flex;
+    align-items: center;
+    margin-right: 1.33rem;
+
+    @include app-header-font;
+    text-transform: none;
+
+    &:hover {
+      background: lighten($color_dark_2, 5%);
+    }
+
+    .arrow {
+      margin-right: 0;
+      margin-left: 0.625rem;
+    }
+  }
+
   .comp-balance {
     background: $color_dark_2;
     border-radius: $border-radius;
