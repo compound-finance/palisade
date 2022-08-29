@@ -20,7 +20,7 @@ import CompoundComponents.Utils.CompoundHtmlAttributes exposing (HrefLinkType(..
 import CompoundComponents.Utils.Markup exposing (disabled)
 import Dict exposing (Dict)
 import Eth.Config exposing (Config)
-import Eth.Contract exposing (contractList)
+import Eth.Contract exposing (ContractInfo, contractList)
 import Eth.FunctionArg exposing (FunctionArg, buildFunctionArg, setArg)
 import Html exposing (Html, button, div, h2, h3, input, label, p, section, span, text, textarea)
 import Html.Events exposing (onClick, onInput)
@@ -34,7 +34,7 @@ import Utils.GovernanceHelper exposing (abiDecoder, governanceHelperDataFromConf
 
 
 type alias Model =
-    { maybeTarget : Maybe ( String, String )
+    { maybeTarget : Maybe (String, String)
     , maybeFunction : Maybe ABIValue
     , maybeDataArg : Maybe String
     , functionArgs : Array FunctionArg
@@ -56,7 +56,7 @@ type alias Model =
 
 
 type alias Action =
-    { target : ( String, String )
+    { target : (String, String)
     , function : ABIValue
     , dataArg : String
     , functionArgs : Array FunctionArg
@@ -532,7 +532,7 @@ governanceView userLanguage isCrowdProposal config ( governorAddress, isBravo ) 
         ]
 
 
-actionModalView : Translations.Lang -> Model -> String -> List ( String, String ) -> Json.Encode.Value -> Html Msg
+actionModalView : Translations.Lang -> Model -> String -> List ContractInfo -> Json.Encode.Value -> Html Msg
 actionModalView userLanguage model nameOfNetwork contracts abiFilesRaw =
     if model.actionModalActive then
         let
@@ -617,7 +617,7 @@ actionModalView userLanguage model nameOfNetwork contracts abiFilesRaw =
         text ""
 
 
-addActionStep1 : Translations.Lang -> Model -> List ( String, String ) -> String -> Html Msg
+addActionStep1 : Translations.Lang -> Model -> List ContractInfo -> String -> Html Msg
 addActionStep1 userLanguage model contracts targetContract =
     let
         targetDropdownClass =
@@ -679,9 +679,9 @@ addActionStep1 userLanguage model contracts targetContract =
                 , div [ class ("dropdown__options dropdown__options--light" ++ targetDropdownClass) ]
                     ((contracts
                         |> List.map
-                            (\( name, address ) ->
-                                div [ class "dropdown__option dropdown__option--light action-modal__input-group__dropdown__option", onClick (ForSelf (SetTarget ( name, address ))) ]
-                                    [ p [ class "small" ] [ text name ] ]
+                            (\contract ->
+                                div [ class "dropdown__option dropdown__option--light action-modal__input-group__dropdown__option", onClick (ForSelf (SetTarget (contract.abiName, contract.address))) ]
+                                    [ p [ class "small" ] [ text contract.friendlyName ] ]
                             )
                      )
                         ++ [ div [ class "dropdown__option dropdown__option--light", onClick (ForSelf (SetActionModalUseExternalTarget True)) ]
