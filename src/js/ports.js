@@ -351,16 +351,19 @@ function subscribeToCTokenPorts(app, eth) {
 
 function subscribeToComptrollerPorts(app, eth) {
   // port askAccountLimitsPort : { blockNumber : Int, comptrollerAddress : String, customerAddress : String, compoundLens: String } -> Cmd msg
-  app.ports.askAccountLimitsPort.subscribe(({ blockNumber, comptrollerAddress, customerAddress, compoundLens }) => {
+  app.ports.askAccountLimitsPort.subscribe(async({ blockNumber, comptrollerAddress, customerAddress, compoundLens }) => {
     const CompoundLens = getContractJsonByName(eth, 'CompoundLens');
     const Comptroller = getContractJsonByName(eth, 'Comptroller');
+
+    const PriceOracleProxy = getContractJsonByName(eth, 'PriceOracleProxy');
+    let ethPriceResult = await wrapCall(app, eth, [[PriceOracleProxy, "0x65c816077C29b557BEE980ae3cC2dCE80204A0C5", 'getUnderlyingPrice', ['0x4ddc2d193948926d02f9b1fe9e1daa0718270ed5']]], blockNumber)
 
     Promise.all([
       getTransactionCount(eth, customerAddress),
       wrapCall(
         app,
         eth,
-        [[CompoundLens, compoundLens, 'getAccountLimits', [comptrollerAddress, customerAddress]]],
+        [[CompoundLens, compoundLens, 'getAccountLimits', [comptrollerAddress, customerAddress, ethPriceResult]]],
         blockNumber
       ),
       wrapCall(app, eth, [[Comptroller, comptrollerAddress, 'closeFactorMantissa', []]], blockNumber),
@@ -383,9 +386,12 @@ function subscribeToComptrollerPorts(app, eth) {
   });
 
   // port askOraclePricesAllPort : { blockNumber : Int, priceOracleAddress : String, cTokenAddress : String, underlyingAssetAddress : String } -> Cmd msg
-  app.ports.askOraclePricesAllPort.subscribe(({ blockNumber, cTokens: cTokenEntries, compoundLens }) => {
+  app.ports.askOraclePricesAllPort.subscribe(async({ blockNumber, cTokens: cTokenEntries, compoundLens }) => {
     const CompoundLens = getContractJsonByName(eth, 'CompoundLens');
     let cTokens = supportFromEntries(cTokenEntries);
+
+    const PriceOracleProxy = getContractJsonByName(eth, 'PriceOracleProxy');
+    let ethPriceResult = await wrapCall(app, eth, [[PriceOracleProxy, "0x65c816077C29b557BEE980ae3cC2dCE80204A0C5", 'getUnderlyingPrice', ['0x4ddc2d193948926d02f9b1fe9e1daa0718270ed5']]], blockNumber)
 
     wrapCall(app, eth, [[CompoundLens, compoundLens, 'cTokenUnderlyingPriceAll', [Object.keys(cTokens)]]], blockNumber)
       .then(([results]) => {
@@ -400,7 +406,7 @@ function subscribeToComptrollerPorts(app, eth) {
 
         let ethPriceHardcoded = {
           underlyingAssetAddress: "0x4ddc2d193948926d02f9b1fe9e1daa0718270ed5",
-          value: toScaledDecimal("1541619978000000000000", EXP_DECIMALS)
+          value: toScaledDecimal(ethPriceResult, EXP_DECIMALS)
         };
 
         allPricesList.push(ethPriceHardcoded);
