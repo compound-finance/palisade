@@ -259,6 +259,8 @@
     "select_extrinsic": "Sélectionnez extrinsèque",
     "encoded_value": "Encodé: {{encoded}}",
 
+    "eth_disabled_prop_119": "DÉSACTIVÉ JUSQU'À PROP 119",
+
     "end_of_interface_strings": "FIN DES CHAÎNES POUR L'INTERFACE Compound",
 
     "all_markets": "Tous les marchés",

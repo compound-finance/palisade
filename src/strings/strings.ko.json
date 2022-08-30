@@ -259,6 +259,8 @@
     "select_extrinsic": "외부 선택",
     "encoded_value": "인코딩 됨 : {{encoded}}",
 
+    "eth_disabled_prop_119": "법안 119까지 장애인",
+
     "end_of_interface_strings": "화합물 인터페이스를위한 문자열의 끝",
 
     "all_markets": "모든 마켓",
