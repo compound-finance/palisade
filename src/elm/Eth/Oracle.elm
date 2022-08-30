@@ -255,11 +255,14 @@ askOraclePricesAll : Int -> ContractAddress -> List ( ContractAddress, AssetAddr
 askOraclePricesAll blockNumber (Contract compoundLens) cTokenPairs =
     let
         cTokens =
-            List.map
+            List.filterMap
                 (\cTokenPair ->
                     case cTokenPair of
                         ( Contract token, Asset asset ) ->
-                            ( token, asset )
+                            if token == "0x4ddc2d193948926d02f9b1fe9e1daa0718270ed5" then
+                                Nothing
+                            else
+                                Just ( token, asset )
                 )
                 cTokenPairs
     in
