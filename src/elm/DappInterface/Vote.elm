@@ -492,6 +492,8 @@ update internalMsg maybeConfig maybeNetwork apiBaseUrlMap account model =
                                                 updatedProposal =
                                                     if proposal.id == 116 then
                                                         { proposal | title = "Initialize Compound III (USDC on Ethereum)"}
+                                                    else if proposal.id == 119 then
+                                                        { proposal | title = "Oracle Update"}
                                                     else
                                                         proposal
                                             in
