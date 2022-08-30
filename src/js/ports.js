@@ -355,9 +355,6 @@ function subscribeToComptrollerPorts(app, eth) {
     const CompoundLens = getContractJsonByName(eth, 'CompoundLens');
     const Comptroller = getContractJsonByName(eth, 'Comptroller');
 
-    // const PriceOracleProxy = getContractJsonByName(eth, 'PriceOracleProxy');
-    // let ethPriceResult = await wrapCall(app, eth, [[PriceOracleProxy, "0x65c816077C29b557BEE980ae3cC2dCE80204A0C5", 'getUnderlyingPrice', ['0x4ddc2d193948926d02f9b1fe9e1daa0718270ed5']]], blockNumber)
-
     Promise.all([
       getTransactionCount(eth, customerAddress),
       wrapCall(
@@ -392,6 +389,7 @@ function subscribeToComptrollerPorts(app, eth) {
 
     const PriceOracleProxy = getContractJsonByName(eth, 'PriceOracleProxy');
     let ethPriceResult = await wrapCall(app, eth, [[PriceOracleProxy, "0x65c816077C29b557BEE980ae3cC2dCE80204A0C5", 'getUnderlyingPrice', ['0x4ddc2d193948926d02f9b1fe9e1daa0718270ed5']]], blockNumber)
+    //TODO: Use instead the same call as new Lens is making for consistency.
 
     wrapCall(app, eth, [[CompoundLens, compoundLens, 'cTokenUnderlyingPriceAll', [Object.keys(cTokens)]]], blockNumber)
       .then(([results]) => {
