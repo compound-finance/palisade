@@ -259,6 +259,8 @@
     "select_extrinsic": "选择外部",
     "encoded_value": "编码：{{encoded}}",
 
+    "eth_disabled_prop_119": "在 119 号提案之前禁用",
+
     "end_of_interface_strings": "复合接口的字符串结尾",
 
     "all_markets": "所有市场",

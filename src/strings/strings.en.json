@@ -259,6 +259,8 @@
   "select_extrinsic": "Select extrinsic",
   "encoded_value": "Encoded: {{encoded}}",
 
+  "eth_disabled_prop_119": "DISABLED UNTIL PROP 119",
+
   "end_of_interface_strings": "END OF STRINGS FOR COMPOUND INTERFACE",
 
   "all_markets": "All Markets",

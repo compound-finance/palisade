@@ -259,6 +259,8 @@
     "select_extrinsic": "Seleccione extrínseco",
     "encoded_value": "Codificado: {{encoded}}",
 
+    "eth_disabled_prop_119": "DESHABILITADO HASTA LA PROPUESTA 119",
+
     "end_of_interface_strings": "FIN DE CUERDAS PARA INTERFAZ COMPUESTA",
 
     "all_markets": "Todos los mercados",
