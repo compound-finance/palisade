@@ -1125,10 +1125,23 @@ update msg ({ page, configs, apiBaseUrlMap, account, transactionState, bnTransac
 
 
 view : Model -> Html Msg
-view model =
-    viewFull model
-        |> Html.div [ id "main" ]
+view ({userLanguage} as model) =
+    let
+        v2EthPausedAlert =
+            div [ class "alert alert--dark2" ] 
+                [ text (Translations.high_gas_alert_1 userLanguage)
+                , span [] 
+                    [ a ([ class "inline", target "__blank" ] ++ href External "https://www.blocknative.com/gas-estimator") [ text (Translations.high_gas_alert_link userLanguage) ] 
+                    ]
+                , text (Translations.high_gas_alert_2 userLanguage) 
+                ]
 
+        viewFullContentList =
+            viewFull model
+    in
+    Html.div [ id "main" ]
+        (v2EthPausedAlert :: viewFullContentList
+        )
 
 viewFull : Model -> List (Html Msg)
 viewFull ({ page, liquidateModel, transactionState, compoundState, tokenState, oracleState, configs, configAbis, network, preferences, account, blockNumber, userLanguage } as model) =
