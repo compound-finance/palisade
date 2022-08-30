@@ -4,6 +4,8 @@
   "bad_network_alert": "Compound Presidio is not supported on this network. Please switch to Mainnet.",
   "no_account_alert": "Please enable MetaMask or visit this page in a Web3 browser to interact with the Compound protocol",
   "testnet_alert": "Note: You are currently connected to the {{network}} Testnet",
+  "ceth_alert": "The cETH market is temporarily frozen",
+  "ceth_alert_more_info": "More info",
   "no_ether_alert": "Your account does not have any Ether, which is required to interact with Compound",
   "high_gas_alert_1": "The Ethereum blockchain is currently congested; transactions are more ",
   "high_gas_alert_link": "expensive",
@@ -129,7 +131,7 @@
   "decline_unlock_mm_wallet": "We have detected that you have Tally installed.",
 
 
-  
+
   "queued_transactions": "Queued Transactions",
   "executed_transactions": "Executed Transactions",
   "accept_admin": "Accepting admin for {{contract}}",

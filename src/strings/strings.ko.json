@@ -4,6 +4,8 @@
     "bad_network_alert": "이 네트워크에서는 Compound Presidio가 지원되지 않습니다. 메인 넷으로 전환하세요.",
     "no_account_alert": "MetaMask를 활성화하거나 Compound 프로토콜과 상호 작용할 수 있는 Web3 브라우저를 이용해 이 페이지를 방문해주세요",
     "testnet_alert": "알림 : 현재 {{network}} 테스트넷에 연결되어 있습니다",
+    "ceth_alert": "The cETH market is temporarily frozen",
+    "ceth_alert_more_info": "More info",
     "no_ether_alert": "Compound와 상호 작용하려면 계정에 Ether를 보유하고 있어야 합니다",
     "high_gas_alert_1": "이더 리움 블록 체인은 현재 혼잡합니다. 거래는 더",
     "high_gas_alert_link": "비싼",
@@ -129,7 +131,7 @@
     "decline_unlock_mm_wallet": "Tally가 설치되어 있음을 감지했습니다.",
 
 
-  
+
     "queued_transactions": "대기 중인 트랜잭션",
     "executed_transactions": "실행된 트랜잭션",
     "accept_admin": "{{contract}}에 대한 관리자 승인",

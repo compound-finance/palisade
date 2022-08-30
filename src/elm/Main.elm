@@ -1171,6 +1171,7 @@ viewFull ({ page, liquidateModel, transactionState, compoundState, tokenState, o
         Home ->
             [ div [ id "borrow-interface-root" ]
                 [ alertView model
+                , cethAlertView model
                 , header
                 , Html.map containerTranslator (DappInterface.Container.view model)
                 , chooseWalletModal userLanguage model
@@ -1221,6 +1222,9 @@ viewFull ({ page, liquidateModel, transactionState, compoundState, tokenState, o
             , replFooter
             ]
 
+cethAlertView : Model -> Html Msg
+cethAlertView ({ userLanguage } as model) =
+  cethAlert userLanguage
 
 alertView : Model -> Html Msg
 alertView ({ account, maybeGasPrice, network, userLanguage } as model) =
@@ -1352,6 +1356,13 @@ testNetworkAlert userLanguage network =
         [ text (Translations.testnet_alert userLanguage network)
         ]
 
+cethAlert : Translations.Lang -> Html msg
+cethAlert userLanguage =
+    div [ class "alert caution" ]
+        [ text (Translations.ceth_alert userLanguage)
+          , text " "
+          , a ([ class "inline", target "__blank" ] ++ href External "https://twitter.com/compoundfinance/status/1564695152626655234?s=20&t=1k4fJgOHKOH9lr9Jtmbnhw") [ text (Translations.ceth_alert_more_info userLanguage) ]
+        ]
 
 testNetworkNoEtherAlert : Translations.Lang -> String -> String -> Html msg
 testNetworkNoEtherAlert userLanguage network address =

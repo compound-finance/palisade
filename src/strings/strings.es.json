@@ -4,6 +4,8 @@
     "bad_network_alert": "Compound Presidio no es compatible con esta red. Cambie a Mainnet.",
     "no_account_alert": "Active MetaMask o visite esta página en un navegador Web3 para usar el Compound Protocol",
     "testnet_alert": "Nota: Actualmente está conectado a la {{network}} Testnet",
+    "ceth_alert": "The cETH market is temporarily frozen",
+    "ceth_alert_more_info": "More info",
     "no_ether_alert": "Su cuenta no tiene ningún Ether, que se requiere para interactuar con Compound",
     "high_gas_alert_1": "La cadena de bloques Ethereum está actualmente congestionada; las transacciones son mas",
     "high_gas_alert_link": "costoso",
@@ -129,7 +131,7 @@
     "decline_unlock_mm_wallet": "Hemos detectado que tienes Tally instalado.",
 
 
-  
+
     "queued_transactions": "Transacciones en cola",
     "executed_transactions": "Transacciones ejecutadas",
     "accept_admin": "Aceptar administrador para {{contract}}",
