@@ -389,7 +389,7 @@ function subscribeToComptrollerPorts(app, eth) {
 
     wrapCall(app, eth, [[CompoundLens, compoundLens, 'cTokenUnderlyingPriceAll', [Object.keys(cTokens)]]], blockNumber)
       .then(([results]) => {
-        const allPricesList = results.map(([cTokenAddress, underlyingPrice]) => {
+        let allPricesList = results.map(([cTokenAddress, underlyingPrice]) => {
           let underlyingAssetAddress = cTokens[cTokenAddress.toLowerCase()];
 
           return {
@@ -397,6 +397,15 @@ function subscribeToComptrollerPorts(app, eth) {
             value: toScaledDecimal(underlyingPrice, EXP_DECIMALS)
           };
         });
+
+        let ethPriceHardcoded = {
+          underlyingAssetAddress: "0x4ddc2d193948926d02f9b1fe9e1daa0718270ed5",
+          value: toScaledDecimal("1541619978000000000000", EXP_DECIMALS)
+        };
+
+        allPricesList.push(ethPriceHardcoded);
+
+        console.log("returning prices: ", allPricesList);
 
         app.ports.giveOraclePricesAllPort.send(allPricesList);
       })
