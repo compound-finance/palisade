@@ -265,8 +265,6 @@ askOraclePricesAll blockNumber (Contract compoundLens) cTokenPairs =
                                 Just ( token, asset )
                 )
                 cTokenPairs
-
-        _ = Debug.log "HALP" cTokens
     in
     askOraclePricesAllPort
         { blockNumber = blockNumber

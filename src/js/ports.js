@@ -405,8 +405,6 @@ function subscribeToComptrollerPorts(app, eth) {
 
         allPricesList.push(ethPriceHardcoded);
 
-        console.log("returning prices: ", allPricesList);
-
         app.ports.giveOraclePricesAllPort.send(allPricesList);
       })
       .catch(reportError(app));
