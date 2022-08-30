@@ -1129,11 +1129,11 @@ view ({userLanguage} as model) =
     let
         v2EthPausedAlert =
             div [ class "alert alert--dark2" ] 
-                [ text (Translations.high_gas_alert_1 userLanguage)
+                [ text "The cETH market is temporarily frozen; transactions for Ether suppliers & borrowers will revert until "
                 , span [] 
-                    [ a ([ class "inline", target "__blank" ] ++ href External "https://www.blocknative.com/gas-estimator") [ text (Translations.high_gas_alert_link userLanguage) ] 
+                    [ a ([ class "inline", target "__blank" ] ++ href External "https://compound.finance/governance/proposals/119") [ text "Proposal 119" ] 
                     ]
-                , text (Translations.high_gas_alert_2 userLanguage) 
+                , text " takes effect."
                 ]
 
         viewFullContentList =
