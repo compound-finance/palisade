@@ -1128,10 +1128,10 @@ view : Model -> Html Msg
 view ({userLanguage} as model) =
     let
         v2EthPausedAlert =
-            div [ class "alert alert--dark2" ] 
-                [ text "The cETH market is temporarily frozen; transactions for Ether suppliers & borrowers will revert until "
-                , span [] 
-                    [ a ([ class "inline", target "__blank" ] ++ href External "https://compound.finance/governance/proposals/119") [ text "Proposal 119" ] 
+            div [ class "alert alert--dark2" ]
+                [ text "The cETH market is temporarily frozen; users supplying or borrowing Ether can supply and repay any asset normally, but can't withdraw or borrow until "
+                , span []
+                    [ a ([ class "inline", target "__blank" ] ++ href External "https://compound.finance/governance/proposals/119") [ text "Proposal 119" ]
                     ]
                 , text " takes effect."
                 ]
