@@ -23,6 +23,7 @@ type EthType
     | Uint Int
     | Address
     | Bytes
+    | Bool
     | Unknown
 
 
@@ -76,6 +77,9 @@ getEthType valueType =
             "bytes" ->
                 Bytes
 
+            "bool" ->
+                Bool
+
             _ ->
                 Unknown
 
@@ -112,6 +116,13 @@ validateArg ethType value =
         Bytes ->
             contains isValidBytes value
 
+        Bool ->
+            let
+                lowercaseValue =
+                    String.toLower value
+            in
+            lowercaseValue == "true" || lowercaseValue == "false"
+
         Unknown ->
             -- Currently, no validation
             True
@@ -135,6 +146,19 @@ encodeArg ethType value =
 
         Bytes ->
             Json.Encode.string value
+
+        Bool ->
+            let
+                lowercaseValue =
+                    String.toLower value
+
+                valueString = 
+                    if lowercaseValue == "false" then
+                        ""
+                    else
+                        "1"
+            in
+            Json.Encode.string valueString
 
         Unknown ->
             Json.Encode.string value
