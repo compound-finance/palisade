@@ -248,28 +248,38 @@ askTokenOraclePrices blockNumber priceOracleAddress compoundLens cTokens =
 -- Ports
 
 
-port askOraclePricesAllPort : { blockNumber : Int, cTokens : List ( String, String ), compoundLens : String } -> Cmd msg
+port askOraclePricesAllPort : { blockNumber : Int, cTokens : List ( String, String ), compoundLens : String, callEthPrice : Bool } -> Cmd msg
 
 
 askOraclePricesAll : Int -> ContractAddress -> List ( ContractAddress, AssetAddress ) -> Cmd msg
 askOraclePricesAll blockNumber (Contract compoundLens) cTokenPairs =
     let
-        cTokens =
-            List.filterMap
-                (\cTokenPair ->
+        tokenPairResults =
+            List.foldl
+                (\cTokenPair {cTokens, etherPriceBorked} ->
                     case cTokenPair of
                         ( Contract token, Asset asset ) ->
-                            if token == "0x4ddc2d193948926d02f9b1fe9e1daa0718270ed5" then
-                                Nothing
-                            else
-                                Just ( token, asset )
+                            let
+                                (tokenToAdd, updatedEthBorked) =
+                                    if token == "0x4ddc2d193948926d02f9b1fe9e1daa0718270ed5" then
+                                        ([], True)
+                                    else
+                                        ([( token, asset )], etherPriceBorked)
+                            in
+                            { cTokens = cTokens ++ tokenToAdd
+                            , etherPriceBorked = updatedEthBorked
+                            }
                 )
+                { cTokens = []
+                , etherPriceBorked = False
+                }
                 cTokenPairs
     in
     askOraclePricesAllPort
         { blockNumber = blockNumber
-        , cTokens = cTokens
+        , cTokens = tokenPairResults.cTokens
         , compoundLens = compoundLens
+        , callEthPrice = tokenPairResults.etherPriceBorked
         }
 
 
