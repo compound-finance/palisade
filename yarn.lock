@@ -3344,9 +3344,9 @@ component-emitter@^1.2.1:
   resolved "https://registry.yarnpkg.com/component-emitter/-/component-emitter-1.3.0.tgz#16e4070fba8ae29b679f2215853ee181ab2eabc0"
   integrity sha512-Rd3se6QB+sO1TwqZjscQrurpEPIfO0/yYnSin6Q/rD3mOutHvUrCAhJub3r90uNb+SESBuE0QYoB90YdfatsRg==
 
-"compound-components@https://github.com/0xAppo/lodestar-components.git#6dba5252610c399a86f9f58cf7b4725484381c79":
+"compound-components@https://github.com/0xAppo/lodestar-components.git#527392746e24d28eeb0ea4964320042e7e8cae20":
   version "1.0.0"
-  resolved "https://github.com/0xAppo/lodestar-components.git#6dba5252610c399a86f9f58cf7b4725484381c79"
+  resolved "https://github.com/0xAppo/lodestar-components.git#527392746e24d28eeb0ea4964320042e7e8cae20"
   dependencies:
     "@babel/core" "^7.0.0"
     "@babel/preset-env" "^7.0.0"
@@ -3385,9 +3385,9 @@ component-emitter@^1.2.1:
     webpack-dev-server "^3.7.2"
     yargs "^16.2.0"
 
-"compound-config@https://github.com/0xAppo/lodestar-config.git#72f71101962eea81d9d55d5f61dee4d161c8386f":
+"compound-config@https://github.com/0xAppo/lodestar-config.git#f4824fd0b27bd6960185e907964c1db10a243f8f":
   version "0.0.0"
-  resolved "https://github.com/0xAppo/lodestar-config.git#72f71101962eea81d9d55d5f61dee4d161c8386f"
+  resolved "https://github.com/0xAppo/lodestar-config.git#f4824fd0b27bd6960185e907964c1db10a243f8f"
 
 compressible@~2.0.16:
   version "2.0.18"
