@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 252.36 253.35">
+  <defs>
+    <clipPath id="clip-path" transform="translate(-1.82 -1.83)">
+      <rect width="256" height="257" style="fill: none"/>
+    </clipPath>
+    <linearGradient id="linear-gradient" x1="94.2" y1="-1394.06" x2="133.92" y2="-1173.87" gradientTransform="translate(-1.82 1409.81)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#55bf9b"/>
+      <stop offset="1" stop-color="#8986c0"/>
+    </linearGradient>
+    <linearGradient id="linear-gradient-2" x1="133.03" y1="1265.33" x2="133.2" y2="1150.79" gradientTransform="matrix(1, 0, 0, -1, -1.82, 1363.96)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#293b47"/>
+      <stop offset="1" stop-color="#667786"/>
+    </linearGradient>
+    <linearGradient id="linear-gradient-3" x1="133.32" y1="1285.31" x2="132.89" y2="1250.33" xlink:href="#linear-gradient-2"/>
+  </defs>
+  <g id="Layer_2" data-name="Layer 2">
+    <g id="Layer_1-2" data-name="Layer 1">
+      <g id="Layer_2-2" data-name="Layer 2">
+        <g id="Layer_1-2-2" data-name="Layer 1-2">
+          <g style="clip-path: url(#clip-path)">
+            <g>
+              <ellipse cx="126.18" cy="126.67" rx="126.18" ry="126.67" style="fill: #f9fcfd"/>
+              <path d="M208.1,226.37A125.84,125.84,0,0,1,30.52,208.9C-13.71,154.84-5.92,75,47.93,30.62A125.79,125.79,0,0,1,208,30.54L182.54,61.71a86.2,86.2,0,1,0,.07,133.52Z" transform="translate(-1.82 -1.83)" style="fill: url(#linear-gradient)"/>
+              <path d="M128,232.91c57.44,0,104-46.75,104-104.41S185.44,24.09,128,24.09,24,70.84,24,128.5,70.56,232.91,128,232.91Z" transform="translate(-1.82 -1.83)" style="fill: #fff"/>
+            </g>
+          </g>
+          <path d="M131.3,173.74H82.61a8.38,8.38,0,0,1-7-12.89l27.68-43.39a11.08,11.08,0,0,1,9.36-5.14H150a11.08,11.08,0,0,1,9.36,5.14L187,160.85a8.37,8.37,0,0,1-7,12.89Z" transform="translate(-1.82 -1.83)" style="fill: url(#linear-gradient-2)"/>
+          <path d="M136.17,74,147.8,91.81a5.57,5.57,0,0,1-4.65,8.64h-23.7a5.57,5.57,0,0,1-5.56-5.58,5.49,5.49,0,0,1,1-3.14l12.07-17.84a5.54,5.54,0,0,1,9.25.07Z" transform="translate(-1.82 -1.83)" style="fill: url(#linear-gradient-3)"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

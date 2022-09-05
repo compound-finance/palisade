@@ -28,3 +28,6 @@ public/compound-components/
 # IPFS release file
 .release
 .release-notes
+
+# sensitive env information
+config/env
