@@ -1126,22 +1126,8 @@ update msg ({ page, configs, apiBaseUrlMap, account, transactionState, bnTransac
 
 view : Model -> Html Msg
 view ({userLanguage} as model) =
-    let
-        v2EthPausedAlert =
-            div [ class "alert alert--dark2" ]
-                [ text "The cETH market is temporarily frozen; users supplying or borrowing Ether can supply and repay any asset normally, but can't withdraw or borrow until "
-                , span []
-                    [ a ([ class "inline", target "__blank" ] ++ href External "https://compound.finance/governance/proposals/119") [ text "Proposal 119" ]
-                    ]
-                , text " takes effect."
-                ]
-
-        viewFullContentList =
-            viewFull model
-    in
     Html.div [ id "main" ]
-        (v2EthPausedAlert :: viewFullContentList
-        )
+        (viewFull model)
 
 viewFull : Model -> List (Html Msg)
 viewFull ({ page, liquidateModel, transactionState, compoundState, tokenState, oracleState, configs, configAbis, network, preferences, account, blockNumber, userLanguage } as model) =
