@@ -383,16 +383,9 @@ function subscribeToComptrollerPorts(app, eth) {
   });
 
   // port askOraclePricesAllPort : { blockNumber : Int, priceOracleAddress : String, cTokenAddress : String, underlyingAssetAddress : String, callEthPrice : bool } -> Cmd msg
-  app.ports.askOraclePricesAllPort.subscribe(async({ blockNumber, cTokens: cTokenEntries, compoundLens, callEthPrice }) => {
+  app.ports.askOraclePricesAllPort.subscribe(async({ blockNumber, cTokens: cTokenEntries, compoundLens }) => {
     const CompoundLens = getContractJsonByName(eth, 'CompoundLens');
     let cTokens = supportFromEntries(cTokenEntries);
-
-    const PriceOracleProxy = getContractJsonByName(eth, 'PriceOracleProxy');
-    let ethPriceResult;
-    if(callEthPrice) {
-      ethPriceResult = await wrapCall(app, eth, [[PriceOracleProxy, "0x65c816077C29b557BEE980ae3cC2dCE80204A0C5", 'getUnderlyingPrice', ['0x4ddc2d193948926d02f9b1fe9e1daa0718270ed5']]], blockNumber)
-    }
-    //TODO: Use instead the same call as new Lens is making for consistency.
 
     wrapCall(app, eth, [[CompoundLens, compoundLens, 'cTokenUnderlyingPriceAll', [Object.keys(cTokens)]]], blockNumber)
       .then(([results]) => {
@@ -404,16 +397,6 @@ function subscribeToComptrollerPorts(app, eth) {
             value: toScaledDecimal(underlyingPrice, EXP_DECIMALS)
           };
         });
-
-        if(callEthPrice) {
-          let ethPriceHardcoded = {
-            underlyingAssetAddress: "0x4ddc2d193948926d02f9b1fe9e1daa0718270ed5",
-            value: toScaledDecimal(ethPriceResult, EXP_DECIMALS)
-          };
-
-          allPricesList.push(ethPriceHardcoded);
-        }
-
         app.ports.giveOraclePricesAllPort.send(allPricesList);
       })
       .catch(reportError(app));
