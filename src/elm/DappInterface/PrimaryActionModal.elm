@@ -1088,22 +1088,6 @@ getSubmitButton userLanguage config ({ chosenAsset, inputValue, primaryActionTyp
                 _ ->
                     False
 
-
-        enteredEthAsset =
-            mainModel.compoundState.maybeAssetsIn
-            |> Maybe.map
-                (\assetsIn ->
-                    List.member (Contract "0x4ddc2d193948926d02f9b1fe9e1daa0718270ed5") assetsIn
-                )
-            |> Maybe.withDefault False
-
-
-        frozenEthBlocked =
-            if ((primaryActionType == BorrowAction || primaryActionType == RedeemAction) && enteredEthAsset) then
-                True
-            else
-                False
-
         ( buttonAttributes, buttonText ) =
             if Decimal.lte availableTokenBalance Decimal.zero then
                 -- Repay is the only special one we want different text for
@@ -1121,9 +1105,6 @@ getSubmitButton userLanguage config ({ chosenAsset, inputValue, primaryActionTyp
                             panelData.disabledPlaceholdler
                 in
                 ( [ class ("submit-button button " ++ panelData.buttonClass), disabled ], disabledText )
-
-            else if frozenEthBlocked then
-                ( [ class ("submit-button button " ++ panelData.buttonClass), disabled ], Translations.eth_disabled_prop_119 userLanguage )
 
             else if hasReachedBorrowCap then
                 ( [ class ("submit-button button " ++ panelData.buttonClass), disabled ], Translations.token_borrow_cap_reached userLanguage chosenAsset.underlying.symbol )
