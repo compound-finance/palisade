@@ -9,11 +9,11 @@
   },
   "DATA_PROVIDERS": {
     "development": "http://localhost:8545",
-    "goerli": "https://infura.io/goerli",
+    "goerli": "https://goerli.infura.io/v3/f6b8a7dc24424a36ac14ac4e499a46dd",
     "rinkeby": "https://infura.io/rinkeby",
     "kovan": "https://infura.io/kovan",
     "ropsten": "https://infura.io/ropsten",
-    "mainnet": "https://infura.io/mainnet"
+    "mainnet": "https://mainnet.infura.io/v3/f6b8a7dc24424a36ac14ac4e499a46dd"
   },
   "NETWORK_MAP": {
     "mainnet": 1,
