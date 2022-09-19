@@ -37,7 +37,7 @@
     "clean-webpack-plugin": "^3.0.0",
     "cli-table": "0.3.1",
     "compound-components": "https://github.com/compound-finance/compound-components.git#e1734102d56ffa14727f10435c68288d9f058a6d",
-    "compound-config": "https://github.com/compound-finance/compound-config.git#5ef098acf65bcb1fcdc60e1dc1c1cef884fd77bd",
+    "compound-config": "https://github.com/compound-finance/compound-config.git#ff8e979ffcb286d09884163cc928688f213abe71",
     "connect-history-api-fallback": "^1.5.0",
     "core-js": "3",
     "cross-spawn": "^7.0.2",
