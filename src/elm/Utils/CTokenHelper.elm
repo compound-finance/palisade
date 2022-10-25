@@ -1,7 +1,7 @@
 module Utils.CTokenHelper exposing (getAllSupportedCTokens)
 
 import Balances
-import Decimal exposing (Decimal)
+import Decimal
 import Dict
 import Eth.Compound exposing (CompoundState)
 import Eth.Token exposing (CToken, TokenState)
@@ -13,7 +13,7 @@ getAllSupportedCTokens compoundState tokenState =
         |> Dict.values
         |> List.filterMap
             (\cToken ->
-                if cToken.symbol == "cSAI" || cToken.symbol == "cREP" || cToken.symbol == "cWBTC" then
+                if cToken.symbol == "cSAI" || cToken.symbol == "cREP" || cToken.symbol == "cWBTC" || cToken.symbol == "cFEI" || Balances.getMintGuardianPaused compoundState.cTokensMetadata cToken.contractAddress then
                     let
                         underlyingBalances =
                             Balances.getUnderlyingBalances compoundState cToken.contractAddress
