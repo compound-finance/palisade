@@ -38,7 +38,7 @@ view : Maybe Config -> Maybe Decimal -> Model -> Html Msg
 view maybeConfig maybeEtherUsdPrice ({ compoundState, oracleState, tokenState, userLanguage } as model) =
     let
         allCTokensList =
-            CTokenHelper.getAllSupportedCTokens compoundState tokenState
+            CTokenHelper.getAllSupportedCTokens compoundState tokenState CTokenHelper.ForCollateral
 
         balanceTotalsUsd =
             Balances.getUnderlyingTotalsInUsd compoundState allCTokensList oracleState
@@ -421,7 +421,7 @@ getReadyCollateralAssets : Model -> Bool -> List ReadyCollateralAsset
 getReadyCollateralAssets { compoundState, oracleState, tokenState } applyNonZeroBalanceFilter =
     let
         allCTokensList =
-            CTokenHelper.getAllSupportedCTokens compoundState tokenState
+            CTokenHelper.getAllSupportedCTokens compoundState tokenState CTokenHelper.ForCollateral
 
         suppliedCTokensList =
             if applyNonZeroBalanceFilter then
@@ -489,7 +489,7 @@ getReadyCollateralAssetsForNoAccount : Model -> List ReadyCollateralAsset
 getReadyCollateralAssetsForNoAccount { compoundState, oracleState, tokenState } =
     let
         allCTokensList =
-            CTokenHelper.getAllSupportedCTokens compoundState tokenState
+            CTokenHelper.getAllSupportedCTokens compoundState tokenState CTokenHelper.ForCollateral
     in
     allCTokensList
         |> List.filterMap
@@ -520,7 +520,7 @@ areAllAssetsLoaded : Model -> Bool
 areAllAssetsLoaded ({ account, compoundState, tokenState } as model) =
     let
         allCTokensList =
-            CTokenHelper.getAllSupportedCTokens compoundState tokenState
+            CTokenHelper.getAllSupportedCTokens compoundState tokenState CTokenHelper.ForCollateral
 
         readyBorrowedAssets =
             case account of

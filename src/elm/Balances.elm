@@ -3,6 +3,7 @@ module Balances exposing
     , getCollateralValueInUsd
     , getHasAnyAssetEnabledForBorrowing
     , getInterestRate
+    , getMintGuardianPaused
     , getUnderlyingBalances
     , getUnderlyingInterestBalances
     , getUnderlyingTotalsInUsd
@@ -12,14 +13,13 @@ module Balances exposing
     )
 
 import CompoundComponents.Eth.Ethereum as Ethereum exposing (Account(..), AssetAddress(..), ContractAddress(..), CustomerAddress(..), getContractAddressString)
-import CompoundComponents.Eth.Ledger exposing (LedgerAccount, ledgerAccountToInt)
 import CompoundComponents.Functions as Functions
 import Decimal exposing (Decimal)
-import Dict exposing (Dict)
-import Eth.Compound exposing (CTokenBalances, CTokenBalancesDict, CTokenInterestBalances, CTokenMetadata, CTokenMetadataDict, CompoundState)
+import Dict 
+import Eth.Compound exposing (CTokenBalances, CTokenInterestBalances, CTokenMetadataDict, CompoundState)
 import Eth.Config exposing (Config)
 import Eth.Oracle exposing (OracleState)
-import Eth.Token exposing (CToken, TokenState)
+import Eth.Token exposing (CToken)
 
 
 getUnderlyingBalances : CompoundState -> ContractAddress -> Maybe CTokenBalances
@@ -83,6 +83,13 @@ getInterestRate cTokenMetadataDict (Contract cTokenAddress) =
     cTokenMetadataDict
         |> Dict.get cTokenAddress
         |> Maybe.map (\metaData -> { borrowRate = metaData.borrowRate, supplyRate = metaData.supplyRate })
+
+getMintGuardianPaused : CTokenMetadataDict -> ContractAddress -> Bool
+getMintGuardianPaused cTokenMetadataDict (Contract cTokenAddress) =
+    cTokenMetadataDict
+        |> Dict.get cTokenAddress
+        |> Maybe.map .mintGuardianPaused
+        |> Maybe.withDefault False
 
 
 type alias UnderlyingBalanceTotals =

@@ -87,6 +87,7 @@ cTokenDecoder =
         |> andThen renameDaiNameToSaiLegacyDecoder
         |> andThen renameUsdtToTetherDecoder
         |> andThen renameAugurToDeprecatedDecoder
+        |> andThen renameFeiToDeprecatedDecoder
         |> andThen renameOldWbtcToLegacyDecoder
 
 
@@ -156,6 +157,20 @@ renameAugurToDeprecatedDecoder apiToken =
         ( underlyingName, underlyingSymbol ) =
             if apiToken.underlying_symbol == "REP" && apiToken.underlying_name == "Augur" then
                 ( "Augur v1 (Deprecated)", apiToken.underlying_symbol )
+
+            else
+                ( apiToken.underlying_name, apiToken.underlying_symbol )
+    in
+    succeed { apiToken | underlying_name = underlyingName, underlying_symbol = underlyingSymbol }
+
+renameFeiToDeprecatedDecoder : CToken -> Json.Decode.Decoder CToken
+renameFeiToDeprecatedDecoder apiToken =
+    let
+        -- Doing a rename based on the symbol and name combo of USDT in the Underlying since
+        -- we want to say Tether here.
+        ( underlyingName, underlyingSymbol ) =
+            if apiToken.underlying_symbol == "FEI" && apiToken.underlying_name == "Fei USD" then
+                ( "Fei USD (Deprecated)", apiToken.underlying_symbol )
 
             else
                 ( apiToken.underlying_name, apiToken.underlying_symbol )

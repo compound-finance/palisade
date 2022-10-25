@@ -227,11 +227,14 @@ function subscribeToCTokenPorts(app, eth) {
   );
 
   // port askCTokenMetadataAllPort : { blockNumber : Int, comptrollerAddress : String, cTokenAddress : String, underlyingAssetAddress : String, cTokenDecimals : Int, underlyingDecimals : Int, isCEther : Bool } -> Cmd msg
-  app.ports.askCTokenMetadataAllPort.subscribe(({ blockNumber, cTokens, compoundLens }) => {
+  app.ports.askCTokenMetadataAllPort.subscribe(({ blockNumber, cTokens, compoundLens, comptroller }) => {
     const CompoundLens = getContractJsonByName(eth, 'CompoundLens');
+    const Comptroller = getContractJsonByName(eth, 'Comptroller');
 
-    wrapCall(app, eth, [[CompoundLens, compoundLens, 'cTokenMetadataAll', [cTokens]]], blockNumber)
-      .then(([results]) => {
+    const mintGuardianCalls = cTokens.map((cTokenAddress) => [Comptroller, comptroller, 'mintGuardianPaused', [cTokenAddress]])
+
+    wrapCall(app, eth, [[CompoundLens, compoundLens, 'cTokenMetadataAll', [cTokens]], ...mintGuardianCalls], blockNumber)
+      .then(([results, ...mintGuardianResults]) => {
         const cTokenMetadataList = results.map(
           ({
             cToken: cTokenAddress,
@@ -251,7 +254,7 @@ function subscribeToCTokenPorts(app, eth) {
             compSupplySpeed: compSupplySpeedResult,
             compBorrowSpeed: compBorrowSpeedResult,
             borrowCap: borrowCapResult
-          }) => {
+          }, index) => {
             const totalCash = toScaledDecimal(parseWeiStr(totalCashResult), underlyingDecimals);
 
             //Calculate oneCTokenInUnderlying
@@ -280,7 +283,8 @@ function subscribeToCTokenPorts(app, eth) {
               compSupplySpeedPerDay: toScaledDecimal(parseWeiStr(compSupplySpeedResult).mul(BLOCKS_PER_DAY), EXP_DECIMALS),
               compBorrowSpeedPerBlock: toScaledDecimal(parseWeiStr(compBorrowSpeedResult), EXP_DECIMALS),
               compBorrowSpeedPerDay: toScaledDecimal(parseWeiStr(compBorrowSpeedResult).mul(BLOCKS_PER_DAY), EXP_DECIMALS),
-              borrowCap: toScaledDecimal(parseWeiStr(borrowCapResult), underlyingDecimals)
+              borrowCap: toScaledDecimal(parseWeiStr(borrowCapResult), underlyingDecimals),
+              mintGuardianPaused: mintGuardianResults[index]
             };
           }
         );

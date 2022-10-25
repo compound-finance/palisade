@@ -40,7 +40,7 @@ view : Maybe Config -> Maybe Decimal -> Model -> Html Msg
 view maybeConfig maybeEtherUsdPrice ({ compoundState, oracleState, tokenState, userLanguage } as model) =
     let
         allCTokensList =
-            CTokenHelper.getAllSupportedCTokens compoundState tokenState
+            CTokenHelper.getAllSupportedCTokens compoundState tokenState CTokenHelper.ForBorrow
 
         balanceTotalsUsd =
             Balances.getUnderlyingTotalsInUsd compoundState allCTokensList oracleState
@@ -263,7 +263,7 @@ borrowedAssetRow : Bool -> Config -> ( Maybe CustomerAddress, Maybe Decimal ) ->
 borrowedAssetRow isAllMarketsRow config ( maybeCustomerAddress, maybeEtherBalance ) maybeEtherUsdPrice { compoundState, tokenState, oracleState, preferences, userLanguage } { cToken, borrowBalance, tokenValueUsd, maybeBorrowInterestAccrued, borrowInterestRate, underlyingCash } =
     let
         allCTokensList =
-            CTokenHelper.getAllSupportedCTokens compoundState tokenState
+            CTokenHelper.getAllSupportedCTokens compoundState tokenState CTokenHelper.ForBorrow
 
         balanceTotalsUsd =
             Balances.getUnderlyingTotalsInUsd compoundState allCTokensList oracleState
@@ -413,7 +413,7 @@ getReadyBorrowedAssets : Model -> Bool -> List ReadyBorrowedAsset
 getReadyBorrowedAssets { compoundState, oracleState, tokenState } applyNonZeroBalanceFilter =
     let
         allCTokensList =
-            CTokenHelper.getAllSupportedCTokens compoundState tokenState
+            CTokenHelper.getAllSupportedCTokens compoundState tokenState CTokenHelper.ForBorrow
 
         borrowedCTokensList =
             if applyNonZeroBalanceFilter then
@@ -488,7 +488,7 @@ getReadyBorrowedAssetsForNoAccount : Model -> List ReadyBorrowedAsset
 getReadyBorrowedAssetsForNoAccount { compoundState, oracleState, tokenState } =
     let
         allCTokensList =
-            CTokenHelper.getAllSupportedCTokens compoundState tokenState
+            CTokenHelper.getAllSupportedCTokens compoundState tokenState CTokenHelper.ForBorrow
     in
     allCTokensList
         |> List.filterMap
@@ -526,7 +526,7 @@ areAllAssetsLoaded : Model -> Bool
 areAllAssetsLoaded ({ account, compoundState, tokenState } as model) =
     let
         allCTokensList =
-            CTokenHelper.getAllSupportedCTokens compoundState tokenState
+            CTokenHelper.getAllSupportedCTokens compoundState tokenState CTokenHelper.ForBorrow
 
         readyBorrowedAssets =
             case account of
