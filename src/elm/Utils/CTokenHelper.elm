@@ -1,4 +1,4 @@
-module Utils.CTokenHelper exposing (getAllSupportedCTokens)
+module Utils.CTokenHelper exposing (CTokenType(..), getAllSupportedCTokens)
 
 import Balances
 import Decimal
@@ -7,13 +7,22 @@ import Eth.Compound exposing (CompoundState)
 import Eth.Token exposing (CToken, TokenState)
 
 
-getAllSupportedCTokens : CompoundState -> TokenState -> List CToken
-getAllSupportedCTokens compoundState tokenState =
+type CTokenType
+    = ForCollateral
+    | ForBorrow
+
+
+getAllSupportedCTokens : CompoundState -> TokenState -> CTokenType -> List CToken
+getAllSupportedCTokens compoundState tokenState cTokenType =
     tokenState.cTokens
         |> Dict.values
         |> List.filterMap
             (\cToken ->
-                if cToken.symbol == "cSAI" || cToken.symbol == "cREP" || cToken.symbol == "cWBTC" || cToken.symbol == "cFEI" || Balances.getMintGuardianPaused compoundState.cTokensMetadata cToken.contractAddress then
+                let
+                    mintPaused =
+                        Balances.getMintGuardianPaused compoundState.cTokensMetadata cToken.contractAddress && cTokenType == ForCollateral
+                in
+                if cToken.symbol == "cSAI" || cToken.symbol == "cREP" || cToken.symbol == "cWBTC" || cToken.symbol == "cFEI" || mintPaused then
                     let
                         underlyingBalances =
                             Balances.getUnderlyingBalances compoundState cToken.contractAddress
