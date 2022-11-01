@@ -12,9 +12,8 @@ import CompoundComponents.DisplayCurrency exposing (DisplayCurrency(..))
 import CompoundComponents.Eth.ConnectedEthWallet as ConnectedEthWallet exposing (tryConnect)
 import CompoundComponents.Eth.Ethereum as Ethereum exposing (Account(..), AssetAddress(..), ContractAddress(..), CustomerAddress(..))
 import CompoundComponents.Eth.Ledger exposing (LedgerAccount(..))
-import CompoundComponents.Eth.Network as Network exposing (Network(..), networkId, networkName)
+import CompoundComponents.Eth.Network as Network exposing (Network(..), networkId)
 import CompoundComponents.Ether.BNTransaction as BNTransaction exposing (BNTransactionMsg)
-import CompoundComponents.Ether.Helpers
 import CompoundComponents.Functions exposing (handleError)
 import CompoundComponents.Utils.CompoundHtmlAttributes exposing (HrefLinkType(..), class, href, id, target)
 import CompoundComponents.Utils.Time
