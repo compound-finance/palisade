@@ -5,7 +5,7 @@ import Bootstrap.Progress as Progress
 import Charty.PieChart as PieChart
 import CompoundComponents.DisplayCurrency as DisplayCurrency
 import CompoundComponents.Eth.Ethereum exposing (getContractAddressString)
-import CompoundComponents.Utils.CompoundHtmlAttributes exposing (class, id, style, onClickStopPropagation)
+import CompoundComponents.Utils.CompoundHtmlAttributes exposing (HrefLinkType(..), class, href, id, onClickStopPropagation, style)
 import CompoundComponents.Utils.DigitAnimatorHelper exposing (valueFormattedStringToDigits)
 import CompoundComponents.Utils.NumberFormatter exposing (formatPercentageToNearestWhole, formatPercentageWithDots)
 import DappInterface.CollateralPane as CollateralPane
@@ -146,11 +146,11 @@ view maybeConfig maybeEtherUsdPrice ({ borrowingContainerState, preferences } as
                                         , label [ class "migrator-alert__title" ] [ text "Migrate your V2 balances!" ]
                                         , label [ class "migrator-alert__description" ]
                                             [ text "Transfer multiple balances to Compound V3 in a single transaction using our new "
-                                            , a [] [ text "migrator tool" ]
+                                            , a (href External "https://app.compound.finance/extensions/comet_migrator") [ text "migrator tool" ]
                                             , text "."
                                             ]
                                         , div [ class "close-x" ]
-                                            [ button [onClickStopPropagation (ForPreferences (Preferences.SetShowMigratorAlert False))] []
+                                            [ button [ onClickStopPropagation (ForPreferences (Preferences.SetShowMigratorAlert False)) ] []
                                             ]
                                         ]
                                     ]
