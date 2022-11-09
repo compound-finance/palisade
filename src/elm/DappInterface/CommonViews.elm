@@ -244,7 +244,7 @@ pageFooter userLanguage maybeBlockNumber preferences model =
 
 compound3Button : Html Msg
 compound3Button =
-    a ([ target "_blank", class "compound-3-button" ] ++ href External "https://v3-app.compound.finance") [ text "Compound III", span [ class "arrow" ] [] ]
+    a ([ target "_blank", class "compound-3-button" ] ++ href External "https://app.compound.finance") [ text "Compound III", span [ class "arrow" ] [] ]
 
 
 compBalanceView : Account -> GovernanceState -> Html Msg
