@@ -1,11 +1,11 @@
-module DappInterface.OverviewHeader exposing (ParentMsg(..), view)
+module DappInterface.OverviewHeader exposing (Msg(..), ParentMsg(..), view)
 
 import Balances
 import Bootstrap.Progress as Progress
-import Charty.PieChart as PieChart exposing (view)
+import Charty.PieChart as PieChart
 import CompoundComponents.DisplayCurrency as DisplayCurrency
 import CompoundComponents.Eth.Ethereum exposing (getContractAddressString)
-import CompoundComponents.Utils.CompoundHtmlAttributes exposing (class, id, style)
+import CompoundComponents.Utils.CompoundHtmlAttributes exposing (HrefLinkType(..), class, href, id, onClickStopPropagation, style)
 import CompoundComponents.Utils.DigitAnimatorHelper exposing (valueFormattedStringToDigits)
 import CompoundComponents.Utils.NumberFormatter exposing (formatPercentageToNearestWhole, formatPercentageWithDots)
 import DappInterface.CollateralPane as CollateralPane
@@ -18,13 +18,14 @@ import DappInterface.MainModel
         , mouseEventDecoder
         )
 import Decimal exposing (Decimal)
-import Dict exposing (Dict)
+import Dict
 import Eth.Config exposing (Config)
 import Eth.Oracle
-import Html exposing (Html, div, label, p, section, span, text)
+import Html exposing (Html, a, button, div, label, p, section, text)
 import Html.Attributes
 import Html.Events
 import Json.Decode
+import Preferences exposing (PreferencesMsg(..))
 import Strings.Translations as Translations
 import Utils.CompAPYHelper
 
@@ -36,8 +37,13 @@ type ParentMsg
     | NetAPYMouseLeave MouseEvent
 
 
-view : Maybe Config -> Maybe Decimal -> Model -> Html ParentMsg
-view maybeConfig maybeEtherUsdPrice ({ borrowingContainerState, userLanguage } as mainModel) =
+type Msg
+    = ForPreferences PreferencesMsg
+    | ForParent ParentMsg
+
+
+view : Maybe Config -> Maybe Decimal -> Model -> Html Msg
+view maybeConfig maybeEtherUsdPrice ({ borrowingContainerState, preferences } as mainModel) =
     let
         cTokens =
             Dict.values mainModel.tokenState.cTokens
@@ -123,9 +129,43 @@ view maybeConfig maybeEtherUsdPrice ({ borrowingContainerState, userLanguage } a
                 ( div [ class "headline headline--loading" ] []
                 , div [ class "headline headline--loading" ] []
                 )
+
+        migratorAlertBanner =
+            cTokens
+                |> List.filter (\ctoken -> ctoken.underlying.symbol == "USDC")
+                |> List.head
+                |> Maybe.andThen
+                    (\cUSDC -> Balances.getUnderlyingBalances mainModel.compoundState cUSDC.contractAddress)
+                |> Maybe.andThen
+                    (\balances ->
+                        let
+                            alertView =
+                                div [ class "container-large" ]
+                                    [ div [ class "migrator-alert" ]
+                                        [ div [ class "migrator-alert__badge" ] [ text "NEW" ]
+                                        , label [ class "migrator-alert__title" ] [ text "Migrate your V2 balances!" ]
+                                        , label [ class "migrator-alert__description" ]
+                                            [ text "Transfer multiple balances to Compound V3 in a single transaction using our new "
+                                            , a (href External "https://app.compound.finance/extensions/comet_migrator") [ text "migrator tool" ]
+                                            , text "."
+                                            ]
+                                        , div [ class "close-x" ]
+                                            [ button [ onClickStopPropagation (ForPreferences (Preferences.SetShowMigratorAlert False)) ] []
+                                            ]
+                                        ]
+                                    ]
+                        in
+                        if Decimal.gt balances.underlyingBorrowBalance Decimal.zero && preferences.showMigratorAlert then
+                            Just alertView
+
+                        else
+                            Nothing
+                    )
+                |> Maybe.withDefault (text "")
     in
     section [ id "borrow-overview", class "hero" ]
-        [ div [ class "balance-totals" ]
+        [ migratorAlertBanner
+        , div [ class "balance-totals" ]
             [ div [ class "content" ]
                 [ div [ class "row align-middle mobile-hide" ]
                     [ div [ class "col-xs-5 text-center" ]
@@ -172,8 +212,8 @@ view maybeConfig maybeEtherUsdPrice ({ borrowingContainerState, userLanguage } a
                         ]
                     , div
                         [ class "progress-bar-hover-space"
-                        , Html.Events.on "mouseenter" (Json.Decode.map BorrowingLimitMouseEnter mouseEventDecoder)
-                        , Html.Events.on "mouseleave" (Json.Decode.map BorrowingLimitMouseLeave mouseEventDecoder)
+                        , Html.Events.on "mouseenter" (Json.Decode.map (ForParent << BorrowingLimitMouseEnter) mouseEventDecoder)
+                        , Html.Events.on "mouseleave" (Json.Decode.map (ForParent << BorrowingLimitMouseLeave) mouseEventDecoder)
                         ]
                         []
                     ]
@@ -190,8 +230,8 @@ buildDataset borrowPercentage =
     ]
 
 
-netAPYView : Maybe Config -> Maybe Decimal -> Model -> Html ParentMsg
-netAPYView maybeConfig maybeEtherUsdPrice ({ userLanguage } as mainModel) =
+netAPYView : Maybe Config -> Maybe Decimal -> Model -> Html Msg
+netAPYView maybeConfig _ ({ userLanguage } as mainModel) =
     let
         cTokens =
             Dict.values mainModel.tokenState.cTokens
@@ -319,8 +359,8 @@ netAPYView maybeConfig maybeEtherUsdPrice ({ userLanguage } as mainModel) =
     in
     div
         [ class "net-apy-wrapper"
-        , Html.Events.on "mouseenter" (Json.Decode.map NetAPYMouseEnter mouseEventDecoder)
-        , Html.Events.on "mouseleave" (Json.Decode.map NetAPYMouseLeave mouseEventDecoder)
+        , Html.Events.on "mouseenter" (Json.Decode.map (ForParent << NetAPYMouseEnter) mouseEventDecoder)
+        , Html.Events.on "mouseleave" (Json.Decode.map (ForParent << NetAPYMouseLeave) mouseEventDecoder)
         ]
         [ div [ class "net-apy" ]
             [ PieChart.view PieChart.defaults (buildDataset borrowEffectPercentage) ]

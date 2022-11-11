@@ -9,7 +9,7 @@ port module Preferences exposing
 import CompoundComponents.DisplayCurrency as DisplayCurrency exposing (DisplayCurrency(..))
 import CompoundComponents.Eth.Decoders exposing (forceMaybe)
 import CompoundComponents.Functions exposing (handleError)
-import Dict exposing (Dict)
+import Dict
 import Json.Decode exposing (Value)
 import Json.Decode.Pipeline exposing (optional, required)
 import Result exposing (Result)
@@ -29,6 +29,7 @@ type alias Preferences =
     , userLanguage : Translations.Lang
     , supplyPaneOpen : Bool
     , borrowPaneOpen : Bool
+    , showMigratorAlert : Bool
     }
 
 
@@ -37,6 +38,7 @@ type PreferencesMsg
     | SetUserLanguage Translations.Lang
     | SetSupplyPaneOpen Bool
     | SetBorrowPaneOpen Bool
+    | SetShowMigratorAlert Bool
     | SetPreferences Preferences
     | ClearStoredPreferences
 
@@ -47,6 +49,7 @@ preferencesInit initialLanguage =
       , userLanguage = initialLanguage
       , supplyPaneOpen = True
       , borrowPaneOpen = True
+      , showMigratorAlert = False
       }
     , askStoredPreferences
     )
@@ -83,6 +86,13 @@ preferencesUpdate msg state =
             in
             ( updatedState, storePreferences updatedState )
 
+        SetShowMigratorAlert show ->
+            let
+                updatedState =
+                    { state | showMigratorAlert = show }
+            in
+            ( updatedState, storePreferences updatedState )
+
         SetPreferences preferences ->
             ( preferences, Cmd.none )
 
@@ -91,7 +101,7 @@ preferencesUpdate msg state =
 
 
 preferencesSubscriptions : Preferences -> Sub PreferencesMsg
-preferencesSubscriptions state =
+preferencesSubscriptions _ =
     Sub.batch
         [ giveStoredPreferences (handleError (\_ -> ClearStoredPreferences) SetPreferences)
         ]
@@ -130,16 +140,17 @@ savedLanguageToString userLanguage =
 -- PORTS
 
 
-port storePreferencesPort : { displayCurrency : String, userLanguage : String, supplyPaneOpen : Bool, borrowPaneOpen : Bool } -> Cmd msg
+port storePreferencesPort : { displayCurrency : String, userLanguage : String, supplyPaneOpen : Bool, borrowPaneOpen : Bool, showMigratorAlert : Bool } -> Cmd msg
 
 
 storePreferences : Preferences -> Cmd msg
-storePreferences { displayCurrency, userLanguage, supplyPaneOpen, borrowPaneOpen } =
+storePreferences { displayCurrency, userLanguage, supplyPaneOpen, borrowPaneOpen, showMigratorAlert } =
     storePreferencesPort
         { displayCurrency = DisplayCurrency.displayCurrencyToString displayCurrency
         , userLanguage = savedLanguageToString userLanguage
         , supplyPaneOpen = supplyPaneOpen
         , borrowPaneOpen = borrowPaneOpen
+        , showMigratorAlert = showMigratorAlert
         }
 
 
@@ -159,12 +170,16 @@ giveStoredPreferences wrapper =
     let
         decoder =
             Json.Decode.succeed Preferences
-                |> required "displayCurrency"
-                    (Json.Decode.string
-                        |> Json.Decode.map DisplayCurrency.readDisplayCurrency
-                        |> Json.Decode.andThen (forceMaybe "invalid display currency")
+                |> optional "displayCurrency"
+                    (Json.Decode.oneOf
+                        [ Json.Decode.null DisplayCurrency.USD
+                        , Json.Decode.string
+                            |> Json.Decode.map DisplayCurrency.readDisplayCurrency
+                            |> Json.Decode.andThen (forceMaybe "invalid display currency")
+                        ]
                     )
-                |> required "userLanguage"
+                    DisplayCurrency.USD
+                |> optional "userLanguage"
                     (Json.Decode.oneOf
                         [ Json.Decode.null Translations.En
                         , Json.Decode.string
@@ -172,8 +187,10 @@ giveStoredPreferences wrapper =
                             |> Json.Decode.andThen (forceMaybe "invalid saved language")
                         ]
                     )
+                    Translations.En
                 |> optional "supplyPaneOpen" Json.Decode.bool True
                 |> optional "borrowPaneOpen" Json.Decode.bool True
+                |> optional "showMigratorAlert" Json.Decode.bool True
     in
     giveStoredPreferencesPort
         (Json.Decode.decodeValue decoder >> wrapper)

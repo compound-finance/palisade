@@ -99,20 +99,23 @@ translator { onContainerParentMsg, onInternalMsg, onWrappedCompoundMsg, onWrappe
             onWrappedPreferencesMsg preferencesMsg
 
 
-overviewHeaderMsgMapper : OverviewHeader.ParentMsg -> Msg
+overviewHeaderMsgMapper : OverviewHeader.Msg -> Msg
 overviewHeaderMsgMapper overviewHeaderMsg =
     case overviewHeaderMsg of
-        OverviewHeader.BorrowingLimitMouseEnter mouseEvent ->
+        OverviewHeader.ForParent (OverviewHeader.BorrowingLimitMouseEnter mouseEvent) ->
             ForSelf (BorrowingLimitMouseEnter mouseEvent)
 
-        OverviewHeader.BorrowingLimitMouseLeave mouseEvent ->
+        OverviewHeader.ForParent (OverviewHeader.BorrowingLimitMouseLeave mouseEvent) ->
             ForSelf (BorrowingLimitMouseLeave mouseEvent)
 
-        OverviewHeader.NetAPYMouseEnter mouseEvent ->
+        OverviewHeader.ForParent (OverviewHeader.NetAPYMouseEnter mouseEvent) ->
             ForSelf (NetAPYMouseEnter mouseEvent)
 
-        OverviewHeader.NetAPYMouseLeave mouseEvent ->
+        OverviewHeader.ForParent (OverviewHeader.NetAPYMouseLeave mouseEvent) ->
             ForSelf (NetAPYMouseLeave mouseEvent)
+
+        OverviewHeader.ForPreferences preferencesMsg ->
+            ForEthControllers (WrappedPreferencesMsg preferencesMsg)
 
 
 collateralPaneMsgMapper : CollateralPane.Msg -> Msg

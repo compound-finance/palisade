@@ -15,12 +15,12 @@ module DappInterface.CommonViews exposing
 import CompoundComponents.DisplayCurrency exposing (DisplayCurrency(..))
 import CompoundComponents.Eth.ConnectedEthWallet as EthConnectedWallet
 import CompoundComponents.Eth.Ethereum exposing (Account(..), CustomerAddress(..), shortenedAddressString)
-import CompoundComponents.Utils.CompoundHtmlAttributes exposing (HrefLinkType(..), class, href, id, onClickStopPropagation, src, style, target)
+import CompoundComponents.Utils.CompoundHtmlAttributes exposing (HrefLinkType(..), class, href, id, onClickStopPropagation, style, target)
 import CompoundComponents.Utils.NumberFormatter exposing (formatBlockNumber, formatCompAndVoteBalance, formatToDecimalPlaces)
 import DappInterface.Page exposing (Page(..), getHrefUrl)
 import Decimal exposing (Decimal)
 import Eth.Governance exposing (GovernanceState, getCompAccruedBalance, getCompoundGovernanceTokenBalance)
-import Html exposing (Html, a, div, footer, header, img, label, span, text)
+import Html exposing (Html, a, div, footer, header, label, span, text)
 import Html.Events exposing (onClick)
 import Preferences exposing (Preferences, PreferencesMsg(..))
 import Strings.Translations as Translations exposing (Lang(..))
@@ -214,7 +214,7 @@ pageFooter userLanguage maybeBlockNumber preferences model =
                 [ div [ class "col-xs-12 col-sm-2" ]
                     [ a ([ class "brand" ] |> List.append (href PageNavigation "/")) [] ]
                 , div [ class "col-xs-12 col-sm-10 links" ]
-                    [ a (target "_blank" :: href External "https://compound.finance/markets") [ text (Translations.markets userLanguage) ]
+                    [ a (target "_blank" :: href External "https://app.compound.finance/markets?market=1_V2_0x3d9819210A31b4961b30EF54bE2aeD79B9c9Cd3B") [ text (Translations.markets userLanguage) ]
                     , a (target "_blank" :: href External "https://compound.finance/governance") [ text (Translations.governance userLanguage) ]
                     , a (target "_blank" :: href External "https://compound.finance/governance/comp") [ text (Translations.comp userLanguage) ]
                     , a (href PageNavigation (getHrefUrl TermsOfService)) [ text (Translations.terms userLanguage) ]
@@ -226,7 +226,7 @@ pageFooter userLanguage maybeBlockNumber preferences model =
                     [ div [ class "mobile-hide" ]
                         [ span [ class ("dot-indicator" ++ indicatorColorClass) ] []
                         , label [ class "small" ] [ text (Translations.latest_block userLanguage (formatBlockNumber maybeBlockNumber)) ]
-                        , a (target "_blank" :: href External "https://compound.finance/markets") [ text (Translations.markets userLanguage) ]
+                        , a (target "_blank" :: href External "https://app.compound.finance/markets?market=1_V2_0x3d9819210A31b4961b30EF54bE2aeD79B9c9Cd3B") [ text (Translations.markets userLanguage) ]
                         , a (target "_blank" :: href External "https://compound.finance/governance") [ text (Translations.governance userLanguage) ]
                         , a (target "_blank" :: href External "https://compound.finance/governance/comp") [ text (Translations.comp userLanguage) ]
                         , a (target "_blank" :: href External "https://medium.com/compound-finance/the-compound-guide-to-supplying-borrowing-crypto-assets-94821f2950a0") [ text (Translations.support userLanguage) ]
@@ -244,7 +244,7 @@ pageFooter userLanguage maybeBlockNumber preferences model =
 
 compound3Button : Html Msg
 compound3Button =
-    a ([ target "_blank", class "compound-3-button" ] ++ href External "https://v3-app.compound.finance") [ text "Compound III", span [ class "arrow" ] [] ]
+    a ([ target "_blank", class "compound-3-button" ] ++ href External "https://app.compound.finance") [ text "Compound III", span [ class "arrow" ] [] ]
 
 
 compBalanceView : Account -> GovernanceState -> Html Msg

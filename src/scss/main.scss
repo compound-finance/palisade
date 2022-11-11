@@ -232,6 +232,68 @@ body {
 }
 
 #borrow-overview {
+  .migrator-alert {
+    align-items: center;
+    background-color: #1d2833;
+    border-radius: 0.5rem;
+    display: flex;
+    margin-bottom: 3.25rem;
+    padding: 0.825rem 0.75rem;
+
+    &__badge {
+      background-color: #073e2e;
+      border-radius: 0.25rem;
+      color: #00d697;
+      font-style: normal;
+      font-weight: 500;
+      font-size: 11px;
+      line-height: 16px;
+      margin-right: 0.5rem;
+      padding: 0.125rem 0.5rem;
+    }
+
+    &__title {
+      color: $color_light_1;
+      font-style: normal;
+      font-weight: 500;
+      font-size: 11px;
+      line-height: 16px;
+      margin-right: 0.5rem;
+    }
+
+    &__description {
+      color: #6d7e8f;
+      font-style: normal;
+      font-weight: 400;
+      font-size: 11px;
+      line-height: 16px;
+
+      a {
+        font-style: normal;
+        font-weight: 400;
+        font-size: 11px;
+        line-height: 16px;
+        letter-spacing: inherit;
+        text-transform: none;
+        text-decoration: underline;
+      }
+    }
+
+    .close-x {
+      margin-left: auto;
+
+      button {
+        background-color: transparent;
+        background-image: url('/images/icn-circle-close.svg');
+        background-size: 100% 100%;
+        border: 0;
+        padding: 0.5rem 1rem;
+        height: 1.25rem;
+        width: 1.25rem;
+      }
+    }
+  }
+
   .mobile-only {
     display: none;
 
