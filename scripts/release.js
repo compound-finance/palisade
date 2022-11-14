@@ -79,7 +79,7 @@ async function release(cid, host, path, ipfsSecret) {
 async function run(maybeRelease) {
   const releaseFile = '.release';
   const ipfsSecret = process.env['IPFS_SECRET'];
-  const host = 'app-ipfs.compound.finance';
+  const host = 'v2-app.compound.finance';
   const path = '/release';
 
   if (!ipfsSecret) {
