@@ -111,7 +111,7 @@ update msg model =
 
 
 pageHeader : Translations.Lang -> Page -> EthConnectedWallet.Model -> Account -> Preferences -> GovernanceState -> Model -> Html Msg
-pageHeader userLanguage page connectedWallet account preferences governanceState model =
+pageHeader userLanguage page connectedWallet account _ governanceState _ =
     let
         accountAddress =
             case account of
@@ -187,8 +187,7 @@ pageHeader userLanguage page connectedWallet account preferences governanceState
                     ]
                 , div [ class "col-xs-5 col-sm-4 mobile-hide text-center links" ] links
                 , div [ class "col-xs-9 col-sm-4 text-right actions" ]
-                    [ compound3Button
-                    , compBalanceView account governanceState
+                    [ compBalanceView account governanceState
                     , accountButton
                     ]
                 , div [ class "col-xs-9 mobile-links actions" ] mobileLinks
@@ -242,11 +241,6 @@ pageFooter userLanguage maybeBlockNumber preferences model =
         ]
 
 
-compound3Button : Html Msg
-compound3Button =
-    a ([ target "_blank", class "compound-3-button" ] ++ href External "https://app.compound.finance") [ text "Compound III", span [ class "arrow" ] [] ]
-
-
 compBalanceView : Account -> GovernanceState -> Html Msg
 compBalanceView account governanceState =
     let
@@ -293,7 +287,7 @@ getCurrencyTextAndMsg targetCurrency =
 currencySelectorButton : DisplayCurrency -> Model -> Html Msg
 currencySelectorButton selectedCurrency model =
     let
-        ( currencyText, onCurrencyClickMsg ) =
+        ( currencyText, _ ) =
             getCurrencyTextAndMsg selectedCurrency
 
         ( currencyDropdownActiveClass, dropdownOptions ) =
@@ -332,7 +326,7 @@ currencySelectorButton selectedCurrency model =
 languageSelectorView : Translations.Lang -> Model -> Html Msg
 languageSelectorView userLanguage model =
     let
-        selectedLanguageText =
+        _ =
             case userLanguage of
                 En ->
                     Translations.english userLanguage
