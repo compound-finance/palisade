@@ -32,7 +32,7 @@ getPageTitle userLanguage page =
             buildTitle userLanguage Nothing
 
         Home ->
-            buildTitle userLanguage (Just (Translations.site_title_dashboard userLanguage))
+            buildTitle userLanguage (Just (Translations.site_title_v2 userLanguage))
 
         Liquidate ->
             buildTitle userLanguage (Just (Translations.site_title_liquidate userLanguage))
