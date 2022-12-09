@@ -44,6 +44,7 @@ const PROVIDER_TYPE_SHOW_ACCOUNT = 3;
 const ACCOUNT_CHECK_INTERVAL_MS = 2000;
 const NETWORK_CHECK_INTERVAL_MS = 4000;
 const NEW_BLOCK_CHECK_INTERVAL_MS = 5000;
+const SECONDS_PER_BLOCK = 12;
 const BLOCKS_PER_DAY = new BN(7200); // 12 seconds per block
 const EXP_DECIMALS = 18;
 const CALCULATE_ACCOUNT_VALUES_DECIMALS = 36;
@@ -842,8 +843,7 @@ function subscribeToGovernancePorts(app, eth) {
     let endTime = timestamps[proposal.startBlock];
 
     if (endTime == null) {
-      const blockSecFreq = 12.0;
-      endTime = Math.floor(currentTime + ((proposal.startBlock - currentBlock) * blockSecFreq));
+      endTime = Math.floor(currentTime + ((proposal.startBlock - currentBlock) * SECONDS_PER_BLOCK));
     }
 
     return {
@@ -860,7 +860,8 @@ function subscribeToGovernancePorts(app, eth) {
       (meta.canceledBlock == null || proposal.startBlock < meta.canceledBlock) && (startTime != null && startTime < currentTime);
 
     if (isActive) {
-      const endTime = timestamps[proposal.endBlock] || currentTime + (proposal.endBlock - currentBlock) * 15; // This assumes 15 second block times. API uses this same assumption
+      // This assumes a block time of 12 seconds, similar to the API.
+      const endTime = timestamps[proposal.endBlock] || currentTime + (proposal.endBlock - currentBlock) * SECONDS_PER_BLOCK;
       return {
         state: 'active',
         start_time: startTime,
