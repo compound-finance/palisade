@@ -56,7 +56,7 @@ async function sign(cid, ipfsSecret) {
 
   // Verify CID has been signed
   let signature = await crypto.subtle.sign(
-    { name: "ECDSA", hash: {name: "SHA-384"} },
+    { name: "ECDSA", hash: {name: "SHA-256"} },
     key,
     enc.encode(cid)
   );
