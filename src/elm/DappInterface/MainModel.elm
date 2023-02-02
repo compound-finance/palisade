@@ -162,6 +162,7 @@ type alias Model =
     , maybeGasPrice : Maybe Decimal
     , userLanguage : Translations.Lang
     , repl : Repl.Model
+    , unsDomains: Dict String String 
     }
 
 

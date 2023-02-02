@@ -34,6 +34,7 @@ import {
   wrapCallErr,
   wrapSend,
 } from '../../node_modules/compound-components/src/js/sharedEth/eth';
+import Resolution from '@unstoppabledomains/resolution';
 
 const PROVIDER_TYPE_NONE = 0;
 const PROVIDER_TYPE_LEDGER = 1;
@@ -103,7 +104,7 @@ async function getBlockTimestamps(blockNumbers, network) {
 let blockNativeApiKey;
 let blockNativeNetwork = {};
 let blockNative;
-
+const resolution = new Resolution();
 function buildBlockNative(networkId) {
   if (blockNativeApiKey) {
     if (blockNativeNetwork[networkId]) {
@@ -1636,6 +1637,22 @@ function subscribeToSetBlockNativeNetwork(app, eth) {
     buildBlockNative(networkId);
   });
 }
+function subscribeToGetUNSAddress(app, eth) {
+
+  app.ports.sendUNSAddress.subscribe((address) => {
+    resolution
+    .reverse(address)
+    .then((domain) => {
+       if(domain != null){
+        app.ports.receiveUNSAddress.send([address, domain])
+       }
+    })
+    // domain consists of the domain with reverse resolution to that address
+    // use this domain in your application
+    .catch(console.error);
+  });
+}
+
 
 function subscribe(
   app,
@@ -1666,6 +1683,7 @@ function subscribe(
   subscribeToAdminDashboard(app, eth);
   subscribeToGovernancePorts(app, eth);
   subscribeToFlywheelPorts(app, eth);
+  subscribeToGetUNSAddress(app, eth);
 
   // TODO: Do we want to reduce the globalness of these vars?
   blockNativeApiKey = blockNativeApiKeyInput;

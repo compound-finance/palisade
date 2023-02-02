@@ -259,7 +259,7 @@ handleShouldLoadCurrentDelegatee apiBaseUrlMap maybeNetwork account governanceSt
     let
         maybeRequestCurrentDelegateeUrl =
             case ( requestCurrentDelegatee, maybeNetwork, account ) of
-                ( True, Just network, Acct customer _ ) ->
+                ( True, Just network, Acct customer _ _ ) ->
                     case getDelegatedAddress customer governanceState of
                         Just (Delegatee (Customer delegateeAddressString)) ->
                             { addresses = [ delegateeAddressString ]
@@ -373,7 +373,7 @@ getPendingApproveCAPTransaction config network customer transactionState =
 handleTransactionUpdate : Maybe Config -> Maybe Network -> Account -> TransactionState -> TransactionMsg -> Model -> Model
 handleTransactionUpdate maybeConfig maybeNetwork account transactionState transactionMsg model =
     case ( maybeConfig, maybeNetwork, account ) of
-        ( Just config, Just actualNetwork, Acct customer _ ) ->
+        ( Just config, Just actualNetwork, Acct customer _ _ ) ->
             case transactionMsg of
                 Eth.Transaction.NewTransaction transaction ->
                     if transaction.function == "approve" then
@@ -436,7 +436,7 @@ update internalMsg maybeConfig maybeNetwork apiBaseUrlMap account model =
 
         VoteDashboardDataResult data ->
             case ( maybeNetwork, account ) of
-                ( Just network, Acct (Customer voter) _ ) ->
+                ( Just network, Acct (Customer voter) _ _ ) ->
                     if String.toLower (networkName network) == data.network && voter == data.voter then
                         let
                             isCompletedState : List ProposalState -> Bool
@@ -617,7 +617,7 @@ update internalMsg maybeConfig maybeNetwork apiBaseUrlMap account model =
                     case voteModalState of
                         ConfirmVoteType proposal voteType reason ->
                             case ( maybeConfig, account ) of
-                                ( Just config, Acct accountAddress _ ) ->
+                                ( Just config, Acct accountAddress _ _ ) ->
                                     case config.maybeGovernor of
                                         Just ( governorAddress, isBravo ) ->
                                             voteProposal accountAddress (getContractAddressString governorAddress) isBravo proposal.id voteType reason
@@ -684,7 +684,7 @@ update internalMsg maybeConfig maybeNetwork apiBaseUrlMap account model =
             case maybeConfig of
                 Just config ->
                     case ( config.maybeCompToken, account ) of
-                        ( Just comp, Acct accountAddress _ ) ->
+                        ( Just comp, Acct accountAddress _ _ ) ->
                             let
                                 isValidDelegate =
                                     isValidAddress delegateAddress
@@ -752,7 +752,7 @@ view userLanguage maybeConfig maybeNetwork timezone maybeCurrentTime account tra
     let
         { headerView, walletPanel, proposalsPanelView, votingModalView, delegateModalView, approveCAPModalView } =
             case ( maybeConfig, account, maybeNetwork ) of
-                ( Just config, Acct accountAddress _, Just network ) ->
+                ( Just config, Acct accountAddress _ _ , Just network ) ->
                     case config.maybeCompToken of
                         Just _ ->
                             let
@@ -1767,7 +1767,7 @@ voteProposalRow userLanguage timezone maybeCurrentTime config network account mo
 
                         Just Succeeded ->
                             case ( config.maybeGovernor, account ) of
-                                ( Just governor, Acct customer _ ) ->
+                                ( Just governor, Acct customer _ _ ) ->
                                     div [ class "button main proposal__queue-execute-button", onClickStopPropagation (WrappedGovernanceMsg (Eth.Governance.QueueProposal governor customer proposal.id)) ]
                                         [ text (Translations.queue userLanguage) ]
 
@@ -1780,7 +1780,7 @@ voteProposalRow userLanguage timezone maybeCurrentTime config network account mo
                                     proposal.states |> List.reverse |> List.head
                             in
                             case ( config.maybeGovernor, account, maybeRawProposalState ) of
-                                ( Just governor, Acct customer _, Just rawProposalState ) ->
+                                ( Just governor, Acct customer _ _ , Just rawProposalState ) ->
                                     case ( maybeCurrentTime, rawProposalState.end_time ) of
                                         ( Just time, Just endTime ) ->
                                             if CompoundComponents.Utils.Time.posixToSeconds time > CompoundComponents.Utils.Time.posixToSeconds endTime then
@@ -1915,7 +1915,7 @@ getVoteDashboardData configs maybeNetwork maybeCurrentBlockNumber account =
 
         getTrxsCmd =
             case ( Dict.get nameOfNetwork configs, account, maybeCurrentBlockNumber ) of
-                ( Just config, Acct (Customer voter) _, Just currentBlockNumber ) ->
+                ( Just config, Acct (Customer voter) _ _ , Just currentBlockNumber ) ->
                     case ( config.maybeGovernor, config.maybeCompToken ) of
                         ( Just ( governorAddress, isBravo ), Just comp ) ->
                             let

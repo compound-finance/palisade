@@ -12,6 +12,8 @@ port module Port exposing
     , imageError
     , setGasPrice
     , setTitle
+    , sendUNSAddress
+    , receiveUNSAddress
     )
 
 import CompoundComponents.Eth.Decoders
@@ -51,6 +53,11 @@ port askSetBlockNativeNetworkPort : { networkId : Int } -> Cmd msg
 
 port giveAccountBalancePort : (Value -> msg) -> Sub msg
 
+
+-- UNS Address
+
+port sendUNSAddress : String -> Cmd msg
+port receiveUNSAddress : ((String,String) -> msg) -> Sub msg
 
 giveAccountBalance : (Result Json.Decode.Error Decimal -> msg) -> Sub msg
 giveAccountBalance wrapper =

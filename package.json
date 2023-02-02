@@ -28,6 +28,7 @@
     "@babel/runtime": "^7.9.2",
     "@babel/runtime-corejs3": "^7.10.2",
     "@material/switch": "^3.0.0",
+    "@unstoppabledomains/resolution": "^8.2.0",
     "assets-webpack-plugin": "^3.5.1",
     "autoprefixer": "^9.7.6",
     "babel-loader": "^8.0.0",

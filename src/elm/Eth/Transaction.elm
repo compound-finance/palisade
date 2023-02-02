@@ -446,14 +446,14 @@ getPendingTransactionsForAccount maybeNetwork account maybeOldestTrxTimestamp ma
             pendingBNTransactions ++ transactions
     in
     case ( maybeNetwork, account, maybeOldestTrxTimestamp ) of
-        ( Just network, Acct customerAddress _, Just oldestTrxTimeStamp ) ->
+        ( Just network, Acct customerAddress _ _ , Just oldestTrxTimeStamp ) ->
             allPendingTransactions
                 |> List.filter (.status >> (==) Pending)
                 |> List.filter (.network >> (==) network)
                 |> List.filter (.customer >> (==) customerAddress)
                 |> List.filter (\trx -> Time.posixToMillis trx.timestamp >= Time.posixToMillis oldestTrxTimeStamp)
 
-        ( Just network, Acct customerAddress _, Nothing ) ->
+        ( Just network, Acct customerAddress _ _ , Nothing ) ->
             allPendingTransactions
                 |> List.filter (.status >> (==) Pending)
                 |> List.filter (.network >> (==) network)

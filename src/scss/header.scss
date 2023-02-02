@@ -138,7 +138,7 @@ header {
     border-radius: $border-radius;
     padding: ($column-gutter * 0.5);
     margin-left: $column-gutter;
-
+    display: flex;
     &:hover {
       background: lighten($color_dark_2, 5%);
     }

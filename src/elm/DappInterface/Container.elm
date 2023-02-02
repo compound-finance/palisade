@@ -288,7 +288,7 @@ view mainModel =
 
             else
                 case account of
-                    Acct (Customer _) maybeBalance ->
+                    Acct (Customer _) maybeBalance _ ->
                         let
                             hasZeroEthBalance =
                                 case maybeBalance of

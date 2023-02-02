@@ -134,7 +134,7 @@ getUnderlyingTotalsInUsd compoundState cTokens oracleState =
 getWalletBalanceNonSafeEther : Config -> Account -> CompoundState -> CToken -> Maybe Decimal
 getWalletBalanceNonSafeEther config account compoundState cToken =
     case ( Eth.Token.isCEtherToken config cToken, account ) of
-        ( True, Acct customerAddress etherBalance ) ->
+        ( True, Acct customerAddress etherBalance _ ) ->
             etherBalance
 
         _ ->
@@ -145,7 +145,7 @@ getWalletBalanceNonSafeEther config account compoundState cToken =
 getWalletBalanceSafeEther : Config -> Account -> CompoundState -> CToken -> Maybe Decimal
 getWalletBalanceSafeEther config account compoundState cToken =
     case ( Eth.Token.isCEtherToken config cToken, account ) of
-        ( True, Acct customerAddress etherBalance ) ->
+        ( True, Acct customerAddress etherBalance _ ) ->
             case ( Decimal.fromFloat 0.005, etherBalance ) of
                 ( Just etherMaxAdjustment, Just actualEtherBalance ) ->
                     Decimal.sub actualEtherBalance etherMaxAdjustment

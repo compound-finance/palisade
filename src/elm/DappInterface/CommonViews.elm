@@ -10,6 +10,7 @@ module DappInterface.CommonViews exposing
     , pageHeader
     , translator
     , update
+    
     )
 
 import CompoundComponents.DisplayCurrency exposing (DisplayCurrency(..))
@@ -115,14 +116,18 @@ pageHeader userLanguage page connectedWallet account _ governanceState _ =
     let
         accountAddress =
             case account of
-                UnknownAcct ->
-                    ""
+                    UnknownAcct ->
+                        ""
 
-                NoAccount ->
-                    Translations.no_account userLanguage
+                    NoAccount ->
+                        Translations.no_account userLanguage
 
-                Acct (Customer customerAddress) _ ->
-                    shortenedAddressString 2 4 customerAddress
+                    Acct (Customer customerAddress) _ unsDomain ->
+                        case unsDomain of
+                            Nothing ->
+                                shortenedAddressString 2 4 customerAddress
+                            Just domain ->
+                                domain
 
         connectedWalletIconClass =
             case connectedWallet.selectedProvider of
@@ -139,10 +144,9 @@ pageHeader userLanguage page connectedWallet account _ governanceState _ =
                     ""
 
         accountButton =
-            if connectedWallet.selectedProvider == Nothing || connectedWallet.selectedProvider == Just EthConnectedWallet.None then
+            if (connectedWallet.selectedProvider == Nothing || connectedWallet.selectedProvider == Just EthConnectedWallet.None) then
                 a [ id "connect-wallet", class "dapp button hollow", onClick (ForParent AccountAddressClicked) ]
                     [ text (Translations.connect_wallet userLanguage) ]
-
             else
                 a [ id "account", onClick (ForParent AccountAddressClicked) ]
                     [ span [ class connectedWalletIconClass ] []
@@ -191,6 +195,7 @@ pageHeader userLanguage page connectedWallet account _ governanceState _ =
                 , div [ class "col-xs-9 col-sm-4 text-right actions" ]
                     [ compBalanceView account governanceState
                     , accountButton
+                    , text ""
                     ]
                 , div [ class "col-xs-9 mobile-links actions" ] mobileLinks
                 ]
@@ -253,7 +258,7 @@ compBalanceView account governanceState =
                 ]
     in
     case account of
-        Acct customer _ ->
+        Acct customer _ _ ->
             case ( getCompoundGovernanceTokenBalance customer governanceState, getCompAccruedBalance customer governanceState ) of
                 ( Just balance, Just accrued ) ->
                     let

@@ -220,7 +220,7 @@ buildLiquidateRequestCmd config account cTokens liquidateDetails msg =
     let
         maybeDappUserAddress =
             case account of
-                Ethereum.Acct customerAddress _ ->
+                Ethereum.Acct customerAddress _ _ ->
                     Just customerAddress
 
                 _ ->
@@ -904,7 +904,7 @@ recentActivityView userLanguage timezone transactions maybeNetwork account cToke
     let
         filteredTransactions =
             case ( maybeNetwork, account ) of
-                ( Just network, Acct customerAccount _ ) ->
+                ( Just network, Acct customerAccount _ _ ) ->
                     transactions
                         |> List.filter
                             (\transaction ->
