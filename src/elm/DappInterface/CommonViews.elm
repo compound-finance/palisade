@@ -174,8 +174,10 @@ pageHeader userLanguage page connectedWallet account _ governanceState _ =
 
                         _ ->
                             emptyClasses
+                v2MarketsExternalLink = "https://app.compound.finance/markets?market=1_Compound+V2_0x3d9819210A31b4961b30EF54bE2aeD79B9c9Cd3B"
             in
             [ a (class homeClass :: href PageNavigation (getHrefUrl Home)) [ text (Translations.dashboard userLanguage) ]
+            , a (href External (v2MarketsExternalLink)) [ text (Translations.markets userLanguage) ]
             , a (class voteClass :: href PageNavigation (getHrefUrl Vote)) [ text (Translations.vote userLanguage) ]
             ]
     in
