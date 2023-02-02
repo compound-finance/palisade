@@ -1,6 +1,5 @@
 name: Release Branch
-on:
-  workflow_dispatch:
+on: push
 jobs:
   build:
     name: Release Branch
@@ -12,7 +11,7 @@ jobs:
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
-          node-version: '16.x'
+          node-version: '18.12'
 
       - name: Download artifact
         uses: dawidd6/action-download-artifact@v2
@@ -20,7 +19,7 @@ jobs:
           github_token: ${{secrets.GITHUB_TOKEN}}
           workflow: build-workflow.yml
           workflow_conclusion: success
-          commit: ${{github.event.pull_request.head.sha}}
+          branch: main
           name: .release
 
       - name: Push IPFS Release
