@@ -1,101 +1,48 @@
-const crypto = require('crypto').webcrypto;
-const https = require('https');
+const { ethers } = require('ethers');
+const fetch = require('node-fetch');
 const fs = require('fs/promises');
 
-async function post(host, path, data, signature) {
-  return new Promise((resolve, reject) => {
-    const options = {
-      hostname: host,
-      port: 443,
-      path: path,
-      method: 'POST',
-      headers: {
-        'Content-Length': data.length,
-        'x-signature': signature
-      }
+const releaseFile = '.release';
+const ethereumNode = process.env['ETHEREUM_NODE'] || 'http://localhost:8585';
+const workerHost = process.env['WORKER_HOST'] || 'https://v2-app.compound.finance';
+const url = `${workerHost}/release`;
+
+async function release(cid, url, signature) {
+  console.log(`Release cid=${cid}, url=${url}`);
+
+  const res = await fetch(url, {
+    body: cid,
+    method: 'POST',
+    headers: {
+      'x-signature': signature
     }
-
-    let resp = '';
-    let status = null;
-    const req = https.request(options, res => {
-      status = res.statusCode;
-
-      res.on('data', d => {
-        resp += d;
-      })
-    })
-
-    req.on('error', error => {
-      reject(error);
-    });
-
-    req.on('close', error => {
-      if (status === 200) {
-        resolve(JSON.parse(resp));
-      } else {
-        reject(resp);
-      }
-    });
-
-    req.write(data);
-    req.end();
   });
-}
+  const json = await res.json();
 
-async function sign(cid, ipfsSecret) {
-  let enc = new TextEncoder("utf-8");
-  let secretEnc = enc.encode(ipfsSecret);
-
-  let key = await crypto.subtle.importKey(
-    "jwk",
-    JSON.parse(ipfsSecret),
-    { name: "ECDSA", namedCurve: "P-384" },
-    false,
-    ["sign"]
-  );
-
-  // Verify CID has been signed
-  let signature = await crypto.subtle.sign(
-    { name: "ECDSA", hash: {name: "SHA-384"} },
-    key,
-    enc.encode(cid)
-  );
-
-  return Buffer.from(signature).toString('hex');
-}
-
-async function release(cid, host, path, ipfsSecret) {
-  console.log(`Release cid=${cid}`);
-  let signature = await sign(cid, ipfsSecret);
-  let res = await post(host, path, cid, signature);
-
-  if (res.cid) {
-    console.log(`Successfully released: ${res.cid}`);
+  if (json.cid) {
+    console.log(`Successfully released: ${json.cid}`);
   } else {
-    throw new Error(`Invalid response: ${JSON.stringify(res)}`);
+    throw new Error(`Invalid response: ${JSON.stringify(json)}`);
   }
 }
 
-async function run(maybeRelease) {
-  const releaseFile = '.release';
-  const ipfsSecret = process.env['IPFS_SECRET'];
-  const host = 'v2-app.compound.finance';
-  const path = '/release';
-
-  if (!ipfsSecret) {
-    throw new Error("Missing IPFS_SECRET");
-  }
-
-  let cid;
-  if (maybeRelease) {
-    cid = maybeRelease;
-  } else {
+async function run(cid, signature) {
+  if (!cid) {
     cid = (await fs.readFile(releaseFile, 'utf-8')).trim();
   }
 
-  return await release(cid, host, path, ipfsSecret);
+  if (!signature) {
+    // If no signature, pull from Ethereum node, e.g. Seacrest
+    const provider = new ethers.providers.JsonRpcProvider(ethereumNode);
+    const signer = provider.getSigner();
+    signature = await signer.signMessage(cid);
+  }
+
+  return await release(cid, url, signature);
 }
 
-let [_node, _app, maybeRelease, ...rest] = process.argv;
+let [_node, _app, cidArg, signatureArg, ...rest] = process.argv;
+const cid = cidArg || process.env['CID'];
+const signature = signatureArg || process.env['SIGNATURE'];
 
-run(maybeRelease);
+run(cid, signature);
