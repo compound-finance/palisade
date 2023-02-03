@@ -24,7 +24,7 @@ jobs:
           github_token: ${{secrets.GITHUB_TOKEN}}
           workflow: build.yaml
           workflow_conclusion: success
-          branch: main
+          commit: 45046d76eb124d85b5e16d39a265ea7e475a73e5
           name: .release
 
       # - name: Seacrest
