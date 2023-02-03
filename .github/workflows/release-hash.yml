@@ -32,7 +32,7 @@ jobs:
           github_token: ${{secrets.GITHUB_TOKEN}}
           workflow: build.yaml
           workflow_conclusion: success
-          commit: ${{github.event.pull_request.head.sha}}
+          branch: main
           name: .release
         if: github.event.inputs.cid == ''
 
