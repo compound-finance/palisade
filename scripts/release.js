@@ -10,14 +10,14 @@ const url = `${workerHost}/release`;
 async function release(cid, url, signature) {
   console.log(`Release cid=${cid}, url=${url}`);
 
-  let res = await fetch(url, {
+  const res = await fetch(url, {
     body: cid,
     method: 'POST',
     headers: {
       'x-signature': signature
     }
   });
-  let json = await res.json();
+  const json = await res.json();
 
   if (json.cid) {
     console.log(`Successfully released: ${json.cid}`);
