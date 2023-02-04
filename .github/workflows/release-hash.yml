@@ -4,7 +4,7 @@ on:
     inputs:
       cid:
         name: cid
-        description: IPFS Hash (if blank, pulled from build step)
+        description: IPFS Hash (if blank, pulled from latest main's build)
 
       signature:
         name: Signature
