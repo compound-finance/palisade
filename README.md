@@ -61,7 +61,7 @@ Each of the top level keys have the following functions:
 
 ## Getting Started
 
-The Compound web3 front-end is written in [elm](http://elm-lang.org/) and was bootstrapped with [create elm app](https://github.com/halfzebra/create-elm-app). We strongly recommmend getting familiar with the Elm framework before jumping into the Compound source code.
+The Compound web3 front-end is written in [elm](http://elm-lang.org/) and was bootstrapped with [create elm app](https://github.com/halfzebra/create-elm-app). We strongly recommend getting familiar with the Elm framework before jumping into the Compound source code.
 
 To get started, first clone this repo:
 
@@ -125,6 +125,7 @@ To deploy a build to Infura IPFS:
 IPFS_AUTH="PROJECT_ID:PROJECT_SECRET" \
   IPFS_HOST="ipfs.infura.io" \
   IPFS_PORT=5001 \
+  WALLET_CONNECT_PROJECT_ID="<WALLET_CONNECT_PROJECT_ID>"
   yarn deploy-ipfs
 ```
 
@@ -133,6 +134,7 @@ Each of environment variables have the following functions:
 * `IPFS_AUTH` - Basic authentication for header for using the Infura IPFS add endpoint. You can find more information [here](https://infura.io/docs/ipfs#section/Authentication).
 * `IPFS_HOST` - IPFS Pinning service host.
 * `IPFS_PORT` - IPFS Pinning service host port.
+* `WALLET_CONNECT_PROJECT_ID` - Wallet Connect project id.
 
 Note: The `deploy-ipfs` script has been tested and used with Infura IPFS. You may need a few changes to support alternative pinning services.
 

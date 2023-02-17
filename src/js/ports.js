@@ -1650,7 +1650,8 @@ function subscribe(
   blockNativeApiKeyInput
 ) {
   const eth = makeEth(dataProviders, networkMap, networkAbiMap, configNameToAddressMappings, defaultNetwork);
-  connectedWalletPorts.subscribe(app, eth, globEthereum, networkMap, defaultNetwork);
+  const walletConnectProjectId = process.env['WALLET_CONNECT_PROJECT_ID'];
+  connectedWalletPorts.subscribe(app, eth, globEthereum, networkMap, defaultNetwork, walletConnectProjectId);
 
   subscribeToConsole(app);
   subscribeToSetBlockNativeNetwork(app, eth);

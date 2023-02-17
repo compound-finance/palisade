@@ -79,6 +79,7 @@ jobs:
       env:
         IPFS_AUTH: ${{ secrets.IPFS_AUTH }}
         IPFS_HOST: ${{ secrets.IPFS_HOST }}
+        WALLET_CONNECT_PROJECT_ID: ${{ secrets.WALLET_CONNECT_PROJECT_ID }}
 
     - name: Upload IPFS Release Artifact
       uses: actions/upload-artifact@v1
