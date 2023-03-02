@@ -996,16 +996,28 @@ function subscribeToGovernancePorts(app, eth) {
       initialBlockNumber
     );
 
+    const parseTitleDescriptionFromBody = (description) => {
+      const match = description.match(/\s*#\s+([^\r\n]+)/);
+      if (match === null) {
+        return { title: 'Untitled', description };
+      }
+      const parsedDescription = description.slice(match.index + match[0].length);
+      return {
+        title: match[1],
+        description: parsedDescription.trim(),
+      };
+    }
+
     let proposalEventHandlers = {
       [ProposalCreated.signature]: {
         decode: ProposalCreated.decode,
         build: (proposal, { description, values }, { blockNumber, transactionHash }) => {
-          const regex = /^\s*#\s+(?<title>.+(\r)?\n)(?:(\r\n|\n)*)(?<description>(.|[\r\n])*?)\s*$/u.exec(description);
+          const meta = parseTitleDescriptionFromBody(description);
 
           return {
             ...proposal,
-            title: regex ? regex.groups.title : 'Untitled',
-            description: regex ? regex.groups.description : description,
+            title: meta.title,
+            description: meta.description,
             createBlock: blockNumber,
             createTrxHash: transactionHash,
             values: values,
