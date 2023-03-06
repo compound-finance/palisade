@@ -5,7 +5,8 @@
     "kovan": "https://api.stage.compound.finance/api/",
     "rinkeby": "https://api.stage.compound.finance/api/",
     "ropsten": "https://api.stage.compound.finance/api/",
-    "mainnet": "https://api.compound.finance/api/"
+    "mainnet": "https://api.compound.finance/api/",
+    "v3_api": "https://v3-api-stage.compound.finance/"
   },
   "DATA_PROVIDERS": {
     "development": "http://localhost:8545",
