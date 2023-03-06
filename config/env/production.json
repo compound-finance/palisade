@@ -4,7 +4,8 @@
     "kovan": "https://api.compound.finance/api/",
     "rinkeby": "https://api.compound.finance/api/",
     "ropsten": "https://api.compound.finance/api/",
-    "mainnet": "https://api.compound.finance/api/"
+    "mainnet": "https://api.compound.finance/api/",
+    "v3_api": "https://v3-api.compound.finance/"
   },
   "DATA_PROVIDERS": {
     "development": "http://localhost:8545",
