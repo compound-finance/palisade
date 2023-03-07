@@ -322,19 +322,6 @@ borrowedAssetRow isAllMarketsRow config ( maybeCustomerAddress, maybeEtherBalanc
             DisplayCurrency.formatMarketSize preferences.displayCurrency maybeEtherUsdPrice
                 >> Maybe.withDefault "―"
 
-        borrowInterestAccruedSubtitle =
-            case maybeBorrowInterestAccrued of
-                Just borrowInterestAccrued ->
-                    borrowInterestAccrued
-                        |> tokenFormatter
-
-                Nothing ->
-                    if Decimal.eq borrowBalanceUsd Decimal.zero then
-                        "–"
-
-                    else
-                        Translations.tbd userLanguage
-
         ( balanceColumnContents, percentOfBorrowColumnContents ) =
             if isAllMarketsRow then
                 ( div [ class "balance" ]
@@ -374,17 +361,8 @@ borrowedAssetRow isAllMarketsRow config ( maybeCustomerAddress, maybeEtherBalanc
             ]
         , div [ class "col-xs-0 col-sm-3 text-right mobile-hide" ]
             [ div [ class "balance" ]
-                (div []
-                    [ text (formatPercentageWithDots (Just borrowInterestRate)) ]
-                    :: (if not isAllMarketsRow then
-                            [ span [ class "subtitle" ]
-                                [ text borrowInterestAccruedSubtitle ]
-                            ]
-
-                        else
-                            [ text "" ]
-                       )
-                )
+                [ div [] [ text (formatPercentageWithDots (Just borrowInterestRate)) ]
+                ]
             ]
         , div [ class "col-xs-4 col-sm-3 text-right" ]
             [ balanceColumnContents

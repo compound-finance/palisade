@@ -364,27 +364,7 @@ compoundUpdate config tokenState oracleState msg ( state, bnState ) =
             case result of
                 Ok accountResponse ->
                     let
-                        maybeFirstAccount =
-                            List.head accountResponse.accounts
-
-                        updatedInterestBalances =
-                            case maybeFirstAccount of
-                                Just firstAccount ->
-                                    List.foldl
-                                        (\accountCToken ->
-                                            let
-                                                interestData =
-                                                    { underlyingBorrowInterestPaid = accountCToken.lifetime_borrow_interest_accrued
-                                                    , underlyingSupplyInterestEarned = accountCToken.lifetime_supply_interest_accrued
-                                                    }
-                                            in
-                                            Dict.insert accountCToken.address interestData
-                                        )
-                                        Dict.empty
-                                        firstAccount.tokens
-
-                                Nothing ->
-                                    Dict.empty
+                        updatedInterestBalances = Dict.empty
                     in
                     ( ( { state | interestBalances = updatedInterestBalances }, Cmd.none )
                     , ( bnState, Cmd.none )
@@ -608,36 +588,10 @@ askCTokenMetadata blockNumber config cTokenConfigs =
 askCustomerBalances : Dict String String -> Maybe Network -> Int -> CustomerAddress -> List CTokenConfig -> ContractAddress -> Cmd CompoundMsg
 askCustomerBalances apiBaseUrlMap maybeNetwork blockNumber account cTokenConfigs compoundLens =
     let
-        maybeAccountsUrl =
-            maybeNetwork
-                |> Maybe.andThen
-                    (\network ->
-                        { addresses = [ getCustomerAddressString account ]
-                        , min_borrow_value_in_eth = Nothing
-                        , max_health = Nothing
-                        , block_number = 0
-                        , page_size = 1
-                        , page_number = 1
-                        }
-                            |> CompoundApi.Presidio.Accounts.Urls.accountsRequestUrl apiBaseUrlMap network
-                    )
-
-        loadAccountRequestCmd =
-            case maybeAccountsUrl of
-                Just accountsUrl ->
-                    let
-                        accountsRequestHttpGet =
-                            Http.get accountsUrl accountsResponseDecoder
-                    in
-                    [ Http.send PresidioAccountResponse accountsRequestHttpGet ]
-
-                _ ->
-                    [ Cmd.none ]
-
         cTokenBalancesCmds =
             [ askCTokenGetBalances blockNumber account cTokenConfigs compoundLens ]
     in
-    Cmd.batch (cTokenBalancesCmds ++ loadAccountRequestCmd)
+    Cmd.batch (cTokenBalancesCmds)
 
 
 

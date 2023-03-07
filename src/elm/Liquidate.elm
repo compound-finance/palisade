@@ -12,9 +12,7 @@ port module Liquidate exposing
     , view
     )
 
-import CompoundApi.Presidio.Accounts.Decoders exposing (accountsResponseDecoder)
 import CompoundApi.Presidio.Accounts.Models exposing (AccountResponse)
-import CompoundApi.Presidio.Accounts.Urls
 import CompoundComponents.Console as Console
 import CompoundComponents.DisplayCurrency as DisplayCurrency exposing (DisplayCurrency)
 import CompoundComponents.Eth.Decoders exposing (decimal, decodeAssetAddress, decodeCustomerAddress)
@@ -339,31 +337,7 @@ view userLanguage currentTimeZone maybeConfig maybeNetwork account compoundState
 
 
 loadPresidioBorrows : Dict String String -> Network -> Cmd Msg
-loadPresidioBorrows apiBaseUrlMap network =
-    let
-        maybeAccountsUrl =
-            { addresses = []
-            , min_borrow_value_in_eth = Just minBorrowEthAmount
-            , max_health = Just maxHealthAmount
-            , block_number = 0
-            , page_size = 100
-            , page_number = 1
-            }
-                |> CompoundApi.Presidio.Accounts.Urls.accountsRequestUrl apiBaseUrlMap network
-
-        accountsRequestCmd =
-            case maybeAccountsUrl of
-                Just accountsUrl ->
-                    let
-                        accountsRequestHttpGet =
-                            Http.get accountsUrl accountsResponseDecoder
-                    in
-                    Http.send (ForSelf << PresidioAccountsResponse) accountsRequestHttpGet
-
-                _ ->
-                    Cmd.none
-    in
-    accountsRequestCmd
+loadPresidioBorrows apiBaseUrlMap network = Cmd.none
 
 
 loadAtRiskAccounts : Config -> Account -> Maybe Int -> Dict String String -> Network -> Cmd Msg
