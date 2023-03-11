@@ -334,15 +334,9 @@ view userLanguage currentTimeZone maybeConfig maybeNetwork account compoundState
 
 
 -- Get accounts
-
-
-loadPresidioBorrows : Dict String String -> Network -> Cmd Msg
-loadPresidioBorrows apiBaseUrlMap network = Cmd.none
-
-
 loadAtRiskAccounts : Config -> Account -> Maybe Int -> Dict String String -> Network -> Cmd Msg
 loadAtRiskAccounts config account maybeBlockNumber apiBaseUrlMap network =
-    loadPresidioBorrows apiBaseUrlMap network
+    Cmd.none
 
 
 updateBorrowerDetailWithPresidioAccount : Config -> TokenState -> OracleState -> CompoundApi.Presidio.Accounts.Models.Account -> Dict String BorrowerDetail -> Dict String BorrowerDetail
