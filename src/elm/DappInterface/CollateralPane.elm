@@ -88,7 +88,7 @@ collateralListOrAllMarketsPanel maybeConfig maybeEtherUsdPrice ({ account, userL
         columnLabels =
             div [ class "panel__labels" ]
                 [ div [ class "col-xs-4 col-sm-4" ] [ label [] [ text (Translations.asset userLanguage) ] ]
-                , div [ class "col-xs-0 col-sm-3 text-right mobile-hide" ] [ label [] [ text (Translations.apy_slash_earned userLanguage) ] ]
+                , div [ class "col-xs-0 col-sm-3 text-right mobile-hide" ] [ label [] [ text (Translations.apy userLanguage) ] ]
                 , div [ class "col-xs-4 col-sm-3 text-right" ] [ label [] [ text (Translations.balance userLanguage) ] ]
                 , div [ class "col-xs-4 col-sm-2 text-right" ] [ label [] [ text (Translations.borrow_against userLanguage) ] ]
                 ]
@@ -281,19 +281,6 @@ collateralAssetRow isAllMarketsRow config ( maybeCustomerAddress, maybeEtherBala
         formatCurrencyFunc =
             DisplayCurrency.formatDisplayCurrencyInNumberSpec preferences.displayCurrency maybeEtherUsdPrice
 
-        supplyInterestEarnedSubtitle =
-            case maybeSupplyInterestEarned of
-                Just supplyInterestEarned ->
-                    supplyInterestEarned
-                        |> tokenFormatter
-
-                Nothing ->
-                    if Decimal.eq supplyBalanceUsd Decimal.zero then
-                        "–"
-
-                    else
-                        Translations.tbd userLanguage
-
         ( onClickMsg, switchClass, inputExtraMarkup ) =
             case maybeCustomerAddress of
                 Just _ ->
@@ -383,17 +370,8 @@ collateralAssetRow isAllMarketsRow config ( maybeCustomerAddress, maybeEtherBala
             ]
         , div [ class "col-xs-0 col-sm-3 text-right mobile-hide" ]
             [ div [ class "balance" ]
-                (div []
-                    [ text (formatPercentageWithDots (Just supplyInterestRate)) ]
-                    :: (if not isAllMarketsRow then
-                            [ span [ class "subtitle" ]
-                                [ text supplyInterestEarnedSubtitle ]
-                            ]
-
-                        else
-                            [ text "" ]
-                       )
-                )
+                [ div [] [ text (formatPercentageWithDots (Just supplyInterestRate)) ]
+                ]
             ]
         , div [ class "col-xs-4 col-sm-3 text-right" ]
             [ balanceColumnContents
