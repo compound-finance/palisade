@@ -24,11 +24,7 @@ The following is an example configuration file:
 ```json
 {
   "API_BASE_URL_MAP": {
-    "goerli": "https://api.compound.finance/api/",
-    "kovan": "https://api.compound.finance/api/",
-    "rinkeby": "https://api.compound.finance/api/",
-    "ropsten": "https://api.compound.finance/api/",
-    "mainnet": "https://api.compound.finance/api/"
+    "v3_api": "https://v3-api.compound.finance/"
   },
   "DATA_PROVIDERS": {
     "development": "http://localhost:8545",
