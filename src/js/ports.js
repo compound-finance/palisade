@@ -11,6 +11,7 @@ import storage from './storage';
 import { requestForeground } from './helpers';
 import {
   debug,
+  langFromURL,
   shouldAutoConnect,
   supportFromEntries,
 } from '../../node_modules/compound-components/src/js/sharedEth/utils';
@@ -539,6 +540,8 @@ function subscribeToStoreTransaction(app, eth) {
 }
 
 function subscribeToPreferences(app, eth) {
+  const url = new URL(window.location);
+  const lang = langFromURL(url, window.navigator.language);
   // port storePreferencesPort : { displayCurrency : String, userLanguage : String, supplyPaneOpen : Bool, borrowPaneOpen : Bool } -> Cmd msg
   app.ports.storePreferencesPort.subscribe((preferences) => {
     preferencesStorage.set(preferences);
@@ -547,8 +550,7 @@ function subscribeToPreferences(app, eth) {
   // port askStoredPreferencesPort : {} -> Cmd msg
   app.ports.askStoredPreferencesPort.subscribe(() => {
     const preferences = preferencesStorage.get();
-
-    app.ports.giveStoredPreferencesPort.send(preferences);
+    app.ports.giveStoredPreferencesPort.send({userLanguage: lang, ...preferences});
   });
 
   // port askClearPreferencesPort : {} -> Cmd msg
