@@ -368,21 +368,6 @@ view mainModel =
 
 
 -- aka right side of pane (bottom on mobile)
-
-
-marketDetailPageUrl : CToken -> String
-marketDetailPageUrl chosenAsset =
-    let
-        targetUnderlyingSymbol =
-            if chosenAsset.symbol == "cWBTC2" then
-                "WBTC2"
-
-            else
-                chosenAsset.underlying.symbol
-    in
-    "https://compound.finance/markets/" ++ targetUnderlyingSymbol
-
-
 inputActionPane : Translations.Lang -> Maybe Config -> Maybe Decimal -> PrimaryActionModalState -> Model -> Html Msg
 inputActionPane userLanguage maybeConfig maybeEtherUsdPrice primaryActionModalState mainModel =
     let
@@ -587,7 +572,7 @@ assetAndCompRateForm userLanguage config maybeEtherUsdPrice ({ chosenAsset, prim
                     "– %"
     in
     div [ class "form" ]
-        [ a ([ class "label-link", target "__blank" ] ++ href External (marketDetailPageUrl chosenAsset))
+        [ a ([ class "label-link", target "__blank" ] ++ href External "https://app.compound.finance/markets/?market=v2")
             [ label [ class "dark" ] [ text formLabel ]
             , div [ class "line-icon line-icon--small line-icon--external-link line-icon--external-link--black" ] []
             ]
