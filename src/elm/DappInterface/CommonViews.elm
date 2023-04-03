@@ -158,27 +158,24 @@ pageHeader userLanguage page connectedWallet account _ governanceState _ =
 
         links =
             let
-                { homeClass, voteClass } =
+                { homeClass } =
                     let
                         emptyClasses =
                             { homeClass = ""
-                            , voteClass = ""
                             }
                     in
                     case page of
                         Home ->
                             { emptyClasses | homeClass = "active" }
 
-                        Vote ->
-                            { emptyClasses | voteClass = "active" }
-
                         _ ->
                             emptyClasses
                 v2MarketsExternalLink = "https://app.compound.finance/markets?market=v2"
+                v3VoteExternalLink = "https://app.compound.finance/vote"
             in
             [ a (class homeClass :: href PageNavigation (getHrefUrl Home)) [ text (Translations.dashboard userLanguage) ]
             , a (href External (v2MarketsExternalLink)) [ text (Translations.markets userLanguage) ]
-            , a (class voteClass :: href PageNavigation (getHrefUrl Vote)) [ text (Translations.vote userLanguage) ]
+            , a (href External (v3VoteExternalLink)) [ text (Translations.vote userLanguage) ]
             ]
     in
     header [ class "dapp" ]
