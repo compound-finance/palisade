@@ -1,3 +1,5 @@
+import { Sleuth } from '../../node_modules/@compound-finance/sleuth';
+import { StaticJsonRpcProvider } from '../../node_modules/@ethersproject/providers';
 import BlocknativeSdk from '../../node_modules/bnc-sdk';
 import BN from '../../node_modules/bn.js';
 import connectedWalletPorts from '../../node_modules/compound-components/src/js/sharedEth/connectedWalletPorts';
@@ -35,6 +37,8 @@ import {
   wrapCallErr,
   wrapSend,
 } from '../../node_modules/compound-components/src/js/sharedEth/eth';
+
+import CometQuery from '../sleuth/out/CometQuery.sol/CometQuery.json';
 
 const PROVIDER_TYPE_NONE = 0;
 const PROVIDER_TYPE_LEDGER = 1;
@@ -229,9 +233,27 @@ function subscribeToCTokenPorts(app, eth) {
   );
 
   // port askCTokenMetadataAllPort : { blockNumber : Int, comptrollerAddress : String, cTokenAddress : String, underlyingAssetAddress : String, cTokenDecimals : Int, underlyingDecimals : Int, isCEther : Bool } -> Cmd msg
-  app.ports.askCTokenMetadataAllPort.subscribe(({ blockNumber, cTokens, compoundLens, comptroller }) => {
+  app.ports.askCTokenMetadataAllPort.subscribe(async ({ blockNumber, cTokens, compoundLens, comptroller }) => {
     const CompoundLens = getContractJsonByName(eth, 'CompoundLens');
     const Comptroller = getContractJsonByName(eth, 'Comptroller');
+
+    // const web3 = await withWeb3Eth(eth);
+
+    // const QUERY = Sleuth.querySol(CometQuery, { queryFunctionName: 'query' });
+
+    // const provider = new StaticJsonRpcProvider(web3.currentProvider.host);
+    // let sleuth = new Sleuth(provider);
+    // let result = await sleuth.fetch(QUERY, ['0xc3d688B66703497DAA19211EEdff47f25384cdc3', '0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419']);
+
+    // console.log("result halp: ", result);
+
+
+
+    //TODO: This part needs to be wrapped inside of Sleuth
+    //      Then combine this with
+    //      - cToken getBalances
+    //      - comptroller ports
+    //      - oraclePrices ports
 
     const mintGuardianCalls = cTokens.map((cTokenAddress) => [Comptroller, comptroller, 'mintGuardianPaused', [cTokenAddress]])
 
