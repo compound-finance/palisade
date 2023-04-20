@@ -5,7 +5,6 @@ port module Eth.Oracle exposing
     , getEtherPrice
     , getOraclePrice
     , oracleInit
-    , oracleNewBlockCmd
     , oracleSubscriptions
     , oracleUpdate
     )
@@ -230,44 +229,8 @@ oracleSubscriptions state =
         [ giveAllOraclePrices (Functions.handleError (Json.Decode.errorToString >> Error) SetOraclePrices) ]
 
 
-oracleNewBlockCmd : OracleState -> Int -> ContractAddress -> TokenState -> ContractAddress -> Cmd OracleMsg
-oracleNewBlockCmd state blockNumber priceOracle tokenState compoundLens =
-    Cmd.batch
-        [ askTokenOraclePrices blockNumber priceOracle compoundLens (Dict.values tokenState.cTokens)
-        ]
-
-
-askTokenOraclePrices : Int -> ContractAddress -> ContractAddress -> List CToken -> Cmd OracleMsg
-askTokenOraclePrices blockNumber priceOracleAddress compoundLens cTokens =
-    cTokens
-        |> List.map (\cToken -> ( cToken.contractAddress, cToken.underlying.assetAddress ))
-        |> askOraclePricesAll blockNumber compoundLens
-
-
 
 -- Ports
-
-
-port askOraclePricesAllPort : { blockNumber : Int, cTokens : List ( String, String ), compoundLens : String } -> Cmd msg
-
-
-askOraclePricesAll : Int -> ContractAddress -> List ( ContractAddress, AssetAddress ) -> Cmd msg
-askOraclePricesAll blockNumber (Contract compoundLens) cTokenPairs =
-    let
-        cTokens =
-            cTokenPairs
-            |> List.map
-                (\cTokenPair ->
-                    case cTokenPair of
-                        ( Contract token, Asset asset ) ->
-                            (token, asset)
-                )
-    in
-    askOraclePricesAllPort
-        { blockNumber = blockNumber
-        , cTokens = cTokens
-        , compoundLens = compoundLens
-        }
 
 
 port giveOraclePricesAllPort : (Value -> msg) -> Sub msg

@@ -1,10 +1,3 @@
-// import "../CErc20.sol";
-//import "../CToken.sol";
-//import "../PriceOracle.sol";
-//import "../EIP20Interface.sol";
-//import "../Governance/GovernorAlpha.sol";
-//import "../Governance/Comp.sol";
-
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.15;
 
@@ -99,6 +92,9 @@ interface ComptrollerLensInterface {
     function compSupplySpeeds(address) external view returns (uint);
     function compBorrowSpeeds(address) external view returns (uint);
     function borrowCaps(address) external view returns (uint);
+    function mintGuardianPaused(address) external view returns (bool);
+    function closeFactorMantissa() external view returns (uint);
+    function liquidationIncentiveMantissa() external view returns (uint);
 }
 
 interface GovernorBravoInterface {
@@ -143,6 +139,34 @@ contract CompoundLens {
         uint compSupplySpeed;
         uint compBorrowSpeed;
         uint borrowCap;
+    }
+
+    struct CTokenAllData {
+        address cToken;
+        uint exchangeRateCurrent;
+        uint supplyRatePerBlock;
+        uint borrowRatePerBlock;
+        uint reserveFactorMantissa;
+        uint totalBorrows;
+        uint totalReserves;
+        uint totalSupply;
+        uint totalCash;
+        bool isListed;
+        uint collateralFactorMantissa;
+        address underlyingAssetAddress;
+        uint cTokenDecimals;
+        uint underlyingDecimals;
+        uint compSupplySpeed;
+        uint compBorrowSpeed;
+        uint borrowCap;
+        bool mintGuardianPaused;
+        uint underlyingPrice;
+    }
+
+    struct NoAccountAllData {
+        uint closeFactorMantissa;
+        uint liquidationIncentiveMantissa;
+        CTokenAllData[] cTokens;
     }
 
     function getCompSpeeds(ComptrollerLensInterface comptroller, CTokenInterface cToken) internal returns (uint, uint) {
@@ -249,6 +273,85 @@ contract CompoundLens {
         return res;
     }
 
+    function buildCTokenAllData(CTokenInterface cToken) public returns (CTokenAllData memory) {
+        uint exchangeRateCurrent = cToken.exchangeRateCurrent();
+        ComptrollerLensInterface comptroller = ComptrollerLensInterface(address(cToken.comptroller()));
+        (bool isListed, uint collateralFactorMantissa) = comptroller.markets(address(cToken));
+        address underlyingAssetAddress;
+        uint underlyingDecimals;
+
+        if (compareStrings(cToken.symbol(), "cETH")) {
+            underlyingAssetAddress = address(0);
+            underlyingDecimals = 18;
+        } else {
+            CErc20Interface cErc20 = CErc20Interface(address(cToken));
+            underlyingAssetAddress = cErc20.underlying();
+            underlyingDecimals = EIP20Interface(cErc20.underlying()).decimals();
+        }
+
+        (uint compSupplySpeed, uint compBorrowSpeed) = getCompSpeeds(comptroller, cToken);
+
+        uint borrowCap = 0;
+        (bool borrowCapSuccess, bytes memory borrowCapReturnData) =
+            address(comptroller).call(
+                abi.encodePacked(
+                    comptroller.borrowCaps.selector,
+                    abi.encode(address(cToken))
+                )
+            );
+        if (borrowCapSuccess) {
+            borrowCap = abi.decode(borrowCapReturnData, (uint));
+        }
+
+        PriceOracleInterface priceOracle = comptroller.oracle();
+
+        return CTokenAllData({
+            cToken: address(cToken),
+            exchangeRateCurrent: exchangeRateCurrent,
+            supplyRatePerBlock: cToken.supplyRatePerBlock(),
+            borrowRatePerBlock: cToken.borrowRatePerBlock(),
+            reserveFactorMantissa: cToken.reserveFactorMantissa(),
+            totalBorrows: cToken.totalBorrows(),
+            totalReserves: cToken.totalReserves(),
+            totalSupply: cToken.totalSupply(),
+            totalCash: cToken.getCash(),
+            isListed: isListed,
+            collateralFactorMantissa: collateralFactorMantissa,
+            underlyingAssetAddress: underlyingAssetAddress,
+            cTokenDecimals: cToken.decimals(),
+            underlyingDecimals: underlyingDecimals,
+            compSupplySpeed: compSupplySpeed,
+            compBorrowSpeed: compBorrowSpeed,
+            borrowCap: borrowCap,
+            mintGuardianPaused: comptroller.mintGuardianPaused(address(cToken)),
+            underlyingPrice: priceOracle.getUnderlyingPrice(cToken)
+        });
+    }
+
+    function queryAllNoAccount(CTokenInterface[] calldata cTokens) external returns (NoAccountAllData memory) {
+        uint cTokenCount = cTokens.length;
+        CTokenAllData[] memory cTokensRes = new CTokenAllData[](cTokenCount);
+        for (uint i = 0; i < cTokenCount; i++) {
+            cTokensRes[i] = buildCTokenAllData(cTokens[i]);
+        }
+
+        //TODO: read the LiquidationIncentive and closeFactor from the comtrpoller.
+        // Is it ok if we take the first cToken?
+        uint liquidationIncentive = 0;
+        uint closeFactor = 0;
+        if(cTokenCount > 0) {
+            ComptrollerLensInterface comptroller = ComptrollerLensInterface(address(cTokens[0].comptroller()));
+            liquidationIncentive = comptroller.liquidationIncentiveMantissa();
+            closeFactor = comptroller.closeFactorMantissa();
+        }
+
+        return NoAccountAllData({
+            closeFactorMantissa: closeFactor,
+            liquidationIncentiveMantissa: liquidationIncentive,
+            cTokens: cTokensRes
+        });
+    }
+
     struct CTokenBalances {
         address cToken;
         uint balanceOf;
@@ -324,7 +427,7 @@ contract CompoundLens {
         uint shortfall;
     }
 
-    function getAccountLimits(ComptrollerLensInterface comptroller, address account) public returns (AccountLimits memory) {
+    function getAccountLimits(ComptrollerLensInterface comptroller, address account) public view returns (AccountLimits memory) {
         (uint errorCode, uint liquidity, uint shortfall) = comptroller.getAccountLiquidity(account);
         require(errorCode == 0);
 

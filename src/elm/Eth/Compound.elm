@@ -151,7 +151,10 @@ type alias AccountLimits =
     , accountShortfall : Decimal
     , assetsIn : List ContractAddress
     , trxCount : Int
-    , closeFactor : Decimal
+    }
+
+type alias ComptrollerMetadata =
+    { closeFactor : Decimal
     , liquidationIncentive : Decimal
     }
 
@@ -180,6 +183,7 @@ type CompoundMsg
     = SetAllCTokenMetadatas (List CTokenMetadataUpdate)
     | SetAllCTokenBalances (List CTokenBalanceUpdate)
     | SetAccountLimits AccountLimits
+    | SetComptrollerMetadata ComptrollerMetadata
     | PresidioAccountResponse (Result Http.Error AccountResponse)
     | Web3TransactionMsg CompoundTransactionMsg
     | Error String
@@ -315,7 +319,7 @@ compoundUpdate config tokenState oracleState msg ( state, bnState ) =
             , ( bnState, Cmd.none )
             )
 
-        SetAccountLimits { accountLiquidity, accountShortfall, assetsIn, trxCount, closeFactor, liquidationIncentive } ->
+        SetAccountLimits { accountLiquidity, accountShortfall, assetsIn, trxCount } ->
             let
                 ( maybeAccountLiquidityUsd, maybeAccountShortfallUsd ) =
                     case oracleState.isPriceFeedOracle of
@@ -350,10 +354,20 @@ compoundUpdate config tokenState oracleState msg ( state, bnState ) =
                         , maybeAccountShortfallUsd = maybeAccountShortfallUsd
                         , maybeAssetsIn = Just assetsIn
                         , maybeTrxCount = Just trxCount
-                        , maybeCloseFactor = Just closeFactor
-                        , maybeLiquidationIncentive = Just liquidationIncentive
                         , maybeAccountLiquidityEth = maybeAccountLiquidityEth
                         , maybeAccountShortfallEth = maybeAccountShortfallEth
+                    }
+            in
+            ( ( updatedState, Cmd.none )
+            , ( bnState, Cmd.none )
+            )
+
+        SetComptrollerMetadata { closeFactor, liquidationIncentive } ->
+            let
+                updatedState =
+                    { state
+                        | maybeCloseFactor = Just closeFactor
+                        , maybeLiquidationIncentive = Just liquidationIncentive
                     }
             in
             ( ( updatedState, Cmd.none )
@@ -526,6 +540,7 @@ compoundSubscriptions =
         [ giveCTokenMetadata (handleError (Json.Decode.errorToString >> Error) SetAllCTokenMetadatas)
         , giveCTokenBalancesAllUpdate (handleError (Json.Decode.errorToString >> Error) SetAllCTokenBalances)
         , giveAccountLimits (handleError (Json.Decode.errorToString >> Error) SetAccountLimits)
+        , giveComptrollerMetadata (handleError (Json.Decode.errorToString >> Error) SetComptrollerMetadata)
         ]
 
 
@@ -582,7 +597,7 @@ cTokenIsApproved config cToken compoundState =
 
 askCTokenMetadata : Int -> Config -> List CTokenConfig -> Cmd CompoundMsg
 askCTokenMetadata blockNumber config cTokenConfigs =
-    askCTokenGetMetadataAll blockNumber (List.map .address cTokenConfigs) config.compoundLens config.comptroller
+    askCTokenGetMetadataAll blockNumber cTokenConfigs config.compoundLens config.comptroller
 
 
 askCustomerBalances : Dict String String -> Maybe Network -> Int -> CustomerAddress -> List CTokenConfig -> ContractAddress -> Cmd CompoundMsg
@@ -598,14 +613,28 @@ askCustomerBalances apiBaseUrlMap maybeNetwork blockNumber account cTokenConfigs
 -- Get CToken metadata: exchange rate, borrow rate, collateral factor
 
 
-port askCTokenMetadataAllPort : { blockNumber : Int, cTokens : List String, compoundLens : String, comptroller : String } -> Cmd msg
+port askCTokenMetadataAllPort : { blockNumber : Int, cTokens : List ( String, CTokenPortData ), compoundLens : String, comptroller : String } -> Cmd msg
 
 
-askCTokenGetMetadataAll : Int -> List ContractAddress -> ContractAddress -> ContractAddress -> Cmd msg
-askCTokenGetMetadataAll blockNumber cTokens (Contract compoundLens) (Contract comptroller) =
+askCTokenGetMetadataAll : Int -> List CTokenConfig -> ContractAddress -> ContractAddress -> Cmd msg
+askCTokenGetMetadataAll blockNumber cTokenConfigs (Contract compoundLens) (Contract comptroller) =
+    let
+        cTokens =
+            cTokenConfigs
+                |> List.map
+                    (\cTokenConfig ->
+                        ( getContractAddressString cTokenConfig.address
+                        , { underlyingAssetAddress = getContractAddressString cTokenConfig.underlying.address
+                          , underlyingDecimals = cTokenConfig.underlying.decimals
+                          , cTokenDecimals = cTokenConfig.decimals
+                          , cTokenSymbol = cTokenConfig.symbol
+                          }
+                        )
+                    )
+    in
     askCTokenMetadataAllPort
         { blockNumber = blockNumber
-        , cTokens = List.map getContractAddressString cTokens
+        , cTokens = cTokens
         , compoundLens = compoundLens
         , comptroller = comptroller
         }
@@ -739,14 +768,27 @@ giveAccountLimits : (Result Json.Decode.Error AccountLimits -> msg) -> Sub msg
 giveAccountLimits wrapper =
     let
         decoder =
-            Json.Decode.map7 AccountLimits
+            Json.Decode.map5 AccountLimits
                 (field "customerAddress" decodeCustomerAddress)
                 (field "accountLiquidity" decimal)
                 (field "accountShortfall" decimal)
                 (field "assetsIn" (Json.Decode.list decodeContractAddress))
                 (field "trxCount" int)
+    in
+    giveAccountLimitsPort
+        (decodeValue decoder >> wrapper)
+
+
+port giveComptrollerMetadataPort : (Value -> msg) -> Sub msg
+
+
+giveComptrollerMetadata : (Result Json.Decode.Error ComptrollerMetadata -> msg) -> Sub msg
+giveComptrollerMetadata wrapper =
+    let
+        decoder =
+            Json.Decode.map2 ComptrollerMetadata
                 (field "closeFactor" decimal)
                 (field "liquidationIncentive" decimal)
     in
-    giveAccountLimitsPort
+    giveComptrollerMetadataPort
         (decodeValue decoder >> wrapper)

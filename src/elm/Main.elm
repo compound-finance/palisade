@@ -32,7 +32,7 @@ import Dict exposing (Dict)
 import Eth.Compound exposing (CompoundMsg(..), clearCompoundState, compoundInit, compoundNewBlockCmd, compoundSubscriptions, compoundUpdate)
 import Eth.Config exposing (Config, loadConfigs)
 import Eth.Governance exposing (GovernanceMsg(..))
-import Eth.Oracle exposing (OracleMsg(..), oracleInit, oracleNewBlockCmd, oracleSubscriptions, oracleUpdate)
+import Eth.Oracle exposing (OracleMsg(..), oracleInit, oracleSubscriptions, oracleUpdate)
 import Eth.Token exposing (TokenMsg(..), clearTokenState, tokenInit, tokenNewBlockCmd, tokenSubscriptions, tokenUpdate)
 import Eth.Transaction as Transaction exposing (TransactionMsg)
 import Html exposing (Html, a, button, div, span, text)
@@ -342,7 +342,6 @@ newBlockCmd apiBaseUrlMap maybeNetwork blockNumber previousBlockNumber ({ dataPr
                             ++ [ Cmd.map WrappedTransactionMsg (Transaction.newBlockCmd blockNumber network model.transactionState)
                                , Cmd.map WrappedTokenMsg (tokenNewBlockCmd config model.tokenState blockNumber model.account)
                                , Cmd.map WrappedCompoundMsg (compoundNewBlockCmd blockNumber apiBaseUrlMap network config.comptroller model.account config)
-                               , Cmd.map WrappedOracleMsg (oracleNewBlockCmd model.oracleState blockNumber config.priceOracle model.tokenState config.compoundLens)
                                , compAllowanceCmd
                                ]
 
