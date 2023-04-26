@@ -28,3 +28,8 @@ public/compound-components/
 # IPFS release file
 .release
 .release-notes
+
+# Sleuth files
+cache/
+src/sleuth/out/SleuthLens.sol/*
+!src/sleuth/out/SleuthLens.sol/SleuthLens.json
