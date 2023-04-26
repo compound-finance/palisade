@@ -323,15 +323,6 @@ function subscribeToCTokenPorts(app, eth) {
     });
   });
 
-
-  //TOTODOOTDOOT
-  //TODO: queryWithAccount()
-  //      Governance Ports (Comp balances, voting)
-  //      CapAllowance in Token.elm
-  //      Both getCompBalanceMetadataExt & getCompBalanceMetadata
-
-
-  //TODO: Can remove the compoundLens Address here...
   // port askCTokenGetBalancesPort : { blockNumber : Int, customerAddress : String, cTokens : List ( String, CTokenPortData ), compAddress: String, capFactoryAddress: String } -> Cmd msg
   app.ports.askCTokenGetBalancesPort.subscribe(
     async({ blockNumber, customerAddress, cTokens: cTokenEntries, compAddress, capFactoryAddress }) => {
