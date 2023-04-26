@@ -204,22 +204,24 @@ compoundNewBlockCmd blockNumber apiBaseUrlMap network comptroller account config
         cTokenConfigs =
             Dict.values config.cTokens
 
-        accountRequiredCmds =
+        -- We are only going to support networks with COMP
+        comp = 
+            config.maybeCompToken
+            |> Maybe.map .address
+            |> Maybe.withDefault (Contract "0x0000000000000000000000000000000000000000")
+
+        fetchDataCmd =
             case account of
                 Acct customerAddress _ ->
-                    [ askCustomerBalances apiBaseUrlMap (Just network) blockNumber customerAddress cTokenConfigs config.compoundLens
-                    , askAccountLimits blockNumber comptroller customerAddress config.compoundLens
-                    ]
+                    askCustomerBalances apiBaseUrlMap (Just network) blockNumber customerAddress cTokenConfigs comp
 
                 UnknownAcct ->
-                    []
+                    askCTokenMetadata blockNumber config cTokenConfigs
 
                 NoAccount ->
-                    []
+                    askCTokenMetadata blockNumber config cTokenConfigs
     in
-    Cmd.batch <|
-        askCTokenMetadata blockNumber config cTokenConfigs
-            :: accountRequiredCmds
+    fetchDataCmd
 
 
 
@@ -597,14 +599,14 @@ cTokenIsApproved config cToken compoundState =
 
 askCTokenMetadata : Int -> Config -> List CTokenConfig -> Cmd CompoundMsg
 askCTokenMetadata blockNumber config cTokenConfigs =
-    askCTokenGetMetadataAll blockNumber cTokenConfigs config.compoundLens config.comptroller
+    askCTokenGetMetadataAll blockNumber cTokenConfigs config.comptroller
 
 
 askCustomerBalances : Dict String String -> Maybe Network -> Int -> CustomerAddress -> List CTokenConfig -> ContractAddress -> Cmd CompoundMsg
-askCustomerBalances apiBaseUrlMap maybeNetwork blockNumber account cTokenConfigs compoundLens =
+askCustomerBalances apiBaseUrlMap maybeNetwork blockNumber account cTokenConfigs comp =
     let
         cTokenBalancesCmds =
-            [ askCTokenGetBalances blockNumber account cTokenConfigs compoundLens ]
+            [ askCTokenGetBalances blockNumber account cTokenConfigs comp ]
     in
     Cmd.batch (cTokenBalancesCmds)
 
@@ -613,11 +615,11 @@ askCustomerBalances apiBaseUrlMap maybeNetwork blockNumber account cTokenConfigs
 -- Get CToken metadata: exchange rate, borrow rate, collateral factor
 
 
-port askCTokenMetadataAllPort : { blockNumber : Int, cTokens : List ( String, CTokenPortData ), compoundLens : String, comptroller : String } -> Cmd msg
+port askCTokenMetadataAllPort : { blockNumber : Int, cTokens : List ( String, CTokenPortData ), comptroller : String } -> Cmd msg
 
 
-askCTokenGetMetadataAll : Int -> List CTokenConfig -> ContractAddress -> ContractAddress -> Cmd msg
-askCTokenGetMetadataAll blockNumber cTokenConfigs (Contract compoundLens) (Contract comptroller) =
+askCTokenGetMetadataAll : Int -> List CTokenConfig -> ContractAddress -> Cmd msg
+askCTokenGetMetadataAll blockNumber cTokenConfigs (Contract comptroller) =
     let
         cTokens =
             cTokenConfigs
@@ -635,7 +637,6 @@ askCTokenGetMetadataAll blockNumber cTokenConfigs (Contract compoundLens) (Contr
     askCTokenMetadataAllPort
         { blockNumber = blockNumber
         , cTokens = cTokens
-        , compoundLens = compoundLens
         , comptroller = comptroller
         }
 
@@ -694,11 +695,11 @@ type alias CTokenPortData =
     }
 
 
-port askCTokenGetBalancesPort : { blockNumber : Int, customerAddress : String, cTokens : List ( String, CTokenPortData ), compoundLens : String } -> Cmd msg
+port askCTokenGetBalancesPort : { blockNumber : Int, customerAddress : String, cTokens : List ( String, CTokenPortData ), compAddress: String } -> Cmd msg
 
 
 askCTokenGetBalances : Int -> CustomerAddress -> List CTokenConfig -> ContractAddress -> Cmd msg
-askCTokenGetBalances blockNumber (Customer customerAddress) cTokenConfigs (Contract compoundLens) =
+askCTokenGetBalances blockNumber (Customer customerAddress) cTokenConfigs (Contract compAddress) =
     let
         cTokens =
             cTokenConfigs
@@ -717,7 +718,7 @@ askCTokenGetBalances blockNumber (Customer customerAddress) cTokenConfigs (Contr
         { blockNumber = blockNumber
         , customerAddress = customerAddress
         , cTokens = cTokens
-        , compoundLens = compoundLens
+        , compAddress = compAddress
         }
 
 
@@ -746,19 +747,6 @@ giveCTokenBalancesAllUpdate wrapper =
 
 
 -- Get all accounts limits for the user: liquidity, shortfall, assetsIn, and currentTransactionCount
-
-
-port askAccountLimitsPort : { blockNumber : Int, comptrollerAddress : String, customerAddress : String, compoundLens : String } -> Cmd msg
-
-
-askAccountLimits : Int -> ContractAddress -> CustomerAddress -> ContractAddress -> Cmd msg
-askAccountLimits blockNumber (Contract contractAddress) (Customer customerAddress) (Contract compoundLens) =
-    askAccountLimitsPort
-        { blockNumber = blockNumber
-        , comptrollerAddress = contractAddress
-        , customerAddress = customerAddress
-        , compoundLens = compoundLens
-        }
 
 
 port giveAccountLimitsPort : (Value -> msg) -> Sub msg

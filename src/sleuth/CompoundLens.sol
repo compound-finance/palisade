@@ -47,33 +47,6 @@ interface EIP20Interface {
     function allowance(address owner, address spender) external view returns (uint256 remaining);
 }
 
-interface GovernorAlphaInterface {
-    struct Receipt {
-        bool hasVoted;
-        bool support;
-        uint96 votes;
-    }
-    struct Proposal {
-        uint id;
-        address proposer;
-        uint eta;
-        // address[] targets;
-        // uint[] values;
-        // string[] signatures;
-        // bytes[] calldatas;
-        uint startBlock;
-        uint endBlock;
-        uint forVotes;
-        uint againstVotes;
-        bool canceled;
-        bool executed;
-    }
-
-    function getActions(uint proposalId) external view returns (address[] memory targets, uint[] memory values, string[] memory signatures, bytes[] memory calldatas);
-    function proposals(uint proposalId) external view returns (GovernorAlphaInterface.Proposal memory);
-    function getReceipt(uint proposalId, address voter) external view returns (Receipt memory);
-}
-
 interface CompInterface {
     function balanceOf(address account) external view returns (uint);
     function getCurrentVotes(address account) external view returns (uint96);
@@ -97,50 +70,7 @@ interface ComptrollerLensInterface {
     function liquidationIncentiveMantissa() external view returns (uint);
 }
 
-interface GovernorBravoInterface {
-    struct Receipt {
-        bool hasVoted;
-        uint8 support;
-        uint96 votes;
-    }
-    struct Proposal {
-        uint id;
-        address proposer;
-        uint eta;
-        uint startBlock;
-        uint endBlock;
-        uint forVotes;
-        uint againstVotes;
-        uint abstainVotes;
-        bool canceled;
-        bool executed;
-    }
-    function getActions(uint proposalId) external view returns (address[] memory targets, uint[] memory values, string[] memory signatures, bytes[] memory calldatas);
-    function proposals(uint proposalId) external view returns (GovernorBravoInterface.Proposal memory);
-    function getReceipt(uint proposalId, address voter) external view returns (Receipt memory);
-}
-
 contract CompoundLens {
-    struct CTokenMetadata {
-        address cToken;
-        uint exchangeRateCurrent;
-        uint supplyRatePerBlock;
-        uint borrowRatePerBlock;
-        uint reserveFactorMantissa;
-        uint totalBorrows;
-        uint totalReserves;
-        uint totalSupply;
-        uint totalCash;
-        bool isListed;
-        uint collateralFactorMantissa;
-        address underlyingAssetAddress;
-        uint cTokenDecimals;
-        uint underlyingDecimals;
-        uint compSupplySpeed;
-        uint compBorrowSpeed;
-        uint borrowCap;
-    }
-
     struct CTokenAllData {
         address cToken;
         uint exchangeRateCurrent;
@@ -167,6 +97,43 @@ contract CompoundLens {
         uint closeFactorMantissa;
         uint liquidationIncentiveMantissa;
         CTokenAllData[] cTokens;
+    }
+
+    struct CTokenAllDataWithAccount {
+        address cToken;
+        uint exchangeRateCurrent;
+        uint supplyRatePerBlock;
+        uint borrowRatePerBlock;
+        uint reserveFactorMantissa;
+        uint totalBorrows;
+        uint totalReserves;
+        uint totalSupply;
+        uint totalCash;
+        bool isListed;
+        uint collateralFactorMantissa;
+        address underlyingAssetAddress;
+        uint cTokenDecimals;
+        uint underlyingDecimals;
+        uint compSupplySpeed;
+        uint compBorrowSpeed;
+        uint borrowCap;
+        bool mintGuardianPaused;
+        uint underlyingPrice;
+        uint balanceOf;
+        uint borrowBalanceCurrent;
+        uint balanceOfUnderlying;
+        uint tokenBalance;
+        uint tokenAllowance;
+    }
+
+    struct AccountAllData {
+        uint closeFactorMantissa;
+        uint liquidationIncentiveMantissa;
+        CTokenInterface[] marketsIn;
+        uint liquidity;
+        uint shortfall;
+        CompBalanceMetadataExt compMetadata;
+        CTokenAllDataWithAccount[] cTokens;
     }
 
     function getCompSpeeds(ComptrollerLensInterface comptroller, CTokenInterface cToken) internal returns (uint, uint) {
@@ -211,66 +178,6 @@ contract CompoundLens {
             }
         }
         return (compSupplySpeed, compBorrowSpeed);
-    }
-
-    function cTokenMetadata(CTokenInterface cToken) public returns (CTokenMetadata memory) {
-        uint exchangeRateCurrent = cToken.exchangeRateCurrent();
-        ComptrollerLensInterface comptroller = ComptrollerLensInterface(address(cToken.comptroller()));
-        (bool isListed, uint collateralFactorMantissa) = comptroller.markets(address(cToken));
-        address underlyingAssetAddress;
-        uint underlyingDecimals;
-
-        if (compareStrings(cToken.symbol(), "cETH")) {
-            underlyingAssetAddress = address(0);
-            underlyingDecimals = 18;
-        } else {
-            CErc20Interface cErc20 = CErc20Interface(address(cToken));
-            underlyingAssetAddress = cErc20.underlying();
-            underlyingDecimals = EIP20Interface(cErc20.underlying()).decimals();
-        }
-
-        (uint compSupplySpeed, uint compBorrowSpeed) = getCompSpeeds(comptroller, cToken);
-
-        uint borrowCap = 0;
-        (bool borrowCapSuccess, bytes memory borrowCapReturnData) =
-            address(comptroller).call(
-                abi.encodePacked(
-                    comptroller.borrowCaps.selector,
-                    abi.encode(address(cToken))
-                )
-            );
-        if (borrowCapSuccess) {
-            borrowCap = abi.decode(borrowCapReturnData, (uint));
-        }
-
-        return CTokenMetadata({
-            cToken: address(cToken),
-            exchangeRateCurrent: exchangeRateCurrent,
-            supplyRatePerBlock: cToken.supplyRatePerBlock(),
-            borrowRatePerBlock: cToken.borrowRatePerBlock(),
-            reserveFactorMantissa: cToken.reserveFactorMantissa(),
-            totalBorrows: cToken.totalBorrows(),
-            totalReserves: cToken.totalReserves(),
-            totalSupply: cToken.totalSupply(),
-            totalCash: cToken.getCash(),
-            isListed: isListed,
-            collateralFactorMantissa: collateralFactorMantissa,
-            underlyingAssetAddress: underlyingAssetAddress,
-            cTokenDecimals: cToken.decimals(),
-            underlyingDecimals: underlyingDecimals,
-            compSupplySpeed: compSupplySpeed,
-            compBorrowSpeed: compBorrowSpeed,
-            borrowCap: borrowCap
-        });
-    }
-
-    function cTokenMetadataAll(CTokenInterface[] calldata cTokens) external returns (CTokenMetadata[] memory) {
-        uint cTokenCount = cTokens.length;
-        CTokenMetadata[] memory res = new CTokenMetadata[](cTokenCount);
-        for (uint i = 0; i < cTokenCount; i++) {
-            res[i] = cTokenMetadata(cTokens[i]);
-        }
-        return res;
     }
 
     function buildCTokenAllData(CTokenInterface cToken) public returns (CTokenAllData memory) {
@@ -335,8 +242,6 @@ contract CompoundLens {
             cTokensRes[i] = buildCTokenAllData(cTokens[i]);
         }
 
-        //TODO: read the LiquidationIncentive and closeFactor from the comtrpoller.
-        // Is it ok if we take the first cToken?
         uint liquidationIncentive = 0;
         uint closeFactor = 0;
         if(cTokenCount > 0) {
@@ -388,39 +293,6 @@ contract CompoundLens {
         });
     }
 
-    function cTokenBalancesAll(CTokenInterface[] calldata cTokens, address payable account) external returns (CTokenBalances[] memory) {
-        uint cTokenCount = cTokens.length;
-        CTokenBalances[] memory res = new CTokenBalances[](cTokenCount);
-        for (uint i = 0; i < cTokenCount; i++) {
-            res[i] = cTokenBalances(cTokens[i], account);
-        }
-        return res;
-    }
-
-    struct CTokenUnderlyingPrice {
-        address cToken;
-        uint underlyingPrice;
-    }
-
-    function cTokenUnderlyingPrice(CTokenInterface cToken) public returns (CTokenUnderlyingPrice memory) {
-        ComptrollerLensInterface comptroller = ComptrollerLensInterface(address(cToken.comptroller()));
-        PriceOracleInterface priceOracle = comptroller.oracle();
-
-        return CTokenUnderlyingPrice({
-            cToken: address(cToken),
-            underlyingPrice: priceOracle.getUnderlyingPrice(cToken)
-        });
-    }
-
-    function cTokenUnderlyingPriceAll(CTokenInterface[] calldata cTokens) external returns (CTokenUnderlyingPrice[] memory) {
-        uint cTokenCount = cTokens.length;
-        CTokenUnderlyingPrice[] memory res = new CTokenUnderlyingPrice[](cTokenCount);
-        for (uint i = 0; i < cTokenCount; i++) {
-            res[i] = cTokenUnderlyingPrice(cTokens[i]);
-        }
-        return res;
-    }
-
     struct AccountLimits {
         CTokenInterface[] markets;
         uint liquidity;
@@ -435,195 +307,6 @@ contract CompoundLens {
             markets: comptroller.getAssetsIn(account),
             liquidity: liquidity,
             shortfall: shortfall
-        });
-    }
-
-    struct GovReceipt {
-        uint proposalId;
-        bool hasVoted;
-        bool support;
-        uint96 votes;
-    }
-
-    function getGovReceipts(GovernorAlphaInterface governor, address voter, uint[] memory proposalIds) public view returns (GovReceipt[] memory) {
-        uint proposalCount = proposalIds.length;
-        GovReceipt[] memory res = new GovReceipt[](proposalCount);
-        for (uint i = 0; i < proposalCount; i++) {
-            GovernorAlphaInterface.Receipt memory receipt = governor.getReceipt(proposalIds[i], voter);
-            res[i] = GovReceipt({
-                proposalId: proposalIds[i],
-                hasVoted: receipt.hasVoted,
-                support: receipt.support,
-                votes: receipt.votes
-            });
-        }
-        return res;
-    }
-
-    struct GovBravoReceipt {
-        uint proposalId;
-        bool hasVoted;
-        uint8 support;
-        uint96 votes;
-    }
-
-    function getGovBravoReceipts(GovernorBravoInterface governor, address voter, uint[] memory proposalIds) public view returns (GovBravoReceipt[] memory) {
-        uint proposalCount = proposalIds.length;
-        GovBravoReceipt[] memory res = new GovBravoReceipt[](proposalCount);
-        for (uint i = 0; i < proposalCount; i++) {
-            GovernorBravoInterface.Receipt memory receipt = governor.getReceipt(proposalIds[i], voter);
-            res[i] = GovBravoReceipt({
-                proposalId: proposalIds[i],
-                hasVoted: receipt.hasVoted,
-                support: receipt.support,
-                votes: receipt.votes
-            });
-        }
-        return res;
-    }
-
-    struct GovProposal {
-        uint proposalId;
-        address proposer;
-        uint eta;
-        address[] targets;
-        uint[] values;
-        string[] signatures;
-        bytes[] calldatas;
-        uint startBlock;
-        uint endBlock;
-        uint forVotes;
-        uint againstVotes;
-        bool canceled;
-        bool executed;
-    }
-
-    function setProposal(GovProposal memory res, GovernorAlphaInterface governor, uint proposalId) internal view {
-        // (
-        //     ,
-        //     address proposer,
-        //     uint eta,
-        //     uint startBlock,
-        //     uint endBlock,
-        //     uint forVotes,
-        //     uint againstVotes,
-        //     bool canceled,
-        //     bool executed
-        // ) = governor.proposals(proposalId);
-        GovernorAlphaInterface.Proposal memory prop = governor.proposals(proposalId);
-        res.proposalId = proposalId;
-        res.proposer = prop.proposer;
-        res.eta = prop.eta;
-        res.startBlock = prop.startBlock;
-        res.endBlock = prop.endBlock;
-        res.forVotes = prop.forVotes;
-        res.againstVotes = prop.againstVotes;
-        res.canceled = prop.canceled;
-        res.executed = prop.executed;
-    }
-
-    function getGovProposals(GovernorAlphaInterface governor, uint[] calldata proposalIds) external view returns (GovProposal[] memory) {
-        GovProposal[] memory res = new GovProposal[](proposalIds.length);
-        for (uint i = 0; i < proposalIds.length; i++) {
-            (
-                address[] memory targets,
-                uint[] memory values,
-                string[] memory signatures,
-                bytes[] memory calldatas
-            ) = governor.getActions(proposalIds[i]);
-            res[i] = GovProposal({
-                proposalId: 0,
-                proposer: address(0),
-                eta: 0,
-                targets: targets,
-                values: values,
-                signatures: signatures,
-                calldatas: calldatas,
-                startBlock: 0,
-                endBlock: 0,
-                forVotes: 0,
-                againstVotes: 0,
-                canceled: false,
-                executed: false
-            });
-            setProposal(res[i], governor, proposalIds[i]);
-        }
-        return res;
-    }
-
-    struct GovBravoProposal {
-        uint proposalId;
-        address proposer;
-        uint eta;
-        address[] targets;
-        uint[] values;
-        string[] signatures;
-        bytes[] calldatas;
-        uint startBlock;
-        uint endBlock;
-        uint forVotes;
-        uint againstVotes;
-        uint abstainVotes;
-        bool canceled;
-        bool executed;
-    }
-
-    function setBravoProposal(GovBravoProposal memory res, GovernorBravoInterface governor, uint proposalId) internal view {
-        GovernorBravoInterface.Proposal memory p = governor.proposals(proposalId);
-
-        res.proposalId = proposalId;
-        res.proposer = p.proposer;
-        res.eta = p.eta;
-        res.startBlock = p.startBlock;
-        res.endBlock = p.endBlock;
-        res.forVotes = p.forVotes;
-        res.againstVotes = p.againstVotes;
-        res.abstainVotes = p.abstainVotes;
-        res.canceled = p.canceled;
-        res.executed = p.executed;
-    }
-
-    function getGovBravoProposals(GovernorBravoInterface governor, uint[] calldata proposalIds) external view returns (GovBravoProposal[] memory) {
-        GovBravoProposal[] memory res = new GovBravoProposal[](proposalIds.length);
-        for (uint i = 0; i < proposalIds.length; i++) {
-            (
-                address[] memory targets,
-                uint[] memory values,
-                string[] memory signatures,
-                bytes[] memory calldatas
-            ) = governor.getActions(proposalIds[i]);
-            res[i] = GovBravoProposal({
-                proposalId: 0,
-                proposer: address(0),
-                eta: 0,
-                targets: targets,
-                values: values,
-                signatures: signatures,
-                calldatas: calldatas,
-                startBlock: 0,
-                endBlock: 0,
-                forVotes: 0,
-                againstVotes: 0,
-                abstainVotes: 0,
-                canceled: false,
-                executed: false
-            });
-            setBravoProposal(res[i], governor, proposalIds[i]);
-        }
-        return res;
-    }
-
-    struct CompBalanceMetadata {
-        uint balance;
-        uint votes;
-        address delegate;
-    }
-
-    function getCompBalanceMetadata(CompInterface comp, address account) external view returns (CompBalanceMetadata memory) {
-        return CompBalanceMetadata({
-            balance: comp.balanceOf(account),
-            votes: uint256(comp.getCurrentVotes(account)),
-            delegate: comp.delegates(account)
         });
     }
 
@@ -650,18 +333,106 @@ contract CompoundLens {
         });
     }
 
-    struct CompVotes {
-        uint blockNumber;
-        uint votes;
+    function queryAllWithAccount(CTokenInterface[] calldata cTokens, address payable account, CompInterface comp) external returns (AccountAllData memory) {
+        uint cTokenCount = cTokens.length;
+        CTokenAllDataWithAccount[] memory cTokensRes = new CTokenAllDataWithAccount[](cTokenCount);
+        for (uint i = 0; i < cTokenCount; i++) {
+            CTokenAllData memory cTokenAllData = buildCTokenAllData(cTokens[i]);
+            CTokenBalances memory cTokenBalance = cTokenBalances(cTokens[i], account);
+            
+            cTokensRes[i] = CTokenAllDataWithAccount({
+                cToken: cTokenAllData.cToken,
+                exchangeRateCurrent: cTokenAllData.exchangeRateCurrent,
+                supplyRatePerBlock: cTokenAllData.supplyRatePerBlock,
+                borrowRatePerBlock: cTokenAllData.borrowRatePerBlock,
+                reserveFactorMantissa: cTokenAllData.reserveFactorMantissa,
+                totalBorrows: cTokenAllData.totalBorrows,
+                totalReserves: cTokenAllData.totalReserves,
+                totalSupply: cTokenAllData.totalSupply,
+                totalCash: cTokenAllData.totalCash,
+                isListed: cTokenAllData.isListed,
+                collateralFactorMantissa: cTokenAllData.collateralFactorMantissa,
+                underlyingAssetAddress: cTokenAllData.underlyingAssetAddress,
+                cTokenDecimals: cTokenAllData.cTokenDecimals,
+                underlyingDecimals: cTokenAllData.underlyingDecimals,
+                compSupplySpeed: cTokenAllData.compSupplySpeed,
+                compBorrowSpeed: cTokenAllData.compBorrowSpeed,
+                borrowCap: cTokenAllData.borrowCap,
+                mintGuardianPaused: cTokenAllData.mintGuardianPaused,
+                underlyingPrice: cTokenAllData.underlyingPrice,
+                balanceOf: cTokenBalance.balanceOf,
+                borrowBalanceCurrent: cTokenBalance.borrowBalanceCurrent,
+                balanceOfUnderlying: cTokenBalance.balanceOfUnderlying,
+                tokenBalance: cTokenBalance.tokenBalance,
+                tokenAllowance: cTokenBalance.tokenAllowance
+            });
+        }
+
+        //TODO: Put into function?
+        uint liquidationIncentive = 0;
+        uint closeFactor = 0;
+
+        CTokenInterface[] memory accountMarketsIn;
+        uint liquidity = 0;
+        uint shortfall = 0;
+
+        uint compBalance = 0;
+        uint compVotes = 0;
+        address compDelegate;
+        uint compAllocated = 0;
+        if(cTokenCount > 0) {
+            ComptrollerLensInterface comptroller = ComptrollerLensInterface(address(cTokens[0].comptroller()));
+            liquidationIncentive = comptroller.liquidationIncentiveMantissa();
+            closeFactor = comptroller.closeFactorMantissa();
+
+            AccountLimits memory accountLimits = getAccountLimits(comptroller, account);
+            accountMarketsIn = accountLimits.markets;
+            liquidity = accountLimits.liquidity;
+            shortfall = accountLimits.shortfall;
+
+            CompBalanceMetadataExt memory compMetadata = this.getCompBalanceMetadataExt(comp, comptroller, account);
+            compBalance = compMetadata.balance;
+            compVotes = compMetadata.votes;
+            compDelegate = compMetadata.delegate;
+            compAllocated = compMetadata.allocated;
+        }
+
+        return AccountAllData({
+            closeFactorMantissa: closeFactor,
+            liquidationIncentiveMantissa: liquidationIncentive,
+            marketsIn: accountMarketsIn,
+            liquidity: liquidity,
+            shortfall: shortfall,
+            compMetadata: CompBalanceMetadataExt({
+                balance: compBalance,
+                votes: compVotes,
+                delegate: compDelegate,
+                allocated: compAllocated
+            }),
+            cTokens: cTokensRes
+        });
     }
 
-    function getCompVotes(CompInterface comp, address account, uint32[] calldata blockNumbers) external view returns (CompVotes[] memory) {
-        CompVotes[] memory res = new CompVotes[](blockNumbers.length);
-        for (uint i = 0; i < blockNumbers.length; i++) {
-            res[i] = CompVotes({
-                blockNumber: uint256(blockNumbers[i]),
-                votes: uint256(comp.getPriorVotes(account, blockNumbers[i]))
-            });
+    struct CTokenUnderlyingPrice {
+        address cToken;
+        uint underlyingPrice;
+    }
+
+    function cTokenUnderlyingPrice(CTokenInterface cToken) public returns (CTokenUnderlyingPrice memory) {
+        ComptrollerLensInterface comptroller = ComptrollerLensInterface(address(cToken.comptroller()));
+        PriceOracleInterface priceOracle = comptroller.oracle();
+
+        return CTokenUnderlyingPrice({
+            cToken: address(cToken),
+            underlyingPrice: priceOracle.getUnderlyingPrice(cToken)
+        });
+    }
+
+    function cTokenUnderlyingPriceAll(CTokenInterface[] calldata cTokens) external returns (CTokenUnderlyingPrice[] memory) {
+        uint cTokenCount = cTokens.length;
+        CTokenUnderlyingPrice[] memory res = new CTokenUnderlyingPrice[](cTokenCount);
+        for (uint i = 0; i < cTokenCount; i++) {
+            res[i] = cTokenUnderlyingPrice(cTokens[i]);
         }
         return res;
     }

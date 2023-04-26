@@ -5,7 +5,6 @@ port module Eth.Governance exposing
     , askClaimComp
     , askDelegateTo
     , clearState
-    , delegateeProfilePageNavigate
     , getCompAccruedBalance
     , getCompoundGovernanceTokenBalance
     , getCurrentVotes
@@ -13,7 +12,6 @@ port module Eth.Governance exposing
     , getDelegatedAddress
     , getDelegatedAddressString
     , init
-    , newBlockCmd
     , subscriptions
     , update
     )
@@ -80,63 +78,6 @@ emptyState =
 init : GovernanceState
 init =
     emptyState
-
-
-newBlockCmd : Config -> Int -> Account -> Maybe CustomerAddress -> Cmd GovernanceMsg
-newBlockCmd config blockNumber maybeAccount maybeBrowsedAddress =
-    case config.maybeCompToken of
-        Just compToken ->
-            let
-                userBalCmd =
-                    case maybeAccount of
-                        Acct account _ ->
-                            [ askGovernanceData blockNumber config.compoundLens compToken.address account compToken.decimals
-                            ]
-                                ++ (if config.maybeReservoir /= Nothing then
-                                        [ askCompMetadata blockNumber compToken.address config.comptroller account config.compoundLens ]
-
-                                    else
-                                        []
-                                   )
-
-                        _ ->
-                            [ Cmd.none ]
-
-                browsedAddressCmds =
-                    case maybeBrowsedAddress of
-                        Just browsedAddress ->
-                            [ askGovernanceData blockNumber config.compoundLens compToken.address browsedAddress compToken.decimals
-                            ]
-
-                        _ ->
-                            [ Cmd.none ]
-            in
-            Cmd.batch <|
-                userBalCmd
-                    ++ browsedAddressCmds
-
-        Nothing ->
-            Cmd.none
-
-
-delegateeProfilePageNavigate : Config -> Maybe Int -> Maybe CustomerAddress -> Cmd GovernanceMsg
-delegateeProfilePageNavigate config maybeBlockNumber maybeBrowsedAddress =
-    case ( config.maybeCompToken, maybeBlockNumber ) of
-        ( Just compToken, Just blockNumber ) ->
-            let
-                browsedAddressCmds =
-                    case maybeBrowsedAddress of
-                        Just browsedAddress ->
-                            [ askGovernanceData blockNumber config.compoundLens compToken.address browsedAddress compToken.decimals
-                            ]
-
-                        _ ->
-                            [ Cmd.none ]
-            in
-            Cmd.batch browsedAddressCmds
-
-        _ ->
-            Cmd.none
 
 
 update : GovernanceMsg -> GovernanceState -> ( GovernanceState, Cmd GovernanceMsg )
@@ -295,21 +236,6 @@ getCompAccruedBalance customerAddress { compAccruedBalances } =
 
 -- PORTS
 
-
-port askGovernanceDataPort : { blockNumber : Int, compoundLens : String, governanceTokenAddress : String, customerAddress : String, decimals : Int } -> Cmd msg
-
-
-askGovernanceData : Int -> ContractAddress -> ContractAddress -> CustomerAddress -> Int -> Cmd msg
-askGovernanceData blockNumber (Contract compoundLensAddress) (Contract contractAddress) (Customer customerAddress) decimals =
-    askGovernanceDataPort
-        { blockNumber = blockNumber
-        , compoundLens = compoundLensAddress
-        , governanceTokenAddress = contractAddress
-        , customerAddress = customerAddress
-        , decimals = decimals
-        }
-
-
 port giveGovernanceDataPort : (Value -> msg) -> Sub msg
 
 
@@ -336,20 +262,6 @@ askDelegateTo (Contract compTokenAddress) (Customer customerAddress) (Customer t
         { compTokenAddress = compTokenAddress
         , customerAddress = customerAddress
         , targetAddress = targetAddress
-        }
-
-
-port askCompMetadataPort : { blockNumber : Int, compAddress : String, comptrollerAddress : String, customerAddress : String, compoundLens : String } -> Cmd msg
-
-
-askCompMetadata : Int -> ContractAddress -> ContractAddress -> CustomerAddress -> ContractAddress -> Cmd msg
-askCompMetadata blockNumber (Contract compAddress) (Contract comptrollerAddress) (Customer customerAddress) (Contract compoundLens) =
-    askCompMetadataPort
-        { blockNumber = blockNumber
-        , compAddress = compAddress
-        , comptrollerAddress = comptrollerAddress
-        , customerAddress = customerAddress
-        , compoundLens = compoundLens
         }
 
 
