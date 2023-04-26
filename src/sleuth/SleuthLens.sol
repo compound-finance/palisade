@@ -61,7 +61,7 @@ interface ComptrollerLensInterface {
     function liquidationIncentiveMantissa() external view returns (uint);
 }
 
-contract CompoundLens {
+contract SleuthLens {
     struct CTokenAllData {
         address cToken;
         uint exchangeRateCurrent;

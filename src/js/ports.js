@@ -38,7 +38,7 @@ import {
   wrapSend,
 } from '../../node_modules/compound-components/src/js/sharedEth/eth';
 
-import CompoundLensQuery from '../sleuth/out/CompoundLens.sol/CompoundLens.json';
+import SleuthQuery from '../sleuth/out/SleuthLens.sol/SleuthLens.json';
 
 const PROVIDER_TYPE_NONE = 0;
 const PROVIDER_TYPE_LEDGER = 1;
@@ -238,7 +238,7 @@ function subscribeToCTokenPorts(app, eth) {
 
     const web3 = await withWeb3Eth(eth);
 
-    const QUERY = Sleuth.querySol(CompoundLensQuery, { queryFunctionName: 'queryAllNoAccount' });
+    const QUERY = Sleuth.querySol(SleuthQuery, { queryFunctionName: 'queryAllNoAccount' });
 
     const provider = new StaticJsonRpcProvider(web3.currentProvider.host);
     let sleuth = new Sleuth(provider);
@@ -315,8 +315,6 @@ function subscribeToCTokenPorts(app, eth) {
 
     app.ports.giveOraclePricesAllPort.send(allPricesList);
 
-    //TODO: See if we can add the CAP Factory allowance ask in here? Or maybe just even remove the
-    //      voting page entirely???
     app.ports.giveComptrollerMetadataPort.send({
       closeFactor: toScaledDecimal(response.closeFactorMantissa, EXP_DECIMALS),
       liquidationIncentive: toScaledDecimal(response.liquidationIncentiveMantissa, EXP_DECIMALS),
@@ -330,7 +328,7 @@ function subscribeToCTokenPorts(app, eth) {
 
       const web3 = await withWeb3Eth(eth);
 
-      const QUERY = Sleuth.querySol(CompoundLensQuery, { queryFunctionName: 'queryAllWithAccount' });
+      const QUERY = Sleuth.querySol(SleuthQuery, { queryFunctionName: 'queryAllWithAccount' });
 
       const provider = new StaticJsonRpcProvider(web3.currentProvider.host);
       let sleuth = new Sleuth(provider);
@@ -411,13 +409,10 @@ function subscribeToCTokenPorts(app, eth) {
 
       app.ports.giveOraclePricesAllPort.send(allPricesList);
 
-      //TODO: See if we can add the CAP Factory allowance ask in here? Or maybe just even remove the
-      //      voting page entirely???
       app.ports.giveComptrollerMetadataPort.send({
         closeFactor: toScaledDecimal(response.closeFactorMantissa, EXP_DECIMALS),
         liquidationIncentive: toScaledDecimal(response.liquidationIncentiveMantissa, EXP_DECIMALS),
       });
-      //TODO: End
 
       const cTokenBalancesList = response.cTokens.map(
         ({
