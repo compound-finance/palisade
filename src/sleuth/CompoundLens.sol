@@ -133,6 +133,7 @@ contract CompoundLens {
         uint liquidity;
         uint shortfall;
         CompBalanceMetadataExt compMetadata;
+        uint capFactoryAllowance;
         CTokenAllDataWithAccount[] cTokens;
     }
 
@@ -333,7 +334,7 @@ contract CompoundLens {
         });
     }
 
-    function queryAllWithAccount(CTokenInterface[] calldata cTokens, address payable account, CompInterface comp) external returns (AccountAllData memory) {
+    function queryAllWithAccount(CTokenInterface[] calldata cTokens, address payable account, CompInterface comp, address capFactory) external returns (AccountAllData memory) {
         uint cTokenCount = cTokens.length;
         CTokenAllDataWithAccount[] memory cTokensRes = new CTokenAllDataWithAccount[](cTokenCount);
         for (uint i = 0; i < cTokenCount; i++) {
@@ -368,7 +369,6 @@ contract CompoundLens {
             });
         }
 
-        //TODO: Put into function?
         uint liquidationIncentive = 0;
         uint closeFactor = 0;
 
@@ -380,6 +380,8 @@ contract CompoundLens {
         uint compVotes = 0;
         address compDelegate;
         uint compAllocated = 0;
+
+        uint capFactoryAllowance = 0;
         if(cTokenCount > 0) {
             ComptrollerLensInterface comptroller = ComptrollerLensInterface(address(cTokens[0].comptroller()));
             liquidationIncentive = comptroller.liquidationIncentiveMantissa();
@@ -395,6 +397,9 @@ contract CompoundLens {
             compVotes = compMetadata.votes;
             compDelegate = compMetadata.delegate;
             compAllocated = compMetadata.allocated;
+
+            EIP20Interface compEIP20 = EIP20Interface(address(comp));
+            capFactoryAllowance = compEIP20.allowance(account, capFactory);
         }
 
         return AccountAllData({
@@ -409,6 +414,7 @@ contract CompoundLens {
                 delegate: compDelegate,
                 allocated: compAllocated
             }),
+            capFactoryAllowance: capFactoryAllowance,
             cTokens: cTokensRes
         });
     }

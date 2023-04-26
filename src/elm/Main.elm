@@ -327,20 +327,12 @@ newBlockCmd apiBaseUrlMap maybeNetwork blockNumber previousBlockNumber ({ dataPr
                                 _ ->
                                     []
 
-                        compAllowanceCmd =
-                            case ( config.maybeCompToken, config.maybeCrowdProposalFactory, model.account ) of
-                                ( Just compToken, Just capFactory, Acct customerAddress _ ) ->
-                                    Cmd.map WrappedTokenMsg (Eth.Token.askCompCapFactoryAllowance blockNumber customerAddress capFactory compToken.address)
-
-                                _ ->
-                                    Cmd.none
                     in
                     Cmd.batch <|
                         pageCmds
                             ++ [ Cmd.map WrappedTransactionMsg (Transaction.newBlockCmd blockNumber network model.transactionState)
                                , Cmd.map WrappedTokenMsg (tokenNewBlockCmd config model.tokenState blockNumber model.account)
                                , Cmd.map WrappedCompoundMsg (compoundNewBlockCmd blockNumber apiBaseUrlMap network config.comptroller model.account config)
-                               , compAllowanceCmd
                                ]
 
                 _ ->

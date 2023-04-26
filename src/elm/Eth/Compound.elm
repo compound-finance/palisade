@@ -210,10 +210,14 @@ compoundNewBlockCmd blockNumber apiBaseUrlMap network comptroller account config
             |> Maybe.map .address
             |> Maybe.withDefault (Contract "0x0000000000000000000000000000000000000000")
 
+        capFactory =
+            config.maybeCrowdProposalFactory
+            |> Maybe.withDefault (Contract "0x0000000000000000000000000000000000000000")
+
         fetchDataCmd =
             case account of
                 Acct customerAddress _ ->
-                    askCustomerBalances apiBaseUrlMap (Just network) blockNumber customerAddress cTokenConfigs comp
+                    askCustomerBalances apiBaseUrlMap (Just network) blockNumber customerAddress cTokenConfigs comp capFactory
 
                 UnknownAcct ->
                     askCTokenMetadata blockNumber config cTokenConfigs
@@ -602,13 +606,9 @@ askCTokenMetadata blockNumber config cTokenConfigs =
     askCTokenGetMetadataAll blockNumber cTokenConfigs config.comptroller
 
 
-askCustomerBalances : Dict String String -> Maybe Network -> Int -> CustomerAddress -> List CTokenConfig -> ContractAddress -> Cmd CompoundMsg
-askCustomerBalances apiBaseUrlMap maybeNetwork blockNumber account cTokenConfigs comp =
-    let
-        cTokenBalancesCmds =
-            [ askCTokenGetBalances blockNumber account cTokenConfigs comp ]
-    in
-    Cmd.batch (cTokenBalancesCmds)
+askCustomerBalances : Dict String String -> Maybe Network -> Int -> CustomerAddress -> List CTokenConfig -> ContractAddress -> ContractAddress -> Cmd CompoundMsg
+askCustomerBalances apiBaseUrlMap maybeNetwork blockNumber account cTokenConfigs comp capFactory =
+    askCTokenGetBalances blockNumber account cTokenConfigs comp capFactory
 
 
 
@@ -695,11 +695,11 @@ type alias CTokenPortData =
     }
 
 
-port askCTokenGetBalancesPort : { blockNumber : Int, customerAddress : String, cTokens : List ( String, CTokenPortData ), compAddress: String } -> Cmd msg
+port askCTokenGetBalancesPort : { blockNumber : Int, customerAddress : String, cTokens : List ( String, CTokenPortData ), compAddress: String, capFactoryAddress: String } -> Cmd msg
 
 
-askCTokenGetBalances : Int -> CustomerAddress -> List CTokenConfig -> ContractAddress -> Cmd msg
-askCTokenGetBalances blockNumber (Customer customerAddress) cTokenConfigs (Contract compAddress) =
+askCTokenGetBalances : Int -> CustomerAddress -> List CTokenConfig -> ContractAddress -> ContractAddress -> Cmd msg
+askCTokenGetBalances blockNumber (Customer customerAddress) cTokenConfigs (Contract compAddress) (Contract capFactoryAddress) =
     let
         cTokens =
             cTokenConfigs
@@ -719,6 +719,7 @@ askCTokenGetBalances blockNumber (Customer customerAddress) cTokenConfigs (Contr
         , customerAddress = customerAddress
         , cTokens = cTokens
         , compAddress = compAddress
+        , capFactoryAddress = capFactoryAddress
         }
 
 

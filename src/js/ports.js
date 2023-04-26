@@ -332,10 +332,9 @@ function subscribeToCTokenPorts(app, eth) {
 
 
   //TODO: Can remove the compoundLens Address here...
-  // port askCTokenGetBalancesPort : { blockNumber : Int, customerAddress: String, cTokens : List (String, CTokenPortData), compoundLens: String }  -> Cmd msg
+  // port askCTokenGetBalancesPort : { blockNumber : Int, customerAddress : String, cTokens : List ( String, CTokenPortData ), compAddress: String, capFactoryAddress: String } -> Cmd msg
   app.ports.askCTokenGetBalancesPort.subscribe(
-    async({ blockNumber, customerAddress, cTokens: cTokenEntries, compoundLens, compAddress }) => {
-      const CompoundLens = getContractJsonByName(eth, 'CompoundLens');
+    async({ blockNumber, customerAddress, cTokens: cTokenEntries, compAddress, capFactoryAddress }) => {
       let cTokens = supportFromEntries(cTokenEntries);
 
       const web3 = await withWeb3Eth(eth);
@@ -344,14 +343,11 @@ function subscribeToCTokenPorts(app, eth) {
 
       const provider = new StaticJsonRpcProvider(web3.currentProvider.host);
       let sleuth = new Sleuth(provider);
-      let response = await sleuth.fetch(QUERY, [Object.keys(cTokens), customerAddress, compAddress]);
-
-      console.log("account response: ", response);
+      let response = await sleuth.fetch(QUERY, [Object.keys(cTokens), customerAddress, compAddress, capFactoryAddress]);
 
       //TODO: put into a promise...
       const accountTrxCount = await getTransactionCount(eth, customerAddress);
 
-      //TODO: Rename me to something else...
       //TODO: Move this into common logic with above, new function to process
       //      response and fire off ports
       const cTokenMetadataList = response.cTokens.map(
@@ -491,27 +487,13 @@ function subscribeToCTokenPorts(app, eth) {
         customerAddress: customerAddress,
         compAccrued: toScaledDecimal(response.compMetadata.allocated, EXP_DECIMALS),
       });
-    }
-  );
-}
 
-// This is now only used by the liquidate page
-function subscribeToAskTokenAllowance(app, eth) {
-  // port askTokenAllowanceTokenPort : { blockNumber : Int, assetAddress : String, contractAddress : String, customerAddress : String, decimals : Int } -> Cmd msg
-  app.ports.askTokenAllowanceTokenPort.subscribe(
-    ({ blockNumber, assetAddress, contractAddress, customerAddress, decimals }) => {
-      wrapCall(app, eth, [[EIP20Interface, assetAddress, 'allowance', [customerAddress, contractAddress]]], blockNumber)
-        .then(([result]) => {
-          const allowance = toScaledDecimal(result, decimals);
-
-          app.ports.giveTokenAllowanceTokenPort.send({
-            assetAddress: assetAddress,
-            contractAddress: contractAddress,
-            customerAddress: customerAddress,
-            allowance: allowance,
-          });
-        })
-        .catch(reportError(app));
+      app.ports.giveTokenAllowanceTokenPort.send({
+        assetAddress: compAddress,
+        contractAddress: capFactoryAddress,
+        customerAddress: customerAddress,
+        allowance: toScaledDecimal(response.capFactoryAllowance, EXP_DECIMALS)
+      });
     }
   );
 }
@@ -1677,7 +1659,6 @@ function subscribe(
   subscribeToCTokenPorts(app, eth);
   subscribeToNewBlocks(app, eth);
   subscribeToCheckTrxStatus(app, eth);
-  subscribeToAskTokenAllowance(app, eth);
   subscribeToStoreTransaction(app, eth);
   subscribeToPreferences(app, eth);
   subscribeToGasService(app);
