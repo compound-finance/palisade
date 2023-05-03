@@ -335,79 +335,81 @@ function subscribeToCTokenPorts(app, eth) {
 
       const provider = new StaticJsonRpcProvider(web3.currentProvider.host);
       let sleuth = new Sleuth(provider);
-      let response = await sleuth.fetch(QUERY, [Object.keys(cTokens), customerAddress, compAddress, capFactoryAddress]);
 
-      //TODO: put into a promise...
-      const accountTrxCount = await getTransactionCount(eth, customerAddress);
+      Promise.all([
+        getTransactionCount(eth, customerAddress), 
+        sleuth.fetch(QUERY, [Object.keys(cTokens), customerAddress, compAddress, capFactoryAddress])
+      ]).then(([accountTrxCount, response]) => {
+        handleNonAccountQueryResults(app, cTokens, response);
 
-      handleNonAccountQueryResults(app, cTokens, response);
+        const cTokenBalancesList = response.cTokens.map(
+          ({
+            cToken: cTokenAddress,
+            balanceOf: cTokenWalletBalanceResult,
+            borrowBalanceCurrent: underlyingBorrowBalanceResult,
+            balanceOfUnderlying: underlyingSupplyBalanceResult,
+            tokenBalance: tokenBalanceResult,
+            tokenAllowance: tokenAllowanceResult,
+          }) => {
+            let { underlyingAssetAddress, underlyingDecimals, cTokenDecimals, cTokenSymbol } = cTokens[
+              cTokenAddress.toLowerCase()
+            ];
+            const walletBalance = toScaledDecimal(cTokenWalletBalanceResult, cTokenDecimals);
+            const borrowBalance = toScaledDecimal(underlyingBorrowBalanceResult, underlyingDecimals);
+            const supplyBalance = toScaledDecimal(underlyingSupplyBalanceResult, underlyingDecimals);
+            const tokenBalance = toScaledDecimal(tokenBalanceResult, underlyingDecimals);
+            const tokenAllowance = toScaledDecimal(tokenAllowanceResult, underlyingDecimals);
 
-      const cTokenBalancesList = response.cTokens.map(
-        ({
-          cToken: cTokenAddress,
-          balanceOf: cTokenWalletBalanceResult,
-          borrowBalanceCurrent: underlyingBorrowBalanceResult,
-          balanceOfUnderlying: underlyingSupplyBalanceResult,
-          tokenBalance: tokenBalanceResult,
-          tokenAllowance: tokenAllowanceResult,
-        }) => {
-          let { underlyingAssetAddress, underlyingDecimals, cTokenDecimals, cTokenSymbol } = cTokens[
-            cTokenAddress.toLowerCase()
-          ];
-          const walletBalance = toScaledDecimal(cTokenWalletBalanceResult, cTokenDecimals);
-          const borrowBalance = toScaledDecimal(underlyingBorrowBalanceResult, underlyingDecimals);
-          const supplyBalance = toScaledDecimal(underlyingSupplyBalanceResult, underlyingDecimals);
-          const tokenBalance = toScaledDecimal(tokenBalanceResult, underlyingDecimals);
-          const tokenAllowance = toScaledDecimal(tokenAllowanceResult, underlyingDecimals);
+            if (cTokenSymbol == 'cETH') {
+              // Since we're on eth anyway
+              app.ports.giveAccountBalancePort.send({
+                balance: tokenBalance,
+              });
+            }
 
-          if (cTokenSymbol == 'cETH') {
-            // Since we're on eth anyway
-            app.ports.giveAccountBalancePort.send({
-              balance: tokenBalance,
-            });
+            return {
+              cTokenAddress: cTokenAddress,
+              customerAddress: customerAddress,
+              cTokenWalletBalance: walletBalance,
+              underlyingAssetAddress: underlyingAssetAddress,
+              underlyingBorrowBalance: borrowBalance,
+              underlyingSupplyBalance: supplyBalance,
+              underlyingTokenWalletBalance: tokenBalance,
+              underlyingTokenAllowance: tokenAllowance,
+            };
           }
+        );
 
-          return {
-            cTokenAddress: cTokenAddress,
-            customerAddress: customerAddress,
-            cTokenWalletBalance: walletBalance,
-            underlyingAssetAddress: underlyingAssetAddress,
-            underlyingBorrowBalance: borrowBalance,
-            underlyingSupplyBalance: supplyBalance,
-            underlyingTokenWalletBalance: tokenBalance,
-            underlyingTokenAllowance: tokenAllowance,
-          };
-        }
-      );
+        app.ports.giveCTokenBalancesAllPort.send(cTokenBalancesList);
 
-      app.ports.giveCTokenBalancesAllPort.send(cTokenBalancesList);
+        app.ports.giveAccountLimitsPort.send({
+          customerAddress: customerAddress,
+          accountLiquidity: toScaledDecimal(response.liquidity, EXP_DECIMALS),
+          accountShortfall: toScaledDecimal(response.shortfall, EXP_DECIMALS),
+          assetsIn: response.marketsIn,
+          trxCount: accountTrxCount
+        });
 
-      app.ports.giveAccountLimitsPort.send({
-        customerAddress: customerAddress,
-        accountLiquidity: toScaledDecimal(response.liquidity, EXP_DECIMALS),
-        accountShortfall: toScaledDecimal(response.shortfall, EXP_DECIMALS),
-        assetsIn: response.marketsIn,
-        trxCount: accountTrxCount
-      });
+        app.ports.giveGovernanceDataPort.send({
+          customerAddress: customerAddress,
+          compTokenBalance: toScaledDecimal(response.compMetadata.balance, EXP_DECIMALS),
+          currentVotesBalance: toScaledDecimal(response.compMetadata.votes, EXP_DECIMALS),
+          delegateeAddress: response.compMetadata.delegate,
+        });
 
-      app.ports.giveGovernanceDataPort.send({
-        customerAddress: customerAddress,
-        compTokenBalance: toScaledDecimal(response.compMetadata.balance, EXP_DECIMALS),
-        currentVotesBalance: toScaledDecimal(response.compMetadata.votes, EXP_DECIMALS),
-        delegateeAddress: response.compMetadata.delegate,
-      });
+        app.ports.giveCompAccruedPort.send({
+          customerAddress: customerAddress,
+          compAccrued: toScaledDecimal(response.compMetadata.allocated, EXP_DECIMALS),
+        });
 
-      app.ports.giveCompAccruedPort.send({
-        customerAddress: customerAddress,
-        compAccrued: toScaledDecimal(response.compMetadata.allocated, EXP_DECIMALS),
-      });
+        app.ports.giveTokenAllowanceTokenPort.send({
+          assetAddress: compAddress,
+          contractAddress: capFactoryAddress,
+          customerAddress: customerAddress,
+          allowance: toScaledDecimal(response.capFactoryAllowance, EXP_DECIMALS)
+        });
 
-      app.ports.giveTokenAllowanceTokenPort.send({
-        assetAddress: compAddress,
-        contractAddress: capFactoryAddress,
-        customerAddress: customerAddress,
-        allowance: toScaledDecimal(response.capFactoryAllowance, EXP_DECIMALS)
-      });
+      }).catch(reportError(app));
     }
   );
 }
