@@ -217,13 +217,13 @@ compoundNewBlockCmd blockNumber apiBaseUrlMap network comptroller account config
         fetchDataCmd =
             case account of
                 Acct customerAddress _ ->
-                    askCustomerBalances apiBaseUrlMap (Just network) blockNumber customerAddress cTokenConfigs comp capFactory
+                    queryAllWithAccount blockNumber customerAddress cTokenConfigs comp capFactory
 
                 UnknownAcct ->
-                    askCTokenMetadata blockNumber config cTokenConfigs
+                    queryAllDataNoAccount blockNumber cTokenConfigs config.comptroller
 
                 NoAccount ->
-                    askCTokenMetadata blockNumber config cTokenConfigs
+                    queryAllDataNoAccount blockNumber cTokenConfigs config.comptroller
     in
     fetchDataCmd
 
@@ -601,25 +601,14 @@ cTokenIsApproved config cToken compoundState =
         Decimal.gt tokenAllowance Decimal.zero
 
 
-askCTokenMetadata : Int -> Config -> List CTokenConfig -> Cmd CompoundMsg
-askCTokenMetadata blockNumber config cTokenConfigs =
-    askCTokenGetMetadataAll blockNumber cTokenConfigs config.comptroller
-
-
-askCustomerBalances : Dict String String -> Maybe Network -> Int -> CustomerAddress -> List CTokenConfig -> ContractAddress -> ContractAddress -> Cmd CompoundMsg
-askCustomerBalances apiBaseUrlMap maybeNetwork blockNumber account cTokenConfigs comp capFactory =
-    askCTokenGetBalances blockNumber account cTokenConfigs comp capFactory
-
-
-
 -- Get CToken metadata: exchange rate, borrow rate, collateral factor
 
 
-port askCTokenMetadataAllPort : { blockNumber : Int, cTokens : List ( String, CTokenPortData ), comptroller : String } -> Cmd msg
+port queryAllNoAccountPort : { blockNumber : Int, cTokens : List ( String, CTokenPortData ), comptroller : String } -> Cmd msg
 
 
-askCTokenGetMetadataAll : Int -> List CTokenConfig -> ContractAddress -> Cmd msg
-askCTokenGetMetadataAll blockNumber cTokenConfigs (Contract comptroller) =
+queryAllDataNoAccount : Int -> List CTokenConfig -> ContractAddress -> Cmd msg
+queryAllDataNoAccount blockNumber cTokenConfigs (Contract comptroller) =
     let
         cTokens =
             cTokenConfigs
@@ -634,7 +623,7 @@ askCTokenGetMetadataAll blockNumber cTokenConfigs (Contract comptroller) =
                         )
                     )
     in
-    askCTokenMetadataAllPort
+    queryAllNoAccountPort
         { blockNumber = blockNumber
         , cTokens = cTokens
         , comptroller = comptroller
@@ -695,11 +684,11 @@ type alias CTokenPortData =
     }
 
 
-port askCTokenGetBalancesPort : { blockNumber : Int, customerAddress : String, cTokens : List ( String, CTokenPortData ), compAddress: String, capFactoryAddress: String } -> Cmd msg
+port queryAllWithAccountPort : { blockNumber : Int, customerAddress : String, cTokens : List ( String, CTokenPortData ), compAddress: String, capFactoryAddress: String } -> Cmd msg
 
 
-askCTokenGetBalances : Int -> CustomerAddress -> List CTokenConfig -> ContractAddress -> ContractAddress -> Cmd msg
-askCTokenGetBalances blockNumber (Customer customerAddress) cTokenConfigs (Contract compAddress) (Contract capFactoryAddress) =
+queryAllWithAccount : Int -> CustomerAddress -> List CTokenConfig -> ContractAddress -> ContractAddress -> Cmd msg
+queryAllWithAccount blockNumber (Customer customerAddress) cTokenConfigs (Contract compAddress) (Contract capFactoryAddress) =
     let
         cTokens =
             cTokenConfigs
@@ -714,7 +703,7 @@ askCTokenGetBalances blockNumber (Customer customerAddress) cTokenConfigs (Contr
                         )
                     )
     in
-    askCTokenGetBalancesPort
+    queryAllWithAccountPort
         { blockNumber = blockNumber
         , customerAddress = customerAddress
         , cTokens = cTokens
