@@ -5,7 +5,6 @@ port module Eth.Token exposing
     , TokenMsg(..)
     , TokenState
     , TokenTransactionMsg(..)
-    , askCompCapFactoryAllowance
     , clearTokenState
     , emptyState
     , ethDecimals
@@ -164,15 +163,6 @@ askEtherPrice config =
 
         Nothing ->
             loadEtherPrice (handleError (Utils.Http.showError >> Error) SetInfuraEtherUSD)
-
-
-askCompCapFactoryAllowance : Int -> CustomerAddress -> ContractAddress -> ContractAddress -> Cmd TokenMsg
-askCompCapFactoryAllowance blockNumber customerAddress capFactoryAddress compAddress =
-    let
-        compAssetAddress =
-            Ethereum.contractAddressToAssetAddress compAddress
-    in
-    askTokenAllowance blockNumber compAssetAddress capFactoryAddress customerAddress 18
 
 
 tokenNewBlockCmd : Config -> TokenState -> Int -> Account -> Cmd TokenMsg
@@ -488,22 +478,6 @@ getUnderlyingTokenDecimals cTokens assetAddress =
 
 
 -- PORTS
--- Ask for token allowance (now only used by CAP Factory)
-
-
-port askTokenAllowanceTokenPort : { blockNumber : Int, assetAddress : String, contractAddress : String, customerAddress : String, decimals : Int } -> Cmd msg
-
-
-askTokenAllowance : Int -> AssetAddress -> ContractAddress -> CustomerAddress -> Int -> Cmd msg
-askTokenAllowance blockNumber (Asset assetAddress) (Contract contractAddress) (Customer customerAddress) decimals =
-    askTokenAllowanceTokenPort
-        { blockNumber = blockNumber
-        , assetAddress = assetAddress
-        , contractAddress = contractAddress
-        , customerAddress = customerAddress
-        , decimals = decimals
-        }
-
 
 port giveTokenAllowanceTokenPort : (Value -> msg) -> Sub msg
 

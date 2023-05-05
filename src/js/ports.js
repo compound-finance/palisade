@@ -1,3 +1,5 @@
+import { Sleuth } from '../../node_modules/@compound-finance/sleuth';
+import { StaticJsonRpcProvider } from '../../node_modules/@ethersproject/providers';
 import BlocknativeSdk from '../../node_modules/bnc-sdk';
 import BN from '../../node_modules/bn.js';
 import connectedWalletPorts from '../../node_modules/compound-components/src/js/sharedEth/connectedWalletPorts';
@@ -35,6 +37,8 @@ import {
   wrapCallErr,
   wrapSend,
 } from '../../node_modules/compound-components/src/js/sharedEth/eth';
+
+import SleuthQuery from '../sleuth/out/SleuthLens.sol/SleuthLens.json';
 
 const PROVIDER_TYPE_NONE = 0;
 const PROVIDER_TYPE_LEDGER = 1;
@@ -228,204 +232,184 @@ function subscribeToCTokenPorts(app, eth) {
     }
   );
 
-  // port askCTokenMetadataAllPort : { blockNumber : Int, comptrollerAddress : String, cTokenAddress : String, underlyingAssetAddress : String, cTokenDecimals : Int, underlyingDecimals : Int, isCEther : Bool } -> Cmd msg
-  app.ports.askCTokenMetadataAllPort.subscribe(({ blockNumber, cTokens, compoundLens, comptroller }) => {
-    const CompoundLens = getContractJsonByName(eth, 'CompoundLens');
-    const Comptroller = getContractJsonByName(eth, 'Comptroller');
+  function handleNonAccountQueryResults(app, cTokens, slethResponse) {
+    const cTokenMetadataList = slethResponse.cTokens.map(
+      ({
+        cToken: cTokenAddress,
+        exchangeRateCurrent: exchangeRateResult,
+        supplyRatePerBlock: supplyRateResult,
+        borrowRatePerBlock: borrowRateResult,
+        reserveFactorMantissa: reserveFactorResult,
+        totalBorrows: totalBorrowsResult,
+        totalReserves: totalReservesResult,
+        totalSupply: totalSupplyResult,
+        totalCash: totalCashResult,
+        isListed: isListedResult,
+        collateralFactorMantissa: collateralFactorMantissaResult,
+        underlyingAssetAddress: underlyingAssetAddress,
+        cTokenDecimals: cTokenDecimals,
+        underlyingDecimals: underlyingDecimals,
+        compSupplySpeed: compSupplySpeedResult,
+        compBorrowSpeed: compBorrowSpeedResult,
+        borrowCap: borrowCapResult,
+        mintGuardianPaused: mintGuardianPausedResult,
+        underlyingPrice: underlyingPriceResult
+      }, index) => {
+        const totalCash = toScaledDecimal(totalCashResult, underlyingDecimals);
 
-    const mintGuardianCalls = cTokens.map((cTokenAddress) => [Comptroller, comptroller, 'mintGuardianPaused', [cTokenAddress]])
+        //Calculate oneCTokenInUnderlying
+        const exchangeRateCurrent = exchangeRateResult;
+        const mantissa = 18 + parseInt(underlyingDecimals) - cTokenDecimals;
+        const oneCTokenInUnderlying = exchangeRateCurrent / Math.pow(10, mantissa);
+        const totalSupplyScaled = totalSupplyResult / Math.pow(10, cTokenDecimals);
 
-    wrapCall(app, eth, [[CompoundLens, compoundLens, 'cTokenMetadataAll', [cTokens]], ...mintGuardianCalls], blockNumber)
-      .then(([results, ...mintGuardianResults]) => {
-        const cTokenMetadataList = results.map(
+        // APY daily compounding formula : ( 1 + 5760 * supplyRatePerBlock / 1e18 )^365 - 1
+        // BN.js only handles ints so we will need to return
+        // 5760 * supplyRatePerBlock / 1e18
+        // from the port and have the Elm side do the fancier math with Decimal.
+        return {
+          cTokenAddress: cTokenAddress,
+          exchangeRate: toScaledDecimal(exchangeRateResult, EXP_DECIMALS),
+          supplyRatePerDay: toScaledDecimal(supplyRateResult * BLOCKS_PER_DAY, EXP_DECIMALS),
+          borrowRatePerDay: toScaledDecimal(borrowRateResult * BLOCKS_PER_DAY, EXP_DECIMALS),
+          collateralFactor: toScaledDecimal(collateralFactorMantissaResult, EXP_DECIMALS),
+          reserveFactor: toScaledDecimal(reserveFactorResult, EXP_DECIMALS),
+          totalBorrows: toScaledDecimal(totalBorrowsResult, underlyingDecimals),
+          totalReserves: toScaledDecimal(totalReservesResult, underlyingDecimals),
+          totalSupply: toScaledDecimal(totalSupplyResult, cTokenDecimals),
+          totalSupplyUnderlying: toScaledDecimal(totalSupplyScaled * oneCTokenInUnderlying, 0),
+          totalUnderlyingCash: totalCash,
+          compSupplySpeedPerBlock: toScaledDecimal(compSupplySpeedResult, EXP_DECIMALS),
+          compSupplySpeedPerDay: toScaledDecimal(compSupplySpeedResult * BLOCKS_PER_DAY, EXP_DECIMALS),
+          compBorrowSpeedPerBlock: toScaledDecimal(compBorrowSpeedResult, EXP_DECIMALS),
+          compBorrowSpeedPerDay: toScaledDecimal(compBorrowSpeedResult * BLOCKS_PER_DAY, EXP_DECIMALS),
+          borrowCap: toScaledDecimal(borrowCapResult, underlyingDecimals),
+          mintGuardianPaused: mintGuardianPausedResult,
+          underlyingPrice: toScaledDecimal(underlyingPriceResult, EXP_DECIMALS)
+        };
+      }
+    );
+
+    app.ports.giveCTokenMetadataPort.send(cTokenMetadataList);
+
+    let allPricesList = cTokenMetadataList.map(({cTokenAddress, underlyingPrice}) => {
+      let underlyingAssetAddress = cTokens[cTokenAddress.toLowerCase()].underlyingAssetAddress;
+
+      return {
+        underlyingAssetAddress: underlyingAssetAddress,
+        value: underlyingPrice
+      };
+    });
+
+    app.ports.giveOraclePricesAllPort.send(allPricesList);
+
+    app.ports.giveComptrollerMetadataPort.send({
+      closeFactor: toScaledDecimal(slethResponse.closeFactorMantissa, EXP_DECIMALS),
+      liquidationIncentive: toScaledDecimal(slethResponse.liquidationIncentiveMantissa, EXP_DECIMALS),
+    });
+  }
+
+  //port queryAllNoAccountPort : { blockNumber : Int, cTokens : List ( String, CTokenPortData ), comptroller : String } -> Cmd msg
+  app.ports.queryAllNoAccountPort.subscribe(async ({ blockNumber, cTokens: cTokenEntries, comptroller }) => {
+    let cTokens = supportFromEntries(cTokenEntries);
+
+    const web3 = await withWeb3Eth(eth);
+
+    const QUERY = Sleuth.querySol(SleuthQuery, { queryFunctionName: 'queryAllNoAccount' });
+
+    const provider = new StaticJsonRpcProvider(web3.currentProvider.host);
+    let sleuth = new Sleuth(provider);
+    let response = await sleuth.fetch(QUERY, [Object.keys(cTokens)]);
+
+    handleNonAccountQueryResults(app, cTokens, response);
+  });
+
+  // port queryAllWithAccountPort : { blockNumber : Int, customerAddress : String, cTokens : List ( String, CTokenPortData ), compAddress: String, capFactoryAddress: String } -> Cmd msg
+  app.ports.queryAllWithAccountPort.subscribe(
+    async({ blockNumber, customerAddress, cTokens: cTokenEntries, compAddress, capFactoryAddress }) => {
+      let cTokens = supportFromEntries(cTokenEntries);
+
+      const web3 = await withWeb3Eth(eth);
+
+      const QUERY = Sleuth.querySol(SleuthQuery, { queryFunctionName: 'queryAllWithAccount' });
+
+      const provider = new StaticJsonRpcProvider(web3.currentProvider.host);
+      let sleuth = new Sleuth(provider);
+
+      Promise.all([
+        getTransactionCount(eth, customerAddress), 
+        sleuth.fetch(QUERY, [Object.keys(cTokens), customerAddress, compAddress, capFactoryAddress])
+      ]).then(([accountTrxCount, response]) => {
+        handleNonAccountQueryResults(app, cTokens, response);
+
+        const cTokenBalancesList = response.cTokens.map(
           ({
             cToken: cTokenAddress,
-            exchangeRateCurrent: exchangeRateResult,
-            supplyRatePerBlock: supplyRateResult,
-            borrowRatePerBlock: borrowRateResult,
-            reserveFactorMantissa: reserveFactorResult,
-            totalBorrows: totalBorrowsResult,
-            totalReserves: totalReservesResult,
-            totalSupply: totalSupplyResult,
-            totalCash: totalCashResult,
-            isListed: isListedResult,
-            collateralFactorMantissa: collateralFactorMantissaResult,
-            underlyingAssetAddress: underlyingAssetAddress,
-            cTokenDecimals: cTokenDecimals,
-            underlyingDecimals: underlyingDecimals,
-            compSupplySpeed: compSupplySpeedResult,
-            compBorrowSpeed: compBorrowSpeedResult,
-            borrowCap: borrowCapResult
-          }, index) => {
-            const totalCash = toScaledDecimal(parseWeiStr(totalCashResult), underlyingDecimals);
+            balanceOf: cTokenWalletBalanceResult,
+            borrowBalanceCurrent: underlyingBorrowBalanceResult,
+            balanceOfUnderlying: underlyingSupplyBalanceResult,
+            tokenBalance: tokenBalanceResult,
+            tokenAllowance: tokenAllowanceResult,
+          }) => {
+            let { underlyingAssetAddress, underlyingDecimals, cTokenDecimals, cTokenSymbol } = cTokens[
+              cTokenAddress.toLowerCase()
+            ];
+            const walletBalance = toScaledDecimal(cTokenWalletBalanceResult, cTokenDecimals);
+            const borrowBalance = toScaledDecimal(underlyingBorrowBalanceResult, underlyingDecimals);
+            const supplyBalance = toScaledDecimal(underlyingSupplyBalanceResult, underlyingDecimals);
+            const tokenBalance = toScaledDecimal(tokenBalanceResult, underlyingDecimals);
+            const tokenAllowance = toScaledDecimal(tokenAllowanceResult, underlyingDecimals);
 
-            //Calculate oneCTokenInUnderlying
-            const exchangeRateCurrent = parseWeiStr(exchangeRateResult);
-            const mantissa = 18 + parseInt(underlyingDecimals) - cTokenDecimals;
-            const oneCTokenInUnderlying = exchangeRateCurrent / Math.pow(10, mantissa);
-            const totalSupplyScaled = parseWeiStr(totalSupplyResult) / Math.pow(10, cTokenDecimals);
+            if (cTokenSymbol == 'cETH') {
+              // Since we're on eth anyway
+              app.ports.giveAccountBalancePort.send({
+                balance: tokenBalance,
+              });
+            }
 
-            // APY daily compounding formula : ( 1 + 5760 * supplyRatePerBlock / 1e18 )^365 - 1
-            // BN.js only handles ints so we will need to return
-            // 5760 * supplyRatePerBlock / 1e18
-            // from the port and have the Elm side do the fancier math with Decimal.
             return {
               cTokenAddress: cTokenAddress,
-              exchangeRate: toScaledDecimal(parseWeiStr(exchangeRateResult), EXP_DECIMALS),
-              supplyRatePerDay: toScaledDecimal(parseWeiStr(supplyRateResult).mul(BLOCKS_PER_DAY), EXP_DECIMALS),
-              borrowRatePerDay: toScaledDecimal(parseWeiStr(borrowRateResult).mul(BLOCKS_PER_DAY), EXP_DECIMALS),
-              collateralFactor: toScaledDecimal(parseWeiStr(collateralFactorMantissaResult), EXP_DECIMALS),
-              reserveFactor: toScaledDecimal(parseWeiStr(reserveFactorResult), EXP_DECIMALS),
-              totalBorrows: toScaledDecimal(parseWeiStr(totalBorrowsResult), underlyingDecimals),
-              totalReserves: toScaledDecimal(parseWeiStr(totalReservesResult), underlyingDecimals),
-              totalSupply: toScaledDecimal(parseWeiStr(totalSupplyResult), cTokenDecimals),
-              totalSupplyUnderlying: toScaledDecimal(totalSupplyScaled * oneCTokenInUnderlying, 0),
-              totalUnderlyingCash: totalCash,
-              compSupplySpeedPerBlock: toScaledDecimal(parseWeiStr(compSupplySpeedResult), EXP_DECIMALS),
-              compSupplySpeedPerDay: toScaledDecimal(parseWeiStr(compSupplySpeedResult).mul(BLOCKS_PER_DAY), EXP_DECIMALS),
-              compBorrowSpeedPerBlock: toScaledDecimal(parseWeiStr(compBorrowSpeedResult), EXP_DECIMALS),
-              compBorrowSpeedPerDay: toScaledDecimal(parseWeiStr(compBorrowSpeedResult).mul(BLOCKS_PER_DAY), EXP_DECIMALS),
-              borrowCap: toScaledDecimal(parseWeiStr(borrowCapResult), underlyingDecimals),
-              mintGuardianPaused: mintGuardianResults[index]
+              customerAddress: customerAddress,
+              cTokenWalletBalance: walletBalance,
+              underlyingAssetAddress: underlyingAssetAddress,
+              underlyingBorrowBalance: borrowBalance,
+              underlyingSupplyBalance: supplyBalance,
+              underlyingTokenWalletBalance: tokenBalance,
+              underlyingTokenAllowance: tokenAllowance,
             };
           }
         );
 
-        //TODO: Change me to giveCTokenMetadataAllPort
-        app.ports.giveCTokenMetadataPort.send(cTokenMetadataList);
-      })
-      .catch(reportError(app));
-  });
+        app.ports.giveCTokenBalancesAllPort.send(cTokenBalancesList);
 
-  // port askCTokenGetBalancesPort : { blockNumber : Int, customerAddress: String, cTokens : List (String, CTokenPortData), compoundLens: String }  -> Cmd msg
-  app.ports.askCTokenGetBalancesPort.subscribe(
-    ({ blockNumber, customerAddress, cTokens: cTokenEntries, compoundLens }) => {
-      const CompoundLens = getContractJsonByName(eth, 'CompoundLens');
-      let cTokens = supportFromEntries(cTokenEntries);
-
-      wrapCall(
-        app,
-        eth,
-        [[CompoundLens, compoundLens, 'cTokenBalancesAll', [Object.keys(cTokens), customerAddress]]],
-        blockNumber
-      )
-        .then(([results]) => {
-          const cTokenBalancesList = results.map(
-            ({
-              cToken: cTokenAddress,
-              balanceOf: cTokenWalletBalanceResult,
-              borrowBalanceCurrent: underlyingBorrowBalanceResult,
-              balanceOfUnderlying: underlyingSupplyBalanceResult,
-              tokenBalance: tokenBalanceResult,
-              tokenAllowance: tokenAllowanceResult,
-            }) => {
-              let { underlyingAssetAddress, underlyingDecimals, cTokenDecimals, cTokenSymbol } = cTokens[
-                cTokenAddress.toLowerCase()
-              ];
-              const walletBalance = toScaledDecimal(parseWeiStr(cTokenWalletBalanceResult), cTokenDecimals);
-              const borrowBalance = toScaledDecimal(parseWeiStr(underlyingBorrowBalanceResult), underlyingDecimals);
-              const supplyBalance = toScaledDecimal(parseWeiStr(underlyingSupplyBalanceResult), underlyingDecimals);
-              const tokenBalance = toScaledDecimal(tokenBalanceResult, underlyingDecimals);
-              const tokenAllowance = toScaledDecimal(tokenAllowanceResult, underlyingDecimals);
-
-              if (cTokenSymbol == 'cETH') {
-                // Since we're on eth anyway
-                app.ports.giveAccountBalancePort.send({
-                  balance: tokenBalance,
-                });
-              }
-
-              return {
-                cTokenAddress: cTokenAddress,
-                customerAddress: customerAddress,
-                cTokenWalletBalance: walletBalance,
-                underlyingAssetAddress: underlyingAssetAddress,
-                underlyingBorrowBalance: borrowBalance,
-                underlyingSupplyBalance: supplyBalance,
-                underlyingTokenWalletBalance: tokenBalance,
-                underlyingTokenAllowance: tokenAllowance,
-              };
-            }
-          );
-
-          app.ports.giveCTokenBalancesAllPort.send(cTokenBalancesList);
-        })
-        .catch(reportError(app));
-    }
-  );
-}
-
-function subscribeToComptrollerPorts(app, eth) {
-  // port askAccountLimitsPort : { blockNumber : Int, comptrollerAddress : String, customerAddress : String, compoundLens: String } -> Cmd msg
-  app.ports.askAccountLimitsPort.subscribe(async({ blockNumber, comptrollerAddress, customerAddress, compoundLens }) => {
-    const CompoundLens = getContractJsonByName(eth, 'CompoundLens');
-    const Comptroller = getContractJsonByName(eth, 'Comptroller');
-
-    Promise.all([
-      getTransactionCount(eth, customerAddress),
-      wrapCall(
-        app,
-        eth,
-        [[CompoundLens, compoundLens, 'getAccountLimits', [comptrollerAddress, customerAddress]]],
-        blockNumber
-      ),
-      wrapCall(app, eth, [[Comptroller, comptrollerAddress, 'closeFactorMantissa', []]], blockNumber),
-      wrapCall(app, eth, [[Comptroller, comptrollerAddress, 'liquidationIncentiveMantissa', []]], blockNumber),
-    ])
-      .then(
-        ([trxCount, [{ markets, liquidity, shorthall }], [closeFactorMantissa], [liquidationIncentiveMantissa]]) => {
-          app.ports.giveAccountLimitsPort.send({
-            customerAddress: customerAddress,
-            accountLiquidity: toScaledDecimal(parseWeiStr(liquidity), EXP_DECIMALS),
-            accountShortfall: toScaledDecimal(parseWeiStr(shorthall), EXP_DECIMALS),
-            assetsIn: markets,
-            trxCount: trxCount,
-            closeFactor: toScaledDecimal(parseWeiStr(closeFactorMantissa), EXP_DECIMALS),
-            liquidationIncentive: toScaledDecimal(parseWeiStr(liquidationIncentiveMantissa), EXP_DECIMALS),
-          });
-        }
-      )
-      .catch(reportError(app));
-  });
-
-  // port askOraclePricesAllPort : { blockNumber : Int, priceOracleAddress : String, cTokenAddress : String, underlyingAssetAddress : String, callEthPrice : bool } -> Cmd msg
-  app.ports.askOraclePricesAllPort.subscribe(async({ blockNumber, cTokens: cTokenEntries, compoundLens }) => {
-    const CompoundLens = getContractJsonByName(eth, 'CompoundLens');
-    let cTokens = supportFromEntries(cTokenEntries);
-
-    wrapCall(app, eth, [[CompoundLens, compoundLens, 'cTokenUnderlyingPriceAll', [Object.keys(cTokens)]]], blockNumber)
-      .then(([results]) => {
-        let allPricesList = results.map(([cTokenAddress, underlyingPrice]) => {
-          let underlyingAssetAddress = cTokens[cTokenAddress.toLowerCase()];
-
-          return {
-            underlyingAssetAddress: underlyingAssetAddress,
-            value: toScaledDecimal(underlyingPrice, EXP_DECIMALS)
-          };
+        app.ports.giveAccountLimitsPort.send({
+          customerAddress: customerAddress,
+          accountLiquidity: toScaledDecimal(response.liquidity, EXP_DECIMALS),
+          accountShortfall: toScaledDecimal(response.shortfall, EXP_DECIMALS),
+          assetsIn: response.marketsIn,
+          trxCount: accountTrxCount
         });
-        app.ports.giveOraclePricesAllPort.send(allPricesList);
-      })
-      .catch(reportError(app));
-  });
-}
 
-// This is now only used by the liquidate page
-function subscribeToAskTokenAllowance(app, eth) {
-  // port askTokenAllowanceTokenPort : { blockNumber : Int, assetAddress : String, contractAddress : String, customerAddress : String, decimals : Int } -> Cmd msg
-  app.ports.askTokenAllowanceTokenPort.subscribe(
-    ({ blockNumber, assetAddress, contractAddress, customerAddress, decimals }) => {
-      wrapCall(app, eth, [[EIP20Interface, assetAddress, 'allowance', [customerAddress, contractAddress]]], blockNumber)
-        .then(([result]) => {
-          const allowance = toScaledDecimal(result, decimals);
+        app.ports.giveGovernanceDataPort.send({
+          customerAddress: customerAddress,
+          compTokenBalance: toScaledDecimal(response.compMetadata.balance, EXP_DECIMALS),
+          currentVotesBalance: toScaledDecimal(response.compMetadata.votes, EXP_DECIMALS),
+          delegateeAddress: response.compMetadata.delegate,
+        });
 
-          app.ports.giveTokenAllowanceTokenPort.send({
-            assetAddress: assetAddress,
-            contractAddress: contractAddress,
-            customerAddress: customerAddress,
-            allowance: allowance,
-          });
-        })
-        .catch(reportError(app));
+        app.ports.giveCompAccruedPort.send({
+          customerAddress: customerAddress,
+          compAccrued: toScaledDecimal(response.compMetadata.allocated, EXP_DECIMALS),
+        });
+
+        app.ports.giveTokenAllowanceTokenPort.send({
+          assetAddress: compAddress,
+          contractAddress: capFactoryAddress,
+          customerAddress: customerAddress,
+          allowance: toScaledDecimal(response.capFactoryAllowance, EXP_DECIMALS)
+        });
+
+      }).catch(reportError(app));
     }
   );
 }
@@ -1297,32 +1281,6 @@ function subscribeToGovernancePorts(app, eth) {
     }
   );
 
-  // port askGovernanceDataPort : { blockNumber : Int, compoundLens : String,  governanceTokenAddress : String, customerAddress : String, decimals : Int } -> Cmd msg
-  app.ports.askGovernanceDataPort.subscribe(
-    async ({ blockNumber, compoundLens, governanceTokenAddress, customerAddress, decimals }) => {
-      try {
-        const CompoundLens = getContractJsonByName(eth, 'CompoundLens');
-        const checksummedAddress = EthUtils.toChecksumAddress(customerAddress);
-
-        const [govMetadata] = await wrapCall(
-          app,
-          eth,
-          [[CompoundLens, compoundLens, 'getCompBalanceMetadata', [governanceTokenAddress, checksummedAddress]]],
-          blockNumber
-        );
-
-        app.ports.giveGovernanceDataPort.send({
-          customerAddress: customerAddress,
-          compTokenBalance: toScaledDecimal(govMetadata.balance, decimals),
-          currentVotesBalance: toScaledDecimal(govMetadata.votes, decimals),
-          delegateeAddress: govMetadata.delegate,
-        });
-      } catch (e) {
-        reportError(app)(e);
-      }
-    }
-  );
-
   // port askDelegateToPort : { compTokenAddress : String, customerAddress : String, targetAddress : String } -> Cmd msg
   app.ports.askDelegateToPort.subscribe(({ compTokenAddress, customerAddress, targetAddress }) => {
     const CompToken = getContractJsonByName(eth, 'COMP');
@@ -1588,60 +1546,6 @@ function subscribeToFlywheelPorts(app, eth) {
       }
     ).catch(reportError(app));
   });
-
-  // port askCompMetadataPort : { blockNumber : Int, compAddress : String, comptrollerAddress : String, customerAddress : String, compoundLens : String } -> Cmd msg
-  app.ports.askCompMetadataPort.subscribe(
-    async ({ blockNumber, compAddress, comptrollerAddress, customerAddress, compoundLens }) => {
-      const CompoundLens = getContractJsonByName(eth, 'CompoundLens');
-      const Comptroller = getContractJsonByName(eth, 'Comptroller');
-
-      let [implementation] = await wrapCallErr(
-        app,
-        eth,
-        [[Comptroller, comptrollerAddress, 'comptrollerImplementation', []]],
-        reportError(app),
-        blockNumber
-      );
-
-      let implementationCode = await (await withWeb3Eth(eth)).getCode(implementation);
-      let isG3 = implementationCode.includes('e9af0292'); // signature for claimComp(address)
-
-      if (isG3) {
-        let [{ balance, votes, delegate, allocated }] = await wrapCallErr(
-          app,
-          eth,
-          [
-            [
-              CompoundLens,
-              compoundLens,
-              'getCompBalanceMetadataExt',
-              [compAddress, comptrollerAddress, customerAddress],
-            ],
-          ],
-          reportError(app),
-          blockNumber
-        );
-
-        app.ports.giveCompAccruedPort.send({
-          customerAddress: customerAddress,
-          compAccrued: toScaledDecimal(parseWeiStr(allocated), EXP_DECIMALS),
-        });
-      } else {
-        let [{ balance, votes, delegate }] = await wrapCallErr(
-          app,
-          eth,
-          [[CompoundLens, compoundLens, 'getCompBalanceMetadata', [compAddress, customerAddress]]],
-          reportError(app),
-          blockNumber
-        );
-
-        app.ports.giveCompAccruedPort.send({
-          customerAddress: customerAddress,
-          compAccrued: toScaledDecimal(parseWeiStr('0'), EXP_DECIMALS),
-        });
-      }
-    }
-  );
 }
 
 function subscribeToSetBlockNativeNetwork(app, eth) {
@@ -1669,10 +1573,8 @@ function subscribe(
   subscribeToConsole(app);
   subscribeToSetBlockNativeNetwork(app, eth);
   subscribeToCTokenPorts(app, eth);
-  subscribeToComptrollerPorts(app, eth);
   subscribeToNewBlocks(app, eth);
   subscribeToCheckTrxStatus(app, eth);
-  subscribeToAskTokenAllowance(app, eth);
   subscribeToStoreTransaction(app, eth);
   subscribeToPreferences(app, eth);
   subscribeToGasService(app);

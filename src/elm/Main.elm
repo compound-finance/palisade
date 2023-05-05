@@ -32,7 +32,7 @@ import Dict exposing (Dict)
 import Eth.Compound exposing (CompoundMsg(..), clearCompoundState, compoundInit, compoundNewBlockCmd, compoundSubscriptions, compoundUpdate)
 import Eth.Config exposing (Config, loadConfigs)
 import Eth.Governance exposing (GovernanceMsg(..))
-import Eth.Oracle exposing (OracleMsg(..), oracleInit, oracleNewBlockCmd, oracleSubscriptions, oracleUpdate)
+import Eth.Oracle exposing (OracleMsg(..), oracleInit, oracleSubscriptions, oracleUpdate)
 import Eth.Token exposing (TokenMsg(..), clearTokenState, tokenInit, tokenNewBlockCmd, tokenSubscriptions, tokenUpdate)
 import Eth.Transaction as Transaction exposing (TransactionMsg)
 import Html exposing (Html, a, button, div, span, text)
@@ -318,32 +318,21 @@ newBlockCmd apiBaseUrlMap maybeNetwork blockNumber previousBlockNumber ({ dataPr
                         pageCmds =
                             case page of
                                 Home ->
-                                    [ Cmd.map WrappedGovernanceMsg (Eth.Governance.newBlockCmd config blockNumber model.account Nothing)
-                                    ]
+                                    []
 
                                 Vote ->
                                     [ Vote.getVoteDashboardData configs (Just network) (Just blockNumber) model.account
-                                    , Cmd.map WrappedGovernanceMsg (Eth.Governance.newBlockCmd config blockNumber model.account Nothing)
                                     ]
 
                                 _ ->
                                     []
 
-                        compAllowanceCmd =
-                            case ( config.maybeCompToken, config.maybeCrowdProposalFactory, model.account ) of
-                                ( Just compToken, Just capFactory, Acct customerAddress _ ) ->
-                                    Cmd.map WrappedTokenMsg (Eth.Token.askCompCapFactoryAllowance blockNumber customerAddress capFactory compToken.address)
-
-                                _ ->
-                                    Cmd.none
                     in
                     Cmd.batch <|
                         pageCmds
                             ++ [ Cmd.map WrappedTransactionMsg (Transaction.newBlockCmd blockNumber network model.transactionState)
                                , Cmd.map WrappedTokenMsg (tokenNewBlockCmd config model.tokenState blockNumber model.account)
                                , Cmd.map WrappedCompoundMsg (compoundNewBlockCmd blockNumber apiBaseUrlMap network config.comptroller model.account config)
-                               , Cmd.map WrappedOracleMsg (oracleNewBlockCmd model.oracleState blockNumber config.priceOracle model.tokenState config.compoundLens)
-                               , compAllowanceCmd
                                ]
 
                 _ ->
@@ -398,8 +387,15 @@ handleUpdatesFromEthConnectedWallet maybeConfig connectedEthWalletMsg model =
                          ]
                             ++ (case model.blockNumber of
                                     Just blockNumber ->
+                                        let
+                                            refreshBlockCmd =
+                                                if model.network /= Just newNetwork then
+                                                    newBlockCmd model.apiBaseUrlMap (Just newNetwork) blockNumber Nothing model
+                                                else
+                                                    Cmd.none
+                                        in
                                         [ newNetworkCmd newNetwork model
-                                        , newBlockCmd model.apiBaseUrlMap (Just newNetwork) blockNumber Nothing model
+                                        , refreshBlockCmd
                                         ]
 
                                     Nothing ->
@@ -451,8 +447,7 @@ handleUpdatesFromEthConnectedWallet maybeConfig connectedEthWalletMsg model =
                             case ( maybeConfig, model.blockNumber ) of
                                 ( Just config, Just blockNumber ) ->
                                     Cmd.batch
-                                        [ Cmd.map WrappedGovernanceMsg (Eth.Governance.newBlockCmd config blockNumber model.account Nothing)
-                                        ]
+                                        []
 
                                 _ ->
                                     Cmd.none
@@ -462,7 +457,6 @@ handleUpdatesFromEthConnectedWallet maybeConfig connectedEthWalletMsg model =
                                 ( Just config, Just blockNumber ) ->
                                     Cmd.batch
                                         [ Vote.getVoteDashboardData model.configs model.network (Just blockNumber) model.account
-                                        , Cmd.map WrappedGovernanceMsg (Eth.Governance.newBlockCmd config blockNumber model.account Nothing)
                                         ]
 
                                 _ ->
@@ -559,7 +553,6 @@ update msg ({ page, configs, apiBaseUrlMap, account, transactionState, bnTransac
                                 ( Just config, Just blockNumber ) ->
                                     Cmd.batch
                                         [ Vote.getVoteDashboardData configs network model.blockNumber account
-                                        , Cmd.map WrappedGovernanceMsg (Eth.Governance.newBlockCmd config blockNumber model.account Nothing)
                                         ]
 
                                 _ ->

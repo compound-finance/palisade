@@ -16,7 +16,8 @@
     "deploy-ipfs": "node --experimental-repl-await scripts/ipfs.js",
     "i18n": "node --unhandled-rejections=strict config/tx-cli.js -a 'src/strings/always_english_strings.json' -p 'src/strings/strings.<lang>.json' -s en -l es zh fr ko -o src/elm/Strings/Translations.elm -m Strings.Translations -t",
     "watch-i18n": "node --unhandled-rejections=strict config/tx-cli.js -a 'src/strings/always_english_strings.json' -p 'src/strings/strings.<lang>.json' -s en -l es zh fr ko -o src/elm/Strings/Translations.elm -m Strings.Translations -t -w",
-    "release": "node --unhandled-rejections=strict scripts/release.js"
+    "release": "node --unhandled-rejections=strict scripts/release.js",
+    "sleuth": "forge build --via-ir -c src/sleuth -o src/sleuth/out"
   },
   "author": "",
   "license": "GPL-3.0",
@@ -27,6 +28,7 @@
     "@babel/preset-env": "^7.0.0",
     "@babel/runtime": "^7.9.2",
     "@babel/runtime-corejs3": "^7.10.2",
+    "@compound-finance/sleuth": "^1.0.1-alpha8",
     "@material/switch": "^3.0.0",
     "assets-webpack-plugin": "^3.5.1",
     "autoprefixer": "^9.7.6",
@@ -63,6 +65,7 @@
     "react-dev-utils": "^10.2.1",
     "react-error-overlay": "^6.0.7",
     "regenerator-runtime": "^0.13.5",
+    "solc": "^0.8.19",
     "string-replace-loader": "^2.1.1",
     "style-loader": "^1.2.1",
     "sw-precache-webpack-plugin": "^1.0.0",
