@@ -92,14 +92,18 @@ if (process.env['BLOCKNATIVE_API_KEY']) {
   envConfig.BLOCKNATIVE_API_KEY = process.env['BLOCKNATIVE_API_KEY'];
 }
 
+if (process.env['WALLET_CONNECT_PROJECT_ID']) {
+  envConfig.WALLET_CONNECT_PROJECT_ID = process.env['WALLET_CONNECT_PROJECT_ID'];
+}
+
 if (process.env['DATA_PROVIDERS']) {
   try {
     envConfig.DATA_PROVIDERS = JSON.parse(process.env['DATA_PROVIDERS']);
   } catch (e) {
-    console.error("");
-    console.error("Error: DATA_PROVIDERS provided but is not valid JSON");
-    console.error("");
-    console.error("");
+    console.error('');
+    console.error('Error: DATA_PROVIDERS provided but is not valid JSON');
+    console.error('');
+    console.error('');
     throw e;
   }
 }

@@ -127,6 +127,7 @@ window.addEventListener('load', function () {
     configFiles,
     configAbiFiles,
     configNameToAddressMappings,
-    process.env.BLOCKNATIVE_API_KEY
+    process.env.BLOCKNATIVE_API_KEY,
+    process.env.WALLET_CONNECT_PROJECT_ID
   );
 });

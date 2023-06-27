@@ -234,27 +234,30 @@ function subscribeToCTokenPorts(app, eth) {
 
   function handleNonAccountQueryResults(app, cTokens, slethResponse) {
     const cTokenMetadataList = slethResponse.cTokens.map(
-      ({
-        cToken: cTokenAddress,
-        exchangeRateCurrent: exchangeRateResult,
-        supplyRatePerBlock: supplyRateResult,
-        borrowRatePerBlock: borrowRateResult,
-        reserveFactorMantissa: reserveFactorResult,
-        totalBorrows: totalBorrowsResult,
-        totalReserves: totalReservesResult,
-        totalSupply: totalSupplyResult,
-        totalCash: totalCashResult,
-        isListed: isListedResult,
-        collateralFactorMantissa: collateralFactorMantissaResult,
-        underlyingAssetAddress: underlyingAssetAddress,
-        cTokenDecimals: cTokenDecimals,
-        underlyingDecimals: underlyingDecimals,
-        compSupplySpeed: compSupplySpeedResult,
-        compBorrowSpeed: compBorrowSpeedResult,
-        borrowCap: borrowCapResult,
-        mintGuardianPaused: mintGuardianPausedResult,
-        underlyingPrice: underlyingPriceResult
-      }, index) => {
+      (
+        {
+          cToken: cTokenAddress,
+          exchangeRateCurrent: exchangeRateResult,
+          supplyRatePerBlock: supplyRateResult,
+          borrowRatePerBlock: borrowRateResult,
+          reserveFactorMantissa: reserveFactorResult,
+          totalBorrows: totalBorrowsResult,
+          totalReserves: totalReservesResult,
+          totalSupply: totalSupplyResult,
+          totalCash: totalCashResult,
+          isListed: isListedResult,
+          collateralFactorMantissa: collateralFactorMantissaResult,
+          underlyingAssetAddress: underlyingAssetAddress,
+          cTokenDecimals: cTokenDecimals,
+          underlyingDecimals: underlyingDecimals,
+          compSupplySpeed: compSupplySpeedResult,
+          compBorrowSpeed: compBorrowSpeedResult,
+          borrowCap: borrowCapResult,
+          mintGuardianPaused: mintGuardianPausedResult,
+          underlyingPrice: underlyingPriceResult,
+        },
+        index
+      ) => {
         const totalCash = toScaledDecimal(totalCashResult, underlyingDecimals);
 
         //Calculate oneCTokenInUnderlying
@@ -285,19 +288,19 @@ function subscribeToCTokenPorts(app, eth) {
           compBorrowSpeedPerDay: toScaledDecimal(compBorrowSpeedResult * BLOCKS_PER_DAY, EXP_DECIMALS),
           borrowCap: toScaledDecimal(borrowCapResult, underlyingDecimals),
           mintGuardianPaused: mintGuardianPausedResult,
-          underlyingPrice: toScaledDecimal(underlyingPriceResult, EXP_DECIMALS)
+          underlyingPrice: toScaledDecimal(underlyingPriceResult, EXP_DECIMALS),
         };
       }
     );
 
     app.ports.giveCTokenMetadataPort.send(cTokenMetadataList);
 
-    let allPricesList = cTokenMetadataList.map(({cTokenAddress, underlyingPrice}) => {
+    let allPricesList = cTokenMetadataList.map(({ cTokenAddress, underlyingPrice }) => {
       let underlyingAssetAddress = cTokens[cTokenAddress.toLowerCase()].underlyingAssetAddress;
 
       return {
         underlyingAssetAddress: underlyingAssetAddress,
-        value: underlyingPrice
+        value: underlyingPrice,
       };
     });
 
@@ -326,7 +329,7 @@ function subscribeToCTokenPorts(app, eth) {
 
   // port queryAllWithAccountPort : { blockNumber : Int, customerAddress : String, cTokens : List ( String, CTokenPortData ), compAddress: String, capFactoryAddress: String } -> Cmd msg
   app.ports.queryAllWithAccountPort.subscribe(
-    async({ blockNumber, customerAddress, cTokens: cTokenEntries, compAddress, capFactoryAddress }) => {
+    async ({ blockNumber, customerAddress, cTokens: cTokenEntries, compAddress, capFactoryAddress }) => {
       let cTokens = supportFromEntries(cTokenEntries);
 
       const web3 = await withWeb3Eth(eth);
@@ -337,79 +340,79 @@ function subscribeToCTokenPorts(app, eth) {
       let sleuth = new Sleuth(provider);
 
       Promise.all([
-        getTransactionCount(eth, customerAddress), 
-        sleuth.fetch(QUERY, [Object.keys(cTokens), customerAddress, compAddress, capFactoryAddress])
-      ]).then(([accountTrxCount, response]) => {
-        handleNonAccountQueryResults(app, cTokens, response);
+        getTransactionCount(eth, customerAddress),
+        sleuth.fetch(QUERY, [Object.keys(cTokens), customerAddress, compAddress, capFactoryAddress]),
+      ])
+        .then(([accountTrxCount, response]) => {
+          handleNonAccountQueryResults(app, cTokens, response);
 
-        const cTokenBalancesList = response.cTokens.map(
-          ({
-            cToken: cTokenAddress,
-            balanceOf: cTokenWalletBalanceResult,
-            borrowBalanceCurrent: underlyingBorrowBalanceResult,
-            balanceOfUnderlying: underlyingSupplyBalanceResult,
-            tokenBalance: tokenBalanceResult,
-            tokenAllowance: tokenAllowanceResult,
-          }) => {
-            let { underlyingAssetAddress, underlyingDecimals, cTokenDecimals, cTokenSymbol } = cTokens[
-              cTokenAddress.toLowerCase()
-            ];
-            const walletBalance = toScaledDecimal(cTokenWalletBalanceResult, cTokenDecimals);
-            const borrowBalance = toScaledDecimal(underlyingBorrowBalanceResult, underlyingDecimals);
-            const supplyBalance = toScaledDecimal(underlyingSupplyBalanceResult, underlyingDecimals);
-            const tokenBalance = toScaledDecimal(tokenBalanceResult, underlyingDecimals);
-            const tokenAllowance = toScaledDecimal(tokenAllowanceResult, underlyingDecimals);
+          const cTokenBalancesList = response.cTokens.map(
+            ({
+              cToken: cTokenAddress,
+              balanceOf: cTokenWalletBalanceResult,
+              borrowBalanceCurrent: underlyingBorrowBalanceResult,
+              balanceOfUnderlying: underlyingSupplyBalanceResult,
+              tokenBalance: tokenBalanceResult,
+              tokenAllowance: tokenAllowanceResult,
+            }) => {
+              let { underlyingAssetAddress, underlyingDecimals, cTokenDecimals, cTokenSymbol } =
+                cTokens[cTokenAddress.toLowerCase()];
+              const walletBalance = toScaledDecimal(cTokenWalletBalanceResult, cTokenDecimals);
+              const borrowBalance = toScaledDecimal(underlyingBorrowBalanceResult, underlyingDecimals);
+              const supplyBalance = toScaledDecimal(underlyingSupplyBalanceResult, underlyingDecimals);
+              const tokenBalance = toScaledDecimal(tokenBalanceResult, underlyingDecimals);
+              const tokenAllowance = toScaledDecimal(tokenAllowanceResult, underlyingDecimals);
 
-            if (cTokenSymbol == 'cETH') {
-              // Since we're on eth anyway
-              app.ports.giveAccountBalancePort.send({
-                balance: tokenBalance,
-              });
+              if (cTokenSymbol == 'cETH') {
+                // Since we're on eth anyway
+                app.ports.giveAccountBalancePort.send({
+                  balance: tokenBalance,
+                });
+              }
+
+              return {
+                cTokenAddress: cTokenAddress,
+                customerAddress: customerAddress,
+                cTokenWalletBalance: walletBalance,
+                underlyingAssetAddress: underlyingAssetAddress,
+                underlyingBorrowBalance: borrowBalance,
+                underlyingSupplyBalance: supplyBalance,
+                underlyingTokenWalletBalance: tokenBalance,
+                underlyingTokenAllowance: tokenAllowance,
+              };
             }
+          );
 
-            return {
-              cTokenAddress: cTokenAddress,
-              customerAddress: customerAddress,
-              cTokenWalletBalance: walletBalance,
-              underlyingAssetAddress: underlyingAssetAddress,
-              underlyingBorrowBalance: borrowBalance,
-              underlyingSupplyBalance: supplyBalance,
-              underlyingTokenWalletBalance: tokenBalance,
-              underlyingTokenAllowance: tokenAllowance,
-            };
-          }
-        );
+          app.ports.giveCTokenBalancesAllPort.send(cTokenBalancesList);
 
-        app.ports.giveCTokenBalancesAllPort.send(cTokenBalancesList);
+          app.ports.giveAccountLimitsPort.send({
+            customerAddress: customerAddress,
+            accountLiquidity: toScaledDecimal(response.liquidity, EXP_DECIMALS),
+            accountShortfall: toScaledDecimal(response.shortfall, EXP_DECIMALS),
+            assetsIn: response.marketsIn,
+            trxCount: accountTrxCount,
+          });
 
-        app.ports.giveAccountLimitsPort.send({
-          customerAddress: customerAddress,
-          accountLiquidity: toScaledDecimal(response.liquidity, EXP_DECIMALS),
-          accountShortfall: toScaledDecimal(response.shortfall, EXP_DECIMALS),
-          assetsIn: response.marketsIn,
-          trxCount: accountTrxCount
-        });
+          app.ports.giveGovernanceDataPort.send({
+            customerAddress: customerAddress,
+            compTokenBalance: toScaledDecimal(response.compMetadata.balance, EXP_DECIMALS),
+            currentVotesBalance: toScaledDecimal(response.compMetadata.votes, EXP_DECIMALS),
+            delegateeAddress: response.compMetadata.delegate,
+          });
 
-        app.ports.giveGovernanceDataPort.send({
-          customerAddress: customerAddress,
-          compTokenBalance: toScaledDecimal(response.compMetadata.balance, EXP_DECIMALS),
-          currentVotesBalance: toScaledDecimal(response.compMetadata.votes, EXP_DECIMALS),
-          delegateeAddress: response.compMetadata.delegate,
-        });
+          app.ports.giveCompAccruedPort.send({
+            customerAddress: customerAddress,
+            compAccrued: toScaledDecimal(response.compMetadata.allocated, EXP_DECIMALS),
+          });
 
-        app.ports.giveCompAccruedPort.send({
-          customerAddress: customerAddress,
-          compAccrued: toScaledDecimal(response.compMetadata.allocated, EXP_DECIMALS),
-        });
-
-        app.ports.giveTokenAllowanceTokenPort.send({
-          assetAddress: compAddress,
-          contractAddress: capFactoryAddress,
-          customerAddress: customerAddress,
-          allowance: toScaledDecimal(response.capFactoryAllowance, EXP_DECIMALS)
-        });
-
-      }).catch(reportError(app));
+          app.ports.giveTokenAllowanceTokenPort.send({
+            assetAddress: compAddress,
+            contractAddress: capFactoryAddress,
+            customerAddress: customerAddress,
+            allowance: toScaledDecimal(response.capFactoryAllowance, EXP_DECIMALS),
+          });
+        })
+        .catch(reportError(app));
     }
   );
 }
@@ -534,7 +537,7 @@ function subscribeToPreferences(app, eth) {
   // port askStoredPreferencesPort : {} -> Cmd msg
   app.ports.askStoredPreferencesPort.subscribe(() => {
     const preferences = preferencesStorage.get();
-    app.ports.giveStoredPreferencesPort.send({userLanguage: lang, ...preferences});
+    app.ports.giveStoredPreferencesPort.send({ userLanguage: lang, ...preferences });
   });
 
   // port askClearPreferencesPort : {} -> Cmd msg
@@ -829,7 +832,7 @@ function subscribeToGovernancePorts(app, eth) {
     let endTime = timestamps[proposal.startBlock];
 
     if (endTime == null) {
-      endTime = Math.floor(currentTime + ((proposal.startBlock - currentBlock) * SECONDS_PER_BLOCK));
+      endTime = Math.floor(currentTime + (proposal.startBlock - currentBlock) * SECONDS_PER_BLOCK);
     }
 
     return {
@@ -843,11 +846,14 @@ function subscribeToGovernancePorts(app, eth) {
   const activeStateForProposal = (proposal, meta, timestamps, currentBlock, currentTime) => {
     const startTime = timestamps[proposal.startBlock];
     const isActive =
-      (meta.canceledBlock == null || proposal.startBlock < meta.canceledBlock) && (startTime != null && startTime < currentTime);
+      (meta.canceledBlock == null || proposal.startBlock < meta.canceledBlock) &&
+      startTime != null &&
+      startTime < currentTime;
 
     if (isActive) {
       // This assumes a block time of 12 seconds, similar to the API.
-      const endTime = timestamps[proposal.endBlock] || currentTime + (proposal.endBlock - currentBlock) * SECONDS_PER_BLOCK;
+      const endTime =
+        timestamps[proposal.endBlock] || currentTime + (proposal.endBlock - currentBlock) * SECONDS_PER_BLOCK;
       return {
         state: 'active',
         start_time: startTime,
@@ -992,7 +998,7 @@ function subscribeToGovernancePorts(app, eth) {
         title: match[1],
         description: parsedDescription.trim(),
       };
-    }
+    };
 
     let proposalEventHandlers = {
       [ProposalCreated.signature]: {
@@ -1097,7 +1103,7 @@ function subscribeToGovernancePorts(app, eth) {
     return supportFromEntries(
       await Promise.all(
         votedReceipts.map((receipt) => {
-          const voteReceiptSuport = isBravo ? Number(receipt.support) : (receipt.support ? 1 : 0);
+          const voteReceiptSuport = isBravo ? Number(receipt.support) : receipt.support ? 1 : 0;
 
           return [
             receipt.proposalId,
@@ -1121,14 +1127,17 @@ function subscribeToGovernancePorts(app, eth) {
     // Starting from proposal 43 on mainnet, proposals now have a voting delay before becoming
     // active so we need to query Lens with the proposals that are pending otherwise Lens will
     // return an expected error that voting has not begun.
-    const [blockNumbers, pendingBlockNumbers] = proposals.reduce(([startedBlocks, futureBlocks], proposal) => {
-      if (proposal.startBlock <= currentBlockNumber) {
-        startedBlocks.push(proposal.startBlock);
-      } else {
-        futureBlocks.push(proposal.startBlock);
-      }
-      return [startedBlocks, futureBlocks];
-    }, [[],[]]);
+    const [blockNumbers, pendingBlockNumbers] = proposals.reduce(
+      ([startedBlocks, futureBlocks], proposal) => {
+        if (proposal.startBlock <= currentBlockNumber) {
+          startedBlocks.push(proposal.startBlock);
+        } else {
+          futureBlocks.push(proposal.startBlock);
+        }
+        return [startedBlocks, futureBlocks];
+      },
+      [[], []]
+    );
 
     let [compVotes] = await wrapCall(app, eth, [
       [
@@ -1145,9 +1154,9 @@ function subscribeToGovernancePorts(app, eth) {
 
     const emptyVotes = pendingBlockNumbers.map((blockNumber) => {
       return {
-        blockNumber: blockNumber, 
-        votes: 0
-        };
+        blockNumber: blockNumber,
+        votes: 0,
+      };
     });
     const allCompVotes = compVotes.concat(emptyVotes);
 
@@ -1199,7 +1208,7 @@ function subscribeToGovernancePorts(app, eth) {
         voter,
         proposals,
         decimals,
-        currentBlockNumber
+        currentBlockNumber,
       });
 
       const getActions = (p) => {
@@ -1429,7 +1438,7 @@ function subscribeToEtherPorts(app, eth, blockNativeApiKey) {
                 app.ports.giveNewNonBNTrxPort.send({
                   txModule,
                   txId,
-                  txHash: txHash
+                  txHash: txHash,
                 });
 
                 // Finally let's trigger a reject of the BNTransaction so we don't try 2
@@ -1449,7 +1458,7 @@ function subscribeToEtherPorts(app, eth, blockNativeApiKey) {
                   txId,
                 });
               } else {
-                console.log("Error sending transaction: ", e);
+                console.log('Error sending transaction: ', e);
               }
             });
         });
@@ -1565,10 +1574,11 @@ function subscribe(
   configFiles,
   configAbiFiles,
   configNameToAddressMappings,
-  blockNativeApiKeyInput
+  blockNativeApiKeyInput,
+  walletConnectProjectId
 ) {
   const eth = makeEth(dataProviders, networkMap, networkAbiMap, configNameToAddressMappings, defaultNetwork);
-  connectedWalletPorts.subscribe(app, eth, globEthereum, networkMap, defaultNetwork);
+  connectedWalletPorts.subscribe(app, eth, globEthereum, networkMap, defaultNetwork, walletConnectProjectId);
 
   subscribeToConsole(app);
   subscribeToSetBlockNativeNetwork(app, eth);
