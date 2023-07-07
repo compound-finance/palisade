@@ -37,12 +37,15 @@ jobs:
         if: github.event.inputs.cid == ''
 
       - name: Seacrest
-        uses: hayesgm/seacrest@v1
+        uses: hayesgm/seacrest@3a648959926a4630a4849555bec6c7874032afed
+        with:
+          wallet_connect_project_id: ${{secrets.WALLET_CONNECT_PROJECT_ID}}
+          requested_network: mainnet
         if: github.event.inputs.signature == ''
 
       - name: Push IPFS Release
         run: node scripts/release.js
         env:
           ETHEREUM_NODE: http://localhost:8585
-          CID: "${{github.event.inputs.cid}}"
-          SIGNATURE: "${{ github.event.inputs.signature }}"
+          CID: '${{github.event.inputs.cid}}'
+          SIGNATURE: '${{ github.event.inputs.signature }}'
