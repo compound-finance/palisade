@@ -43,17 +43,18 @@ The following is an example configuration file:
     "development": 999
   },
   "DEFAULT_NETWORK": "mainnet",
-  "BLOCKNATIVE_API_KEY": "YOUR_BLOCKNATIVE_KEY"
+  "BLOCKNATIVE_API_KEY": "YOUR_BLOCKNATIVE_KEY",
+  "WALLET_CONNECT_PROJECT_ID": "YOUR_WALLET_CONNECT_PROJECT_ID"
 }
-
 ```
 
 Each of the top level keys have the following functions:
 
-* `API_BASE_URL_MAP` - Object mapping of Eth network name as key and value being the desired Compound Api host. This can be left as is.
-* `DATA_PROVIDERS` - Object mapping of Eth network name as key and value being the url of a corresponding JSON RPC host. This example shows Infura as a sample JSON RPC provider and you can find more information [here](https://infura.io/docs/ethereum). Note: this can be specified by setting in the env var `DATA_PROVIDERS` as JSON (e.g. `export DATA_PROVIDERS='{"rinkeby": "https://infura.io/..."}'`).
-* `NETWORK_MAP` - Object mapping of Eth network name as key and value being the corresponding NetworkId value. This can be left as is.
-* `BLOCKNATIVE_API_KEY` - Blocknative API Key required to track transaction notifications. You can find more information [here](https://docs.blocknative.com/notify). Note: this can be specified by setting the env var `BLOCKNATIVE_API_KEY`. This key is not strictly required (but provides a better user experience).
+- `API_BASE_URL_MAP` - Object mapping of Eth network name as key and value being the desired Compound Api host. This can be left as is.
+- `DATA_PROVIDERS` - Object mapping of Eth network name as key and value being the url of a corresponding JSON RPC host. This example shows Infura as a sample JSON RPC provider and you can find more information [here](https://infura.io/docs/ethereum). Note: this can be specified by setting in the env var `DATA_PROVIDERS` as JSON (e.g. `export DATA_PROVIDERS='{"rinkeby": "https://infura.io/..."}'`).
+- `NETWORK_MAP` - Object mapping of Eth network name as key and value being the corresponding NetworkId value. This can be left as is.
+- `BLOCKNATIVE_API_KEY` - Blocknative API Key required to track transaction notifications. You can find more information [here](https://docs.blocknative.com/notify). Note: this can be specified by setting the env var `BLOCKNATIVE_API_KEY`. This key is not strictly required (but provides a better user experience).
+- `WALLET_CONNECT_PROJECT_ID` - Wallect Connect Project Id required to use Wallet Connect as a wallet type in the app. You can find more information [here](https://docs.walletconnect.com/2.0/). Note: this can be specified by setting the env var `WALLET_CONNECT_PROJECT_ID`. This id is not required unless you want to enable wallet connect usage.
 
 ## Getting Started
 
@@ -117,6 +118,7 @@ To deploy the web3 front-end on IPFS, you first should be familiar with [Hosting
 Alternatively, you may wish to deploy to an IPFS hosting service like [Infura IPFS](https://infura.io/docs/ipfs#section/Getting-started). This repo includes a script to deploy the `/build` directory to an IPFS host specified by several environment variables.
 
 To deploy a build to Infura IPFS:
+
 ```bash
 IPFS_AUTH="PROJECT_ID:PROJECT_SECRET" \
   IPFS_HOST="ipfs.infura.io" \
@@ -126,9 +128,9 @@ IPFS_AUTH="PROJECT_ID:PROJECT_SECRET" \
 
 Each of environment variables have the following functions:
 
-* `IPFS_AUTH` - Basic authentication for header for using the Infura IPFS add endpoint. You can find more information [here](https://infura.io/docs/ipfs#section/Authentication).
-* `IPFS_HOST` - IPFS Pinning service host.
-* `IPFS_PORT` - IPFS Pinning service host port.
+- `IPFS_AUTH` - Basic authentication for header for using the Infura IPFS add endpoint. You can find more information [here](https://infura.io/docs/ipfs#section/Authentication).
+- `IPFS_HOST` - IPFS Pinning service host.
+- `IPFS_PORT` - IPFS Pinning service host port.
 
 Note: The `deploy-ipfs` script has been tested and used with Infura IPFS. You may need a few changes to support alternative pinning services.
 
@@ -146,8 +148,7 @@ To deploy to a gcloud bucket:
 
 To learn more about internationalization, please view [i18n.md](i18n.md).
 
-Discussion
-----------
+## Discussion
 
 For any concerns with the web3 front-end, open an issue or visit us on [Discord](https://discord.com/invite/compound) to discuss.
 
