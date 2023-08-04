@@ -65,7 +65,6 @@
     "react-dev-utils": "^10.2.1",
     "react-error-overlay": "^6.0.7",
     "regenerator-runtime": "^0.13.5",
-    "solc": "^0.8.19",
     "string-replace-loader": "^2.1.1",
     "style-loader": "^1.2.1",
     "sw-precache-webpack-plugin": "^1.0.0",
