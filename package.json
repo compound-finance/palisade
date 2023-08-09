@@ -4,8 +4,8 @@
   "description": "The Compound Web3 Front-end",
   "main": "index.js",
   "scripts": {
-    "build": "node --unhandled-rejections=strict --max-old-space-size=8192 scripts/build.js",
-    "start": "node --unhandled-rejections=strict scripts/start.js dapp",
+    "build": "node --unhandled-rejections=strict --max-old-space-size=8192 --openssl-legacy-provider scripts/build.js",
+    "start": "node --unhandled-rejections=strict --openssl-legacy-provider scripts/start.js dapp",
     "package": "elm-package",
     "make": "elm-make",
     "repl": "elm-repl",
@@ -65,7 +65,6 @@
     "react-dev-utils": "^10.2.1",
     "react-error-overlay": "^6.0.7",
     "regenerator-runtime": "^0.13.5",
-    "solc": "^0.8.19",
     "string-replace-loader": "^2.1.1",
     "style-loader": "^1.2.1",
     "sw-precache-webpack-plugin": "^1.0.0",
