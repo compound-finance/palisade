@@ -83,8 +83,6 @@ type Msg
     | Tick Time.Posix
     | SetTimeZone Time.Zone
     | VoteMsg Vote.InternalMsg
-    | CheckVersion Time.Posix
-    | CheckedVersion (Result Http.Error Float)
     | RefreshGasPrice (Result Http.Error CompoundApi.GasService.Models.API_GasPriceResponse)
 
 
@@ -292,7 +290,6 @@ init { path, configurations, configAbiFiles, dataProviders, apiBaseUrlMap, userA
         , Cmd.map WrappedPreferencesMsg initPreferencesCmd
         , Cmd.map WrappedBNTransactionMsg initBNTransactionCmd
         , Task.perform Tick Time.now
-        , Task.perform CheckVersion Time.now
         , Task.perform SetTimeZone Time.here
         ]
     )
@@ -326,7 +323,6 @@ newBlockCmd apiBaseUrlMap maybeNetwork blockNumber previousBlockNumber ({ dataPr
 
                                 _ ->
                                     []
-
                     in
                     Cmd.batch <|
                         pageCmds
@@ -391,6 +387,7 @@ handleUpdatesFromEthConnectedWallet maybeConfig connectedEthWalletMsg model =
                                             refreshBlockCmd =
                                                 if model.network /= Just newNetwork then
                                                     newBlockCmd model.apiBaseUrlMap (Just newNetwork) blockNumber Nothing model
+
                                                 else
                                                     Cmd.none
                                         in
@@ -763,33 +760,8 @@ update msg ({ page, configs, apiBaseUrlMap, account, transactionState, bnTransac
             , Cmd.map voteTranslator loadDelegateeCmd
             )
 
-        CheckVersion time ->
-            let
-                versionUrl =
-                    ".__v.json"
-
-                versionDecoder =
-                    Json.Decode.field "version" Json.Decode.float
-            in
-            ( model, Http.send CheckedVersion (Http.get versionUrl versionDecoder) )
-
         SetTimeZone timeZone ->
             ( { model | currentTimeZone = timeZone }, Cmd.none )
-
-        CheckedVersion (Ok latestVersion) ->
-            case model.appVersion of
-                Just currentVersion ->
-                    if latestVersion /= currentVersion then
-                        ( model, Browser.Navigation.reload )
-
-                    else
-                        ( model, Cmd.none )
-
-                Nothing ->
-                    ( { model | appVersion = Just latestVersion }, Cmd.none )
-
-        CheckedVersion (Err e) ->
-            ( model, Cmd.none )
 
         SetBlockNumber blockNumber ->
             ( { model | blockNumber = Just blockNumber }, newBlockCmd apiBaseUrlMap model.network blockNumber model.blockNumber model )
@@ -1117,9 +1089,10 @@ update msg ({ page, configs, apiBaseUrlMap, account, transactionState, bnTransac
 
 
 view : Model -> Html Msg
-view ({userLanguage} as model) =
+view ({ userLanguage } as model) =
     Html.div [ id "main" ]
         (viewFull model)
+
 
 viewFull : Model -> List (Html Msg)
 viewFull ({ page, liquidateModel, transactionState, compoundState, tokenState, oracleState, configs, configAbis, network, preferences, account, blockNumber, userLanguage } as model) =
@@ -1417,7 +1390,6 @@ subscriptions model =
         , Sub.map voteTranslator (Vote.subscriptions model.voteModel)
         , Sub.map WrappedGovernanceMsg Eth.Governance.subscriptions
         , Time.every (1000.0 * 1.0 * toFloat CompoundComponents.Utils.Time.seconds) Tick
-        , Time.every (1000.0 * 4.0 * toFloat CompoundComponents.Utils.Time.hours) CheckVersion
         , onUrlChange (Url.fromString >> UrlChange)
         ]
 
