@@ -13,7 +13,7 @@
     "watch-css": "npx dart-sass --watch -I. -Inode_modules src/scss:src/css-build",
     "build-css": "npx dart-sass -I. -Inode_modules src/scss:src/css-build",
     "deploy-gcloud": "bash scripts/deploy-gcloud.sh",
-    "deploy-ipfs": "node --experimental-repl-await scripts/ipfs.js",
+    "deploy-ipfs": "node --experimental-repl-await --trace-warnings scripts/ipfs.js",
     "i18n": "node --unhandled-rejections=strict config/tx-cli.js -a 'src/strings/always_english_strings.json' -p 'src/strings/strings.<lang>.json' -s en -l es zh fr ko -o src/elm/Strings/Translations.elm -m Strings.Translations -t",
     "watch-i18n": "node --unhandled-rejections=strict config/tx-cli.js -a 'src/strings/always_english_strings.json' -p 'src/strings/strings.<lang>.json' -s en -l es zh fr ko -o src/elm/Strings/Translations.elm -m Strings.Translations -t -w",
     "release": "node --unhandled-rejections=strict scripts/release.js",
