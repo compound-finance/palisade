@@ -314,6 +314,7 @@ function subscribeToCTokenPorts(app, eth) {
 
   //port queryAllNoAccountPort : { blockNumber : Int, cTokens : List ( String, CTokenPortData ), comptroller : String } -> Cmd msg
   app.ports.queryAllNoAccountPort.subscribe(async ({ blockNumber, cTokens: cTokenEntries, comptroller }) => {
+    console.log('queryAllNoAccountPort ');
     let cTokens = supportFromEntries(cTokenEntries);
 
     const web3 = await withWeb3Eth(eth);
@@ -330,6 +331,7 @@ function subscribeToCTokenPorts(app, eth) {
   // port queryAllWithAccountPort : { blockNumber : Int, customerAddress : String, cTokens : List ( String, CTokenPortData ), compAddress: String, capFactoryAddress: String } -> Cmd msg
   app.ports.queryAllWithAccountPort.subscribe(
     async ({ blockNumber, customerAddress, cTokens: cTokenEntries, compAddress, capFactoryAddress }) => {
+      console.log('queryAllWithAccountPort ');
       let cTokens = supportFromEntries(cTokenEntries);
 
       const web3 = await withWeb3Eth(eth);

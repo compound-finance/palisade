@@ -108,8 +108,6 @@ if (process.env['DATA_PROVIDERS']) {
   }
 }
 
-console.log(envConfig);
-
 const configPath = path.join(appDirectory, '/config');
 
 function getConfigFiles(filesPath, allFilesList, fileRegex) {

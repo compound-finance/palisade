@@ -28,6 +28,10 @@ buildApiUrl apiBaseUrlMap network apiEndpoint endpointQueryParams =
                 Kovan ->
                     True
 
+                Dmctest ->
+                    True
+
+
                 _ ->
                     False
 

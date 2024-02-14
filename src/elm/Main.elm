@@ -51,6 +51,7 @@ import Tuple
 import Url
 import Utils.BrowserInfo
 import Utils.Http
+import CompoundComponents.Eth.Network exposing (Network)
 
 
 type Msg
@@ -240,6 +241,7 @@ init { path, configurations, configAbiFiles, dataProviders, apiBaseUrlMap, userA
         ( initVoteModel, _ ) =
             Vote.init configs
 
+
         initChooseLedgerAccountModal =
             { isVisible = False
             , pathSelectorActive = False
@@ -310,6 +312,20 @@ newNetworkCmd newNetwork model =
 
 newBlockCmd : Dict String String -> Maybe Network -> Int -> Maybe Int -> Model -> Cmd Msg
 newBlockCmd apiBaseUrlMap maybeNetwork blockNumber previousBlockNumber ({ dataProviders, configs, page } as model) =
+    let
+        _ =
+            Debug.log "Executing newBlockCmd"
+        _ =
+            Debug.log "apiBaseUrlMap" apiBaseUrlMap
+        _ =
+            Debug.log "maybeNetwork" maybeNetwork
+        _ =
+            Debug.log "blockNumber" blockNumber
+        _ =
+            Debug.log "previousBlockNumber" previousBlockNumber
+        _ =
+            Debug.log "model" model
+    in
     case maybeNetwork of
         Just network ->
             case ( getConfig configs network, getProvider dataProviders network ) of
@@ -346,6 +362,9 @@ handleUpdatesFromEthConnectedWallet : Maybe Config -> ConnectedEthWallet.Interna
 handleUpdatesFromEthConnectedWallet maybeConfig connectedEthWalletMsg model =
     case connectedEthWalletMsg of
         ConnectedEthWallet.SetNetwork (Just newNetwork) ->
+            let
+                _ = Debug.log " ConnectedEthWallet.SetNetwork (Just newNetwork)  "
+            in
             let
                 maybeNewConfig =
                     getConfig model.configs newNetwork
@@ -413,12 +432,21 @@ handleUpdatesFromEthConnectedWallet maybeConfig connectedEthWalletMsg model =
             )
 
         ConnectedEthWallet.SetNetwork Nothing ->
+            let
+                _ = Debug.log "ConnectedEthWallet.SetNetwork Nothing "
+            in
             ( { model | network = Nothing }, Cmd.none )
 
         ConnectedEthWallet.SetAccount Nothing ->
+            let
+                _ = Debug.log "ConnectedEthWallet.SetAccount Nothing"
+            in
             ( { model | account = NoAccount, compoundState = clearCompoundState model.compoundState }, Cmd.none )
 
         ConnectedEthWallet.SetAccount (Just newAccount) ->
+            let
+                _ = Debug.log "ConnectedEthWallet.SetAccount (Just newAccount)"
+            in
             let
                 -- If this is an account switching and we have an existing block and network we want to clear some
                 -- internal models and trigger a newBlockCmd to refresh everything immediately.
@@ -502,6 +530,9 @@ handleUpdatesFromEthConnectedWallet maybeConfig connectedEthWalletMsg model =
 
         ConnectedEthWallet.ResetToChooseProvider ->
             let
+                _ = Debug.log "ConnectedEthWallet.ResetToChooseProvider "
+            in
+            let
                 updatedCommonViewsModel =
                     CommonViews.closeDropdownSelectors model.commonViewsModel
             in
@@ -512,6 +543,9 @@ handleUpdatesFromEthConnectedWallet maybeConfig connectedEthWalletMsg model =
             )
 
         ConnectedEthWallet.RequestShowTerms ->
+            let
+                _ = Debug.log "ConnectedEthWallet.RequestShowTerms "
+            in
             let
                 updatedConnectedEthWalletModel =
                     ConnectedEthWallet.resetModel model.connectedEthWalletModel
@@ -1215,7 +1249,7 @@ viewFull ({ page, liquidateModel, transactionState, compoundState, tokenState, o
 
 alertView : Model -> Html Msg
 alertView ({ account, maybeGasPrice, network, userLanguage } as model) =
-    if invalidNetwork model.network model.configs then
+    if invalidNetwork (Just (Network.Dmctest)) model.configs then
         badNetworkAlert userLanguage
 
     else
@@ -1353,7 +1387,9 @@ testNetworkNoEtherAlert userLanguage network address =
             []
             [ text (Translations.no_ether_alert userLanguage) ]
         ]
-
+showConfigs : Dict String Config -> String
+showConfigs configs =
+    Dict.foldl (\_ config acc -> acc ++ "\n" ++ Debug.toString config) "" configs
 
 invalidNetwork : Maybe Network -> Dict String Config -> Bool
 invalidNetwork maybeNetwork configs =
@@ -1361,14 +1397,23 @@ invalidNetwork maybeNetwork configs =
         Just network ->
             case getConfig configs network of
                 Just _ ->
-                    False
+                     False
 
                 Nothing ->
-                    True
+                     True
 
-        --We have decided that the NOP state is still a valid network...
         Nothing ->
             False
+
+        --     case getConfig configs network of
+        --         Just _ ->
+        --             Debug.log ("Network is valid: " ++  Network.networkName network ++ "\nConfigs: " ++ showConfigs configs) False
+
+        --         Nothing ->
+        --             Debug.log ("Network is invalid: " ++  Network.networkName network ++ "\nConfigs: " ++ showConfigs configs) True
+
+        -- Nothing ->
+        --     Debug.log ("Network is invalid: " ++ "\nConfigs: " ++ showConfigs configs) False
 
 
 

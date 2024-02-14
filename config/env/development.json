@@ -4,11 +4,12 @@
   },
   "DATA_PROVIDERS": {
     "development": "http://localhost:8545",
-    "goerli": "https://infura.io/goerli",
+    "goerli": "https://eth-goerli.g.alchemy.com/v2/GLYcvZwAK2DCvNAjJDxk2WHFfX8bLbY3",
     "rinkeby": "https://infura.io/rinkeby",
     "kovan": "https://infura.io/kovan",
     "ropsten": "https://infura.io/ropsten",
-    "mainnet": "https://infura.io/mainnet"
+    "mainnet": "https://eth-mainnet.g.alchemy.com/v2/FDiChnmoJMmO9Zu-gXMozqkKMD33Tdll",
+    "dmctest": "https://dmc.mydefichain.com/testnet"
   },
   "NETWORK_MAP": {
     "mainnet": 1,
@@ -16,8 +17,9 @@
     "rinkeby": 4,
     "goerli": 5,
     "kovan": 42,
-    "development": 999
+    "development": 999,
+    "dmctest": 1131
   },
-  "DEFAULT_NETWORK": "mainnet",
+  "DEFAULT_NETWORK": "dmctest",
   "BLOCKNATIVE_API_KEY": null
 }

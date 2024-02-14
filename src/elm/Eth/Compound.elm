@@ -217,16 +217,63 @@ compoundNewBlockCmd blockNumber apiBaseUrlMap network comptroller account config
         fetchDataCmd =
             case account of
                 Acct customerAddress _ ->
+                    let
+                        _ =
+                            Debug.log "Fetching data for NoAccount"
+                        _ =
+                            Debug.log "blockNumber" blockNumber
+                        _ =
+                            Debug.log "apiBaseUrlMap" apiBaseUrlMap
+                        _ =
+                            Debug.log "network" network
+                        _ =
+                            Debug.log "comptroller" comptroller
+                        _ =
+                            Debug.log "account" account
+                        _ =
+                            Debug.log "config" config
+                    in
                     queryAllWithAccount blockNumber customerAddress cTokenConfigs comp capFactory
 
                 UnknownAcct ->
+                    let
+                        _ =
+                            Debug.log "Fetching data for NoAccount"
+                        _ =
+                            Debug.log "blockNumber" blockNumber
+                        _ =
+                            Debug.log "apiBaseUrlMap" apiBaseUrlMap
+                        _ =
+                            Debug.log "network" network
+                        _ =
+                            Debug.log "comptroller" comptroller
+                        _ =
+                            Debug.log "account" account
+                        _ =
+                            Debug.log "config" config
+                    in
                     queryAllDataNoAccount blockNumber cTokenConfigs config.comptroller
 
                 NoAccount ->
+                    let
+                        _ =
+                            Debug.log "Fetching data for NoAccount"
+                        _ =
+                            Debug.log "blockNumber" blockNumber
+                        _ =
+                            Debug.log "apiBaseUrlMap" apiBaseUrlMap
+                        _ =
+                            Debug.log "network" network
+                        _ =
+                            Debug.log "comptroller" comptroller
+                        _ =
+                            Debug.log "account" account
+                        _ =
+                            Debug.log "config" config
+                    in
                     queryAllDataNoAccount blockNumber cTokenConfigs config.comptroller
     in
     fetchDataCmd
-
 
 
 --TODO: We can remove this after we are fully onboard with new price

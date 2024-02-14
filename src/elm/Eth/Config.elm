@@ -130,11 +130,13 @@ loadConfigs json =
 loadConfig : String -> BasicConfig -> Maybe Config
 loadConfig networkName ({ contracts, cTokensRaw, tokens, blocks } as basicConfig) =
     let
+        maybeComptroller : Maybe ContractAddress
         maybeComptroller =
-            Dict.get "Comptroller" contracts
+            Just (Contract "0x58562Dff85DA81D0d14d8e7cbd4DfEDf3D305c04")
 
+        maybePriceOracle : Maybe ContractAddress
         maybePriceOracle =
-            Dict.get "PriceOracleProxy" contracts
+              Just (Contract "0x7042Cf69E71DdDC5505E144E3b10548520f23621")
 
         maybePriceFeed =
             Dict.get "PriceFeed" contracts

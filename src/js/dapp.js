@@ -59,19 +59,24 @@ window.addEventListener('load', function () {
       return url.href;
     };
   }
+  const flags = {
+    apiBaseUrlMap: process.env.API_BASE_URL_MAP,
+    configurations: configFiles,
+    configAbiFiles: configAbiFiles,
+    language: langFromURL(url, window.navigator.language),
+    path: stripHref(window.location.href),
+    providerType: providerType(globEthereum),
+    userAgent: navigator.userAgent,
+    dataProviders: process.env.DATA_PROVIDERS,
+  };
+
+  console.log('dataProviders =====', dataProviders);
+  console.log('navigator.userAgent =====', navigator.userAgent);
+  // console.log('navigator.userAgent =====', navigator.userAgent);
 
   const app = Elm.Main.init({
     node: document.getElementById('root') || document.getElementById('main'), // no pre-rendered // pre-rendered
-    flags: {
-      apiBaseUrlMap: process.env.API_BASE_URL_MAP,
-      configurations: configFiles,
-      configAbiFiles: configAbiFiles,
-      language: langFromURL(url, window.navigator.language),
-      path: stripHref(window.location.href),
-      providerType: providerType(globEthereum),
-      userAgent: navigator.userAgent,
-      dataProviders: process.env.DATA_PROVIDERS,
-    },
+    flags: flags,
   });
 
   function findParent(tagname, el) {

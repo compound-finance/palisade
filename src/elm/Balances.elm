@@ -110,6 +110,10 @@ getUnderlyingTotalsInUsd compoundState cTokens oracleState =
             , totalSupplyInterest = Decimal.zero
             }
     in
+    -- Log the compound state
+    -- let
+    --     _ = Debug.log "Compound State in getUnderlyingTotalsInUsd:" compoundState
+    -- in
     List.foldl
         (\cToken runningBalanceTotals ->
             let
