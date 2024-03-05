@@ -5352,7 +5352,7 @@ ethereumjs-vm@^2.3.4, ethereumjs-vm@^2.6.0:
     rustbn.js "~0.2.0"
     safe-buffer "^5.1.1"
 
-"ethereumjs-wallet@https://github.com/ethereumjs/ethereumjs-wallet.git#2121d5a32195e595accc9dce81d14bae8b4e6de6":
+"ethereumjs-wallet@git+https://github.com/ethereumjs/ethereumjs-wallet.git#2121d5a32195e595accc9dce81d14bae8b4e6de6", "ethereumjs-wallet@https://github.com/ethereumjs/ethereumjs-wallet.git#2121d5a32195e595accc9dce81d14bae8b4e6de6":
   version "0.6.3"
   resolved "https://github.com/ethereumjs/ethereumjs-wallet.git#2121d5a32195e595accc9dce81d14bae8b4e6de6"
   dependencies:
@@ -10208,10 +10208,10 @@ scryptsy@^2.1.0:
   resolved "https://registry.yarnpkg.com/scryptsy/-/scryptsy-2.1.0.tgz#8d1e8d0c025b58fdd25b6fa9a0dc905ee8faa790"
   integrity sha512-1CdSqHQowJBnMAFyPEBRfqag/YP9OF394FV+4YREIJX4ljD7OxvQRDayyoyyCk+senRjSkP6VnUNQmVQqB6g7w==
 
-seahorse-compound-components@1.0.6:
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/seahorse-compound-components/-/seahorse-compound-components-1.0.6.tgz#b72f0bf18c5815066d5b651494f53245773a5129"
-  integrity sha512-yPqo3uEnJwvPBQ9ihtYvyKnkDnCRe8csDHH6wO20mOxeYkfHq7uf9Ha1irR3InOC9rzyJvc3KDnb6mHTtXN7Ww==
+seahorse-compound-components@1.0.9:
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/seahorse-compound-components/-/seahorse-compound-components-1.0.9.tgz#aabb7b60505b1319ab80c27a0a263b145cb86b6f"
+  integrity sha512-MqZX1lsVu3lD96HXEy2FRL9APx3pi8G2g5cVY6O5ukDtbne/U7EARZnk5zSeZkfXi+KzMCdMECM3Iz0pvgWKlA==
   dependencies:
     "@babel/core" "^7.0.0"
     "@babel/preset-env" "^7.0.0"

@@ -29,8 +29,8 @@
     "transaction_broadcast_with_estimation": "交易广播。预计确认时间：",
     "view_on_etherscan": "在Etherscan上查看",
     "nothing_to_claim": "没什么可要求的",
-    "claim_comp": "索取{{compAmount}} COMP",
-    "claiming_comp": "申请{{compAmount}} COMP",
+    "claim_comp": "索取{{compAmount}} SEA",
+    "claiming_comp": "申请{{compAmount}} SEA",
 
     "supply_markets": "供应市场",
     "borrow_markets": "借贷市场",
@@ -128,8 +128,6 @@
     "decline_unlock_tally_wallet": "我们检测到您安装了 MetaMask。",
     "decline_unlock_mm_wallet": "我们检测到您安装了 Tally。",
 
-
-  
     "queued_transactions": "排队的交易",
     "executed_transactions": "已执行交易",
     "accept_admin": "接受{{contract}}的管理员",
