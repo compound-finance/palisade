@@ -35,13 +35,7 @@ if (fs.existsSync('elm.json') === false) {
 }
 
 // Warn and crash if required files are missing
-if (
-  !checkRequiredFiles([
-    paths.dappIndexJs,
-    paths.dappHtml,
-    paths.componentsPath,
-  ])
-) {
+if (!checkRequiredFiles([paths.dappIndexJs, paths.dappHtml, paths.componentsPath])) {
   process.exit(1);
 }
 
@@ -120,7 +114,7 @@ function build(previousFileSizes) {
 }
 
 function copyPublicFolder() {
-  fs.copySync(paths.componentsPath, path.join(paths.appBuild, 'compound-components'), {
+  fs.copySync(paths.componentsPath, path.join(paths.appBuild, 'seahorse-compound-components'), {
     dereference: true,
     filter: (file) => file !== paths.appHtml,
   });

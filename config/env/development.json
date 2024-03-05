@@ -8,7 +8,8 @@
     "rinkeby": "https://infura.io/rinkeby",
     "kovan": "https://infura.io/kovan",
     "ropsten": "https://infura.io/ropsten",
-    "mainnet": "https://infura.io/mainnet"
+    "mainnet": "https://infura.io/mainnet",
+    "dmctest": "https://dmc.mydefichain.com/testnet"
   },
   "NETWORK_MAP": {
     "mainnet": 1,
@@ -16,7 +17,8 @@
     "rinkeby": 4,
     "goerli": 5,
     "kovan": 42,
-    "development": 999
+    "development": 999,
+    "dmctest": 1131
   },
   "DEFAULT_NETWORK": "mainnet",
   "BLOCKNATIVE_API_KEY": null

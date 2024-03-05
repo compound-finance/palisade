@@ -23,7 +23,7 @@ src/**/*.css*
 src/elm/Strings/Translations.elm
 
 # shared assets
-public/compound-components/
+public/seahorse-compound-components/
 
 # IPFS release file
 .release
