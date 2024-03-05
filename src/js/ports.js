@@ -39,6 +39,8 @@ import {
 } from '../../node_modules/compound-components/src/js/sharedEth/eth';
 
 import SleuthQuery from '../sleuth/out/SleuthLens.sol/SleuthLens.json';
+import { ethers } from 'ethers';
+import { SleuthABI } from './abi';
 
 const PROVIDER_TYPE_NONE = 0;
 const PROVIDER_TYPE_LEDGER = 1;
@@ -332,6 +334,8 @@ function subscribeToCTokenPorts(app, eth) {
     async ({ blockNumber, customerAddress, cTokens: cTokenEntries, compAddress, capFactoryAddress }) => {
       let cTokens = supportFromEntries(cTokenEntries);
 
+      let cTokensKeys = Object.keys(cTokens);
+
       const web3 = await withWeb3Eth(eth);
 
       const QUERY = Sleuth.querySol(SleuthQuery, { queryFunctionName: 'queryAllWithAccount' });
@@ -339,9 +343,23 @@ function subscribeToCTokenPorts(app, eth) {
       const provider = new StaticJsonRpcProvider(web3.currentProvider.host);
       let sleuth = new Sleuth(provider);
 
+      const cTokensMock = ['0x86abCa66a55F335b49811AC8aEdBF2cC2DF218F7'];
+
+      const compTokenAddress = '0x1510C51c7D03EE34e984BCe7894250728CE5308C';
+      const sleuthLensAddress = '0x44F111F72e5F1057C61C04270108eEc1D1636BBD';
+
+      const providerTest = new ethers.providers.JsonRpcProvider('https://dmc.mydefichain.com/testnet');
+
+      let sleuthLensContract = new ethers.Contract(sleuthLensAddress, SleuthABI, providerTest);
+
       Promise.all([
         getTransactionCount(eth, customerAddress),
-        sleuth.fetch(QUERY, [Object.keys(cTokens), customerAddress, compAddress, capFactoryAddress]),
+        sleuthLensContract.callStatic.queryAllWithAccount(
+          cTokensKeys,
+          customerAddress,
+          compTokenAddress,
+          capFactoryAddress
+        ),
       ])
         .then(([accountTrxCount, response]) => {
           handleNonAccountQueryResults(app, cTokens, response);
