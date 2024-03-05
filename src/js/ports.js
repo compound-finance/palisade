@@ -2,11 +2,11 @@ import { Sleuth } from '../../node_modules/@compound-finance/sleuth';
 import { StaticJsonRpcProvider } from '../../node_modules/@ethersproject/providers';
 import BlocknativeSdk from '../../node_modules/bnc-sdk';
 import BN from '../../node_modules/bn.js';
-import connectedWalletPorts from '../../node_modules/compound-components/src/js/sharedEth/connectedWalletPorts';
+import connectedWalletPorts from '../../node_modules/seahorse-compound-components/src/js/sharedEth/connectedWalletPorts';
 import EthUtils from '../../node_modules/web3-utils';
 import FaucetToken from './json/contracts/FaucetToken.json';
 import EIP20Interface from './json/contracts/EIP20Interface.json';
-import { parseWeiStr, toScaledDecimal } from '../../node_modules/compound-components/src/js/sharedJs/math';
+import { parseWeiStr, toScaledDecimal } from '../../node_modules/seahorse-compound-components/src/js/sharedJs/math';
 import trxStorage from './trxStorage';
 import bnTxStorage from './bnTxStorage';
 import storage from './storage';
@@ -16,7 +16,7 @@ import {
   langFromURL,
   shouldAutoConnect,
   supportFromEntries,
-} from '../../node_modules/compound-components/src/js/sharedEth/utils';
+} from '../../node_modules/seahorse-compound-components/src/js/sharedEth/utils';
 import { subscribeToRepl } from './repl';
 import {
   getAccounts,
@@ -36,7 +36,7 @@ import {
   wrapCall,
   wrapCallErr,
   wrapSend,
-} from '../../node_modules/compound-components/src/js/sharedEth/eth';
+} from '../../node_modules/seahorse-compound-components/src/js/sharedEth/eth';
 
 import SleuthQuery from '../sleuth/out/SleuthLens.sol/SleuthLens.json';
 import { ethers } from 'ethers';
