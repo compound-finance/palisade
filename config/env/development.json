@@ -20,6 +20,6 @@
     "development": 999,
     "dmctest": 1131
   },
-  "DEFAULT_NETWORK": "mainnet",
+  "DEFAULT_NETWORK": "dmctest",
   "BLOCKNATIVE_API_KEY": null
 }
