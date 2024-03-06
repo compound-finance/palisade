@@ -3,20 +3,9 @@
     "v3_api": "https://v3-api.compound.finance/"
   },
   "DATA_PROVIDERS": {
-    "development": "http://localhost:8545",
-    "goerli": "https://infura.io/goerli",
-    "rinkeby": "https://infura.io/rinkeby",
-    "kovan": "https://infura.io/kovan",
-    "ropsten": "https://infura.io/ropsten",
-    "mainnet": "https://infura.io/mainnet",
     "dmctest": "https://dmc.mydefichain.com/testnet"
   },
   "NETWORK_MAP": {
-    "mainnet": 1,
-    "ropsten": 3,
-    "rinkeby": 4,
-    "goerli": 5,
-    "kovan": 42,
     "dmctest": 1131
   },
   "DEFAULT_NETWORK": "dmctest",
