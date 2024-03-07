@@ -1,7 +1,7 @@
 {
   "name": "palisade",
   "version": "1.0.0",
-  "description": "The Compound Web3 Front-end",
+  "description": "The Seahorse Web3 Front-end",
   "main": "index.js",
   "scripts": {
     "build": "NODE_OPTIONS=--openssl-legacy-provider node --unhandled-rejections=strict --max-old-space-size=8192 scripts/build.js",
@@ -65,7 +65,7 @@
     "react-dev-utils": "^10.2.1",
     "react-error-overlay": "^6.0.7",
     "regenerator-runtime": "^0.13.5",
-    "seahorse-compound-components": "1.0.6",
+    "seahorse-compound-components": "1.0.9",
     "seahorse-compound-config": "1.0.1",
     "solc": "^0.8.19",
     "string-replace-loader": "^2.1.1",
