@@ -343,12 +343,10 @@ function subscribeToCTokenPorts(app, eth) {
       const provider = new StaticJsonRpcProvider(web3.currentProvider.host);
       let sleuth = new Sleuth(provider);
 
-      const cTokensMock = ['0x86abCa66a55F335b49811AC8aEdBF2cC2DF218F7'];
+      const compTokenAddress = '0xaFD063784bF69739bb057939140BFb75180F5C59';
+      const sleuthLensAddress = '0xA478E7503506b7b2c5CECa6432706065A08e5d29';
 
-      const compTokenAddress = '0x1510C51c7D03EE34e984BCe7894250728CE5308C';
-      const sleuthLensAddress = '0x44F111F72e5F1057C61C04270108eEc1D1636BBD';
-
-      const providerTest = new ethers.providers.JsonRpcProvider('https://dmc.mydefichain.com/testnet');
+      const providerTest = new ethers.providers.JsonRpcProvider('https://dmc01.mydefichain.com/mainnet');
 
       let sleuthLensContract = new ethers.Contract(sleuthLensAddress, SleuthABI, providerTest);
 
