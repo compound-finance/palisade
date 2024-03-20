@@ -10208,10 +10208,10 @@ scryptsy@^2.1.0:
   resolved "https://registry.yarnpkg.com/scryptsy/-/scryptsy-2.1.0.tgz#8d1e8d0c025b58fdd25b6fa9a0dc905ee8faa790"
   integrity sha512-1CdSqHQowJBnMAFyPEBRfqag/YP9OF394FV+4YREIJX4ljD7OxvQRDayyoyyCk+senRjSkP6VnUNQmVQqB6g7w==
 
-seahorse-compound-components@1.0.9:
-  version "1.0.9"
-  resolved "https://registry.yarnpkg.com/seahorse-compound-components/-/seahorse-compound-components-1.0.9.tgz#aabb7b60505b1319ab80c27a0a263b145cb86b6f"
-  integrity sha512-MqZX1lsVu3lD96HXEy2FRL9APx3pi8G2g5cVY6O5ukDtbne/U7EARZnk5zSeZkfXi+KzMCdMECM3Iz0pvgWKlA==
+seahorse-compound-components@1.0.10:
+  version "1.0.10"
+  resolved "https://registry.yarnpkg.com/seahorse-compound-components/-/seahorse-compound-components-1.0.10.tgz#3ff44c802e40648242083a5b11c18e6f130a7473"
+  integrity sha512-Px0NUFjtyujDqo691Gxudm2kbNziEpVwhf9uTx9XhboEC+w3XZCzlxbuB3C7ZOVF1aXPk6aqrS5J/V3fNkwRKQ==
   dependencies:
     "@babel/core" "^7.0.0"
     "@babel/preset-env" "^7.0.0"
@@ -10251,10 +10251,10 @@ seahorse-compound-components@1.0.9:
     webpack-dev-server "^3.7.2"
     yargs "^16.2.0"
 
-seahorse-compound-config@1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/seahorse-compound-config/-/seahorse-compound-config-1.0.1.tgz#67a6773805601b03b3ca772bbe04f4dbd89ecddd"
-  integrity sha512-12JzzcGerFqzXWS++EYMdTE+4t4jPkT0QMfLnkin4XPeXKnF4ohLYrEojNEImEGbAYqM3HlBnAnoMjNlygxklg==
+seahorse-compound-config@1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/seahorse-compound-config/-/seahorse-compound-config-1.0.2.tgz#587b3779e2572b815a0594b63acd27d4c5828405"
+  integrity sha512-WBarN8ZhyemjzYWmXAHrnbzSDFcxCYouN0+ZQu0rMD08hXQKveCD7TK79gh/PvoFZiOtbch6FUYAj/ylrJnF4g==
 
 secp256k1@^3.0.1:
   version "3.8.0"

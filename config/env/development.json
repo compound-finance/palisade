@@ -3,11 +3,13 @@
     "v3_api": "https://v3-api-stage.compound.finance/"
   },
   "DATA_PROVIDERS": {
-    "dmctest": "https://dmc.mydefichain.com/testnet"
+    "dmctest": "https://dmc.mydefichain.com/testnet",
+    "dmclive": "https://dmc01.mydefichain.com/mainnet"
   },
   "NETWORK_MAP": {
-    "dmctest": 1131
+    "dmctest": 1131,
+    "dmclive": 1130
   },
-  "DEFAULT_NETWORK": "dmctest",
+  "DEFAULT_NETWORK": "dmclive",
   "BLOCKNATIVE_API_KEY": null
 }

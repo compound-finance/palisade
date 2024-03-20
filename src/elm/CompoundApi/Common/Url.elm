@@ -30,6 +30,9 @@ buildApiUrl apiBaseUrlMap network apiEndpoint endpointQueryParams =
                 
                 Dmctest ->
                     True
+
+                Dmclive ->
+                    True
                     
                 _ ->
                     False
