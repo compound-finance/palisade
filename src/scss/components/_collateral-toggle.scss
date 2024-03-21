@@ -1,6 +1,6 @@
 @import '../variables';
 
-@import 'node_modules/compound-components/src/scss/components/connecting-ring';
+@import 'node_modules/seahorse-compound-components/src/scss/components/connecting-ring';
 
 .collateral-toggle {
   h4 {
@@ -11,7 +11,7 @@
     color: $color_grey_2;
   }
 
-  p[class*=center-text]{
+  p[class*='center-text'] {
     text-align: center;
   }
 

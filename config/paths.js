@@ -47,5 +47,5 @@ module.exports = {
   elm: require.resolve('elm/bin/elm'),
   publicUrl: getPublicUrl(resolveApp('elm.json')),
   servedPath: getServedPath(resolveApp('elm.json')),
-  componentsPath: resolveApp('./node_modules/compound-components/src/public'),
+  componentsPath: resolveApp('./node_modules/seahorse-compound-components/src/public'),
 };

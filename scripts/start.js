@@ -2,11 +2,7 @@
 
 let app;
 
-if (
-  !process.argv[1] ||
-  !process.argv[2] ||
-  ['dapp'].indexOf((app = process.argv[2].toLowerCase())) === -1
-) {
+if (!process.argv[1] || !process.argv[2] || ['dapp'].indexOf((app = process.argv[2].toLowerCase())) === -1) {
   console.error('please run as `yarn run start dapp`');
   process.exit(1);
 }
@@ -155,7 +151,7 @@ buildI18n().then(() => {
       // Create a webpack compiler that is configured with custom messages.
       const compiler = createCompiler(webpack, config, appName, urls);
 
-      fs.copySync(paths.componentsPath, path.join(paths.appPublic, 'compound-components'), {
+      fs.copySync(paths.componentsPath, path.join(paths.appPublic, 'seahorse-compound-components'), {
         dereference: true,
         filter: (file) => file !== paths.appHtml,
       });

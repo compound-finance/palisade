@@ -57,7 +57,7 @@ process.env.NODE_PATH = (process.env.NODE_PATH || '')
 const ELM_APP = /^ELM_APP_/i;
 
 // Load valid network configurations
-const networksPath = path.join('node_modules/compound-config', 'networks');
+const networksPath = path.join('node_modules/seahorse-compound-config', 'networks');
 const allFiles = fs.readdirSync(networksPath);
 const fileRegex = /^([a-z]+)\.json$/;
 const fileAbiRegex = /^([a-z]+)\-abi\.json$/;

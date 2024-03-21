@@ -1,9 +1,9 @@
 @import 'variables';
 
-@import 'node_modules/compound-components/src/scss/components/connecting-ring';
+@import 'node_modules/seahorse-compound-components/src/scss/components/connecting-ring';
 
-.transactions{
-  .asset{
+.transactions {
+  .asset {
     display: block;
     font-size: 0.95rem;
     padding: 1.25rem $gov-column-gutter;
@@ -14,13 +14,13 @@
       justify-content: space-between;
     }
 
-    .transaction-error{
+    .transaction-error {
       font-size: 0.85rem;
       padding-top: 1rem;
       padding-left: 2.45rem;
     }
   }
-  .status{
+  .status {
     width: 22px;
     height: 22px;
     border-width: 1px;
@@ -40,34 +40,34 @@
         border-color: $color_borrow;
       }
     }
-    &.supply{
+    &.supply {
       background-image: url(/images/icon_arrow_forward.png);
       border-color: $color_supply;
     }
-    &.withdraw{
+    &.withdraw {
       background-image: url(/images/icon_arrow_back.png);
     }
-    &.borrow{
+    &.borrow {
       background-image: url(/images/icon_arrow_back.png);
       border-color: $color_borrow;
     }
-    &.repay{
+    &.repay {
       background-image: url(/images/icon_arrow_forward.png);
     }
-    &.fail{
+    &.fail {
       background-image: url(/images/icon_fail.png);
     }
-    &.enable{
+    &.enable {
       background-image: url(/images/icon_lock_open.png);
     }
-    &.success{
+    &.success {
       background-image: url(/images/icon_success.png);
     }
   }
-  .timestamp{
+  .timestamp {
     color: $color_label;
   }
-  &.failure{
+  &.failure {
     border-bottom: none;
   }
 
