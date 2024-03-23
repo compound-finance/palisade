@@ -5352,7 +5352,7 @@ ethereumjs-vm@^2.3.4, ethereumjs-vm@^2.6.0:
     rustbn.js "~0.2.0"
     safe-buffer "^5.1.1"
 
-"ethereumjs-wallet@git+https://github.com/ethereumjs/ethereumjs-wallet.git#2121d5a32195e595accc9dce81d14bae8b4e6de6", "ethereumjs-wallet@https://github.com/ethereumjs/ethereumjs-wallet.git#2121d5a32195e595accc9dce81d14bae8b4e6de6":
+"ethereumjs-wallet@https://github.com/ethereumjs/ethereumjs-wallet.git#2121d5a32195e595accc9dce81d14bae8b4e6de6":
   version "0.6.3"
   resolved "https://github.com/ethereumjs/ethereumjs-wallet.git#2121d5a32195e595accc9dce81d14bae8b4e6de6"
   dependencies:
@@ -10251,10 +10251,10 @@ seahorse-compound-components@1.0.10:
     webpack-dev-server "^3.7.2"
     yargs "^16.2.0"
 
-seahorse-compound-config@1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/seahorse-compound-config/-/seahorse-compound-config-1.0.2.tgz#587b3779e2572b815a0594b63acd27d4c5828405"
-  integrity sha512-WBarN8ZhyemjzYWmXAHrnbzSDFcxCYouN0+ZQu0rMD08hXQKveCD7TK79gh/PvoFZiOtbch6FUYAj/ylrJnF4g==
+seahorse-compound-config@1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/seahorse-compound-config/-/seahorse-compound-config-1.0.3.tgz#b735f899cc767d7b84557aabe18533c05d2819aa"
+  integrity sha512-1ElLK4NFNZJbZJc9gCsJ0oEFEHZE7fmNJfUlEJuUP7/fb4nPwXAGVY9VAweQlNA4RWDbVXjUCIcp2OWEoLIILw==
 
 secp256k1@^3.0.1:
   version "3.8.0"
