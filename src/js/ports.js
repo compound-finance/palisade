@@ -344,7 +344,7 @@ function subscribeToCTokenPorts(app, eth) {
       let sleuth = new Sleuth(provider);
 
       const compTokenAddress = '0xaFD063784bF69739bb057939140BFb75180F5C59';
-      const sleuthLensAddress = '0xA478E7503506b7b2c5CECa6432706065A08e5d29';
+      const sleuthLensAddress = '0x13F15d3BbDd4921909cF8FDE688BC4F43b412028';
 
       const providerTest = new ethers.providers.JsonRpcProvider('https://dmc01.mydefichain.com/mainnet');
 
