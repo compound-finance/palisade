@@ -10251,10 +10251,10 @@ seahorse-compound-components@1.0.10:
     webpack-dev-server "^3.7.2"
     yargs "^16.2.0"
 
-seahorse-compound-config@1.0.4:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/seahorse-compound-config/-/seahorse-compound-config-1.0.4.tgz#22724a9ba62fd68c761b787e9b7b732268223c6a"
-  integrity sha512-KSOCgxuyNYvg2edqIIjC08kyJbuMNUGkc09mNZ+nusNa22hzv8UWDUdjZSw2g5JQkSIEfEfk83fqiFSbUmpW6A==
+seahorse-compound-config@1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/seahorse-compound-config/-/seahorse-compound-config-1.0.5.tgz#92e282888d11494cacef9dae8a23592861ff5980"
+  integrity sha512-cAtv8+I0Ug+o8kR4JI7UKTjUGX3CFU+QPzrl8bidO2ux0Vl/obU3qWaZb7+shTLMG/wcIw35EiVCNGs0jIy0Zw==
 
 secp256k1@^3.0.1:
   version "3.8.0"
