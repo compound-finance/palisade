@@ -66,7 +66,7 @@
     "react-error-overlay": "^6.0.7",
     "regenerator-runtime": "^0.13.5",
     "seahorse-compound-components": "1.0.10",
-    "seahorse-compound-config": "1.0.4",
+    "seahorse-compound-config": "1.0.5",
     "solc": "^0.8.19",
     "string-replace-loader": "^2.1.1",
     "style-loader": "^1.2.1",
