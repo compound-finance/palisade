@@ -4,7 +4,7 @@ import { Elm } from '../elm/Main.elm';
 import registerServiceWorker from './registerServiceWorker';
 import ports from './ports';
 import storage from './storage';
-import { providerType, langFromURL } from '../../node_modules/compound-components/src/js/sharedEth/utils';
+import { providerType, langFromURL } from '../../node_modules/seahorse-compound-components/src/js/sharedEth/utils';
 import { MDCSwitch } from '@material/switch';
 
 var oldErrorHandler = window.onerror || function () {};

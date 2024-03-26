@@ -17,15 +17,21 @@ buildApiUrl apiBaseUrlMap network apiEndpoint endpointQueryParams =
                     True
 
                 Ropsten ->
-                    True
+                    False
 
                 Rinkeby ->
-                    True
+                    False
 
                 Goerli ->
-                    True
+                    False
 
                 Kovan ->
+                    False
+
+                Dmctest ->
+                    True
+
+                Dmclive ->
                     True
 
                 _ ->

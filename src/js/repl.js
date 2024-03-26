@@ -1,5 +1,9 @@
-import { giveNewTrx, withTrxWeb3, withWeb3Eth } from '../../node_modules/compound-components/src/js/sharedEth/eth';
-import { networkFromId } from '../../node_modules/compound-components/src/js/sharedEth/utils';
+import {
+  giveNewTrx,
+  withTrxWeb3,
+  withWeb3Eth,
+} from '../../node_modules/seahorse-compound-components/src/js/sharedEth/eth';
+import { networkFromId } from '../../node_modules/seahorse-compound-components/src/js/sharedEth/utils';
 
 export function subscribeToRepl(app, eth, configFiles, configAbiFiles, showAccount) {
   let scriptPromise = null;

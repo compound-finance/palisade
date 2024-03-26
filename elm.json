@@ -3,7 +3,7 @@
     "source-directories": [
         "src/elm",
         "src/elm-bootstrap/src",
-        "node_modules/compound-components/src/elm"
+        "node_modules/seahorse-compound-components/src/elm"
     ],
     "elm-version": "0.19.1",
     "dependencies": {
@@ -27,37 +27,40 @@
             "elm-community/list-extra": "8.2.4",
             "elm-community/maybe-extra": "5.2.0",
             "elm-community/typed-svg": "6.0.0",
-            "folkertdev/one-true-path-experiment": "4.0.3",
-            "gampleman/elm-visualization": "2.1.1",
+            "folkertdev/one-true-path-experiment": "5.0.0",
             "hecrj/html-parser": "2.3.4",
             "jinjor/elm-debounce": "3.0.0",
             "justinmimbs/date": "3.1.2",
             "justinmimbs/time-extra": "1.1.0",
+            "kokizzu/elm-date-format": "1.0.0",
+            "kokizzu/elm-visualization": "1.0.0",
             "myrho/elm-round": "1.0.4",
             "nathanjohnson320/base58": "2.0.1",
             "prozacchiwawa/elm-keccak": "2.0.0",
             "rtfeldman/elm-hex": "1.0.0",
             "rtfeldman/elm-iso8601-date-strings": "1.1.3",
-            "ryannhg/date-format": "2.0.1",
             "toastal/either": "3.5.2",
             "torreyatcitty/the-best-decimal": "1.1.0"
         },
         "indirect": {
-            "elm/virtual-dom": "1.0.2",
+            "elm/random": "1.0.0",
+            "elm/virtual-dom": "1.0.3",
             "folkertdev/elm-deque": "3.0.1",
             "folkertdev/svg-path-lowlevel": "3.0.0",
+            "ianmackenzie/elm-1d-parameter": "1.0.1",
             "ianmackenzie/elm-float-extra": "1.1.0",
-            "ianmackenzie/elm-geometry": "1.2.1",
-            "ianmackenzie/elm-interval": "1.0.1",
-            "ianmackenzie/elm-triangular-mesh": "1.0.4"
+            "ianmackenzie/elm-geometry": "3.11.0",
+            "ianmackenzie/elm-interval": "3.1.0",
+            "ianmackenzie/elm-triangular-mesh": "1.1.0",
+            "ianmackenzie/elm-units": "2.10.0",
+            "ianmackenzie/elm-units-interval": "3.2.0",
+            "ianmackenzie/elm-units-prefixed": "2.8.0"
         }
     },
     "test-dependencies": {
         "direct": {
             "elm-explorations/test": "1.1.0"
         },
-        "indirect": {
-            "elm/random": "1.0.0"
-        }
+        "indirect": {}
     }
 }

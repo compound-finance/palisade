@@ -2,11 +2,11 @@ import { Sleuth } from '../../node_modules/@compound-finance/sleuth';
 import { StaticJsonRpcProvider } from '../../node_modules/@ethersproject/providers';
 import BlocknativeSdk from '../../node_modules/bnc-sdk';
 import BN from '../../node_modules/bn.js';
-import connectedWalletPorts from '../../node_modules/compound-components/src/js/sharedEth/connectedWalletPorts';
+import connectedWalletPorts from '../../node_modules/seahorse-compound-components/src/js/sharedEth/connectedWalletPorts';
 import EthUtils from '../../node_modules/web3-utils';
 import FaucetToken from './json/contracts/FaucetToken.json';
 import EIP20Interface from './json/contracts/EIP20Interface.json';
-import { parseWeiStr, toScaledDecimal } from '../../node_modules/compound-components/src/js/sharedJs/math';
+import { parseWeiStr, toScaledDecimal } from '../../node_modules/seahorse-compound-components/src/js/sharedJs/math';
 import trxStorage from './trxStorage';
 import bnTxStorage from './bnTxStorage';
 import storage from './storage';
@@ -16,7 +16,7 @@ import {
   langFromURL,
   shouldAutoConnect,
   supportFromEntries,
-} from '../../node_modules/compound-components/src/js/sharedEth/utils';
+} from '../../node_modules/seahorse-compound-components/src/js/sharedEth/utils';
 import { subscribeToRepl } from './repl';
 import {
   getAccounts,
@@ -36,9 +36,11 @@ import {
   wrapCall,
   wrapCallErr,
   wrapSend,
-} from '../../node_modules/compound-components/src/js/sharedEth/eth';
+} from '../../node_modules/seahorse-compound-components/src/js/sharedEth/eth';
 
 import SleuthQuery from '../sleuth/out/SleuthLens.sol/SleuthLens.json';
+import { ethers } from 'ethers';
+import { SleuthABI } from './abi';
 
 const PROVIDER_TYPE_NONE = 0;
 const PROVIDER_TYPE_LEDGER = 1;
@@ -332,6 +334,8 @@ function subscribeToCTokenPorts(app, eth) {
     async ({ blockNumber, customerAddress, cTokens: cTokenEntries, compAddress, capFactoryAddress }) => {
       let cTokens = supportFromEntries(cTokenEntries);
 
+      let cTokensKeys = Object.keys(cTokens);
+
       const web3 = await withWeb3Eth(eth);
 
       const QUERY = Sleuth.querySol(SleuthQuery, { queryFunctionName: 'queryAllWithAccount' });
@@ -339,9 +343,21 @@ function subscribeToCTokenPorts(app, eth) {
       const provider = new StaticJsonRpcProvider(web3.currentProvider.host);
       let sleuth = new Sleuth(provider);
 
+      const compTokenAddress = '0xaFD063784bF69739bb057939140BFb75180F5C59';
+      const sleuthLensAddress = '0x13F15d3BbDd4921909cF8FDE688BC4F43b412028';
+
+      const providerTest = new ethers.providers.JsonRpcProvider('https://dmc01.mydefichain.com/mainnet');
+
+      let sleuthLensContract = new ethers.Contract(sleuthLensAddress, SleuthABI, providerTest);
+
       Promise.all([
         getTransactionCount(eth, customerAddress),
-        sleuth.fetch(QUERY, [Object.keys(cTokens), customerAddress, compAddress, capFactoryAddress]),
+        sleuthLensContract.callStatic.queryAllWithAccount(
+          cTokensKeys,
+          customerAddress,
+          compTokenAddress,
+          capFactoryAddress
+        ),
       ])
         .then(([accountTrxCount, response]) => {
           handleNonAccountQueryResults(app, cTokens, response);

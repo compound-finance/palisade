@@ -1,5 +1,5 @@
 port module Main exposing (Flags, badNetworkAlert, init, invalidNetwork, liquidateTranslator, main, newBlockCmd, subscriptions, update, view)
-
+-- empty commit
 import Admin
 import Browser
 import Browser.Events
