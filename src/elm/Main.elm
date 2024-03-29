@@ -1240,12 +1240,6 @@ alertView ({ account, maybeGasPrice, network, userLanguage } as model) =
                     ( Just MainNet, _, Just gasPrice ) ->
                         highGasAlert userLanguage gasPrice
 
-                    ( Just testNet, True, _ ) ->
-                        testNetworkNoEtherAlert userLanguage (Network.networkName testNet) address
-
-                    ( Just testNet, _, _ ) ->
-                        testNetworkAlert userLanguage (Network.networkName testNet)
-
                     ( Nothing, True, _ ) ->
                         text ""
 
