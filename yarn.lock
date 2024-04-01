@@ -5352,7 +5352,7 @@ ethereumjs-vm@^2.3.4, ethereumjs-vm@^2.6.0:
     rustbn.js "~0.2.0"
     safe-buffer "^5.1.1"
 
-"ethereumjs-wallet@git+https://github.com/ethereumjs/ethereumjs-wallet.git#2121d5a32195e595accc9dce81d14bae8b4e6de6", "ethereumjs-wallet@https://github.com/ethereumjs/ethereumjs-wallet.git#2121d5a32195e595accc9dce81d14bae8b4e6de6":
+"ethereumjs-wallet@https://github.com/ethereumjs/ethereumjs-wallet.git#2121d5a32195e595accc9dce81d14bae8b4e6de6":
   version "0.6.3"
   resolved "https://github.com/ethereumjs/ethereumjs-wallet.git#2121d5a32195e595accc9dce81d14bae8b4e6de6"
   dependencies:
@@ -10208,10 +10208,10 @@ scryptsy@^2.1.0:
   resolved "https://registry.yarnpkg.com/scryptsy/-/scryptsy-2.1.0.tgz#8d1e8d0c025b58fdd25b6fa9a0dc905ee8faa790"
   integrity sha512-1CdSqHQowJBnMAFyPEBRfqag/YP9OF394FV+4YREIJX4ljD7OxvQRDayyoyyCk+senRjSkP6VnUNQmVQqB6g7w==
 
-seahorse-compound-components@1.0.12:
-  version "1.0.12"
-  resolved "https://registry.yarnpkg.com/seahorse-compound-components/-/seahorse-compound-components-1.0.12.tgz#10ce6c03365889dbcbeb434719813478bef96d44"
-  integrity sha512-jrKfdpd53dDx3GglVpu9jElLENkeDsromW4U2ZorFC8c6AFfjzpiXliUaEkKvZAhTXoVK/JOsNrgAiZUaoLNQQ==
+seahorse-compound-components@1.0.14:
+  version "1.0.14"
+  resolved "https://registry.yarnpkg.com/seahorse-compound-components/-/seahorse-compound-components-1.0.14.tgz#09ccce849756558c104f2665e79165b6dd973fc3"
+  integrity sha512-WUSE9dm/JbyL51VpSqPzeaD0nnwXkX5BYJ49wHdeq7GjA5RMUq64w3WRd3fHMR2Uh2lDUPyn+uuOR8wp80Pz7A==
   dependencies:
     "@babel/core" "^7.0.0"
     "@babel/preset-env" "^7.0.0"
@@ -10251,10 +10251,10 @@ seahorse-compound-components@1.0.12:
     webpack-dev-server "^3.7.2"
     yargs "^16.2.0"
 
-seahorse-compound-config@1.0.5:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/seahorse-compound-config/-/seahorse-compound-config-1.0.5.tgz#92e282888d11494cacef9dae8a23592861ff5980"
-  integrity sha512-cAtv8+I0Ug+o8kR4JI7UKTjUGX3CFU+QPzrl8bidO2ux0Vl/obU3qWaZb7+shTLMG/wcIw35EiVCNGs0jIy0Zw==
+seahorse-compound-config@1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/seahorse-compound-config/-/seahorse-compound-config-1.0.6.tgz#f423785c1c9c2386369e03978ae52ab94e8a32e6"
+  integrity sha512-fTkjIIVhfjVokzlTsLpEaG+gJ3yT+f8R4kbtMF6m2f2XYZ0fQtiDczkre1qtbBo6NYyynTXxwWzxVXpwD00psg==
 
 secp256k1@^3.0.1:
   version "3.8.0"

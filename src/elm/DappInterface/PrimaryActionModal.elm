@@ -572,9 +572,9 @@ assetAndCompRateForm userLanguage config maybeEtherUsdPrice ({ chosenAsset, prim
                     "– %"
     in
     div [ class "form" ]
-        [ a ([ class "label-link", target "__blank" ] ++ href External "https://app.compound.finance/markets/?market=v2")
+        [ div ([ class ""])
             [ label [ class "dark" ] [ text formLabel ]
-            , div [ class "line-icon line-icon--small line-icon--external-link line-icon--external-link--black" ] []
+
             ]
         , div [ class "calculation" ]
             [ span []
