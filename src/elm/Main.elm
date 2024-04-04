@@ -1,5 +1,5 @@
 port module Main exposing (Flags, badNetworkAlert, init, invalidNetwork, liquidateTranslator, main, newBlockCmd, subscriptions, update, view)
-
+-- empty commit
 import Admin
 import Browser
 import Browser.Events
@@ -1239,12 +1239,6 @@ alertView ({ account, maybeGasPrice, network, userLanguage } as model) =
                 case ( network, hasZeroEthBalance, maybeGasPrice ) of
                     ( Just MainNet, _, Just gasPrice ) ->
                         highGasAlert userLanguage gasPrice
-
-                    ( Just testNet, True, _ ) ->
-                        testNetworkNoEtherAlert userLanguage (Network.networkName testNet) address
-
-                    ( Just testNet, _, _ ) ->
-                        testNetworkAlert userLanguage (Network.networkName testNet)
 
                     ( Nothing, True, _ ) ->
                         text ""

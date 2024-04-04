@@ -263,8 +263,8 @@ loadConfig networkName ({ contracts, cTokensRaw, tokens, blocks } as basicConfig
                 Just cEtherTokenConfig ->
                     let
                         dummyEthConfig =
-                            { name = "Ether"
-                            , symbol = "ETH"
+                            { name = "DFI"
+                            , symbol = "DFI"
                             , decimals = 18
                             , address = cEtherTokenConfig.address
                             , supported = Just True

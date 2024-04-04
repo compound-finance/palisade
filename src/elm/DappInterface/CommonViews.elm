@@ -174,15 +174,14 @@ pageHeader userLanguage page connectedWallet account _ governanceState _ =
                 v3VoteExternalLink = "https://app.compound.finance/vote"
             in
             [ a (class homeClass :: href PageNavigation (getHrefUrl Home)) [ text (Translations.dashboard userLanguage) ]
-            , a (href External (v2MarketsExternalLink)) [ text (Translations.markets userLanguage) ]
-            , a (href External (v3VoteExternalLink)) [ text (Translations.vote userLanguage) ]
+
             ]
     in
     header [ class "dapp" ]
         [ div [ class "container-large" ]
             [ div [ class "row align-middle" ]
                 [ div [ class "col-xs-3 col-sm-4" ]
-                    [ a (class "brand" :: href External "https://compound.finance") []
+                    [ a (class "brand" :: href External "https://app.seahorsefi.xyz/") []
                     ]
                 , div [ class "col-xs-5 col-sm-4 mobile-hide text-center links" ] links
                 , div [ class "col-xs-9 col-sm-4 text-right actions" ]
@@ -224,10 +223,6 @@ pageFooter userLanguage maybeBlockNumber preferences model =
                     [ div [ class "mobile-hide" ]
                         [ span [ class ("dot-indicator" ++ indicatorColorClass) ] []
                         , label [ class "small" ] [ text (Translations.latest_block userLanguage (formatBlockNumber maybeBlockNumber)) ]
-                        , a (target "_blank" :: href External "https://app.compound.finance/markets?market=v2") [ text (Translations.markets userLanguage) ]
-                        , a (target "_blank" :: href External "https://compound.finance/governance") [ text (Translations.governance userLanguage) ]
-                        , a (target "_blank" :: href External "https://compound.finance/governance/comp") [ text (Translations.comp userLanguage) ]
-                        , a (target "_blank" :: href External "https://medium.com/compound-finance/the-compound-guide-to-supplying-borrowing-crypto-assets-94821f2950a0") [ text (Translations.support userLanguage) ]
                         , a (href PageNavigation (getHrefUrl TermsOfService)) [ text (Translations.terms userLanguage) ]
                         ]
                     ]
