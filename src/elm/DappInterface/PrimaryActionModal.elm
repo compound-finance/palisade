@@ -592,7 +592,7 @@ assetAndCompRateForm userLanguage config maybeEtherUsdPrice ({ chosenAsset, prim
                     [ text (Translations.distribution_apy userLanguage)
                     ]
                 ]
-            , span [] [ text distributionApyText ]
+            , span [] [ text "Coming Soon" ]
             ]
         ]
 
