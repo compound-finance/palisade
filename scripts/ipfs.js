@@ -45,7 +45,7 @@ function buildIpfsClient() {
   urls = [
     ["IPFS Url", `https://ipfs.io/ipfs/${app.cid}`],
     ["Cloudflare Url", `https://cloudflare-ipfs.com/ipfs/${app.cid}`],
-    ["Infura Url", `https://ipfs.infura.io/ipfs/${app.cid}`],
+    ["Infura Url", `https://compound-app.infura-ipfs.io/ipfs/${app.cid}`],
   ];
   urlText = urls.map(([name, url]) => `  * ${name}: ${url}`).join("\n");
 
