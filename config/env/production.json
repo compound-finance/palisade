@@ -17,6 +17,5 @@
     "goerli": 5,
     "kovan": 42
   },
-  "DEFAULT_NETWORK": "mainnet",
-  "BLOCKNATIVE_API_KEY": null
+  "DEFAULT_NETWORK": "mainnet"
 }

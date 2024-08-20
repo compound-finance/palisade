@@ -88,10 +88,6 @@ const envPath = path.join(appDirectory, '/config/env');
 const envJson = fs.readFileSync(path.join(envPath, `${CONFIG_ENV}.json`));
 const envConfig = JSON.parse(envJson);
 
-if (process.env['BLOCKNATIVE_API_KEY']) {
-  envConfig.BLOCKNATIVE_API_KEY = process.env['BLOCKNATIVE_API_KEY'];
-}
-
 if (process.env['WALLET_CONNECT_PROJECT_ID']) {
   envConfig.WALLET_CONNECT_PROJECT_ID = process.env['WALLET_CONNECT_PROJECT_ID'];
 }

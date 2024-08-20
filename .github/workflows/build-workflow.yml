@@ -64,7 +64,6 @@ jobs:
         run: yarn build
         env:
           DATA_PROVIDERS: ${{ secrets.DATA_PROVIDERS }}
-          BLOCKNATIVE_API_KEY: ${{ secrets.BLOCKNATIVE_API_KEY }}
           WALLET_CONNECT_PROJECT_ID: ${{ secrets.WALLET_CONNECT_PROJECT_ID }}
 
       - name: Archive App
