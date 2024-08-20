@@ -21,7 +21,7 @@ async function release(cid, url, signature) {
   try {
     const json = await res.json();
   } catch (error) {
-    console.error(`Response was not valid JSON: ${error}`);
+    throw new Error(`Response was not valid JSON: ${error}`);
   }
 
   if (json.cid) {
