@@ -43,7 +43,6 @@ The following is an example configuration file:
     "development": 999
   },
   "DEFAULT_NETWORK": "mainnet",
-  "BLOCKNATIVE_API_KEY": "YOUR_BLOCKNATIVE_KEY",
   "WALLET_CONNECT_PROJECT_ID": "YOUR_WALLET_CONNECT_PROJECT_ID"
 }
 ```
@@ -53,7 +52,6 @@ Each of the top level keys have the following functions:
 - `API_BASE_URL_MAP` - Object mapping of Eth network name as key and value being the desired Compound Api host. This can be left as is.
 - `DATA_PROVIDERS` - Object mapping of Eth network name as key and value being the url of a corresponding JSON RPC host. This example shows Infura as a sample JSON RPC provider and you can find more information [here](https://infura.io/docs/ethereum). Note: this can be specified by setting in the env var `DATA_PROVIDERS` as JSON (e.g. `export DATA_PROVIDERS='{"rinkeby": "https://infura.io/..."}'`).
 - `NETWORK_MAP` - Object mapping of Eth network name as key and value being the corresponding NetworkId value. This can be left as is.
-- `BLOCKNATIVE_API_KEY` - Blocknative API Key required to track transaction notifications. You can find more information [here](https://docs.blocknative.com/notify). Note: this can be specified by setting the env var `BLOCKNATIVE_API_KEY`. This key is not strictly required (but provides a better user experience).
 - `WALLET_CONNECT_PROJECT_ID` - Wallect Connect Project Id required to use Wallet Connect as a wallet type in the app. You can find more information [here](https://docs.walletconnect.com/2.0/). Note: this can be specified by setting the env var `WALLET_CONNECT_PROJECT_ID`. This id is not required unless you want to enable wallet connect usage.
 
 ## Getting Started

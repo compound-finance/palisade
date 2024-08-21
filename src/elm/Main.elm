@@ -41,7 +41,7 @@ import Http
 import Json.Decode
 import Json.Encode
 import Liquidate
-import Port exposing (askNetwork, askNewBlock, askSetBlockNativeNetworkPort, giveAccountBalance, giveError, giveNewBlock, setGasPrice, setTitle)
+import Port exposing (askNetwork, askNewBlock, giveAccountBalance, giveError, giveNewBlock, setGasPrice, setTitle)
 import Preferences exposing (PreferencesMsg(..), preferencesInit, preferencesSubscriptions, preferencesUpdate)
 import Repl
 import Strings.Translations as Translations
@@ -326,7 +326,6 @@ newBlockCmd apiBaseUrlMap maybeNetwork blockNumber previousBlockNumber ({ dataPr
 
                                 _ ->
                                     []
-
                     in
                     Cmd.batch <|
                         pageCmds
@@ -373,15 +372,9 @@ handleUpdatesFromEthConnectedWallet maybeConfig connectedEthWalletMsg model =
                     else
                         model.voteModel
 
-                setBlockNativeCmd =
-                    askSetBlockNativeNetworkPort
-                        { networkId = networkId newNetwork
-                        }
-
                 cmd =
                     Cmd.batch
-                        ([ setBlockNativeCmd
-                         , refreshLatestGasPrice model.apiBaseUrlMap newNetwork
+                        ([ refreshLatestGasPrice model.apiBaseUrlMap newNetwork
                          , Cmd.map WrappedTokenMsg newTokenCmd
                          , Cmd.map liquidateTranslator newLiquidateCmd
                          ]
@@ -391,6 +384,7 @@ handleUpdatesFromEthConnectedWallet maybeConfig connectedEthWalletMsg model =
                                             refreshBlockCmd =
                                                 if model.network /= Just newNetwork then
                                                     newBlockCmd model.apiBaseUrlMap (Just newNetwork) blockNumber Nothing model
+
                                                 else
                                                     Cmd.none
                                         in
@@ -1117,9 +1111,10 @@ update msg ({ page, configs, apiBaseUrlMap, account, transactionState, bnTransac
 
 
 view : Model -> Html Msg
-view ({userLanguage} as model) =
+view ({ userLanguage } as model) =
     Html.div [ id "main" ]
         (viewFull model)
+
 
 viewFull : Model -> List (Html Msg)
 viewFull ({ page, liquidateModel, transactionState, compoundState, tokenState, oracleState, configs, configAbis, network, preferences, account, blockNumber, userLanguage } as model) =

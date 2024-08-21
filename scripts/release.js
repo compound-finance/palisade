@@ -14,10 +14,15 @@ async function release(cid, url, signature) {
     body: cid,
     method: 'POST',
     headers: {
-      'x-signature': signature
-    }
+      'x-signature': signature,
+    },
   });
-  const json = await res.json();
+
+  try {
+    const json = await res.json();
+  } catch (error) {
+    throw new Error(`Response was not valid JSON: ${error}`);
+  }
 
   if (json.cid) {
     console.log(`Successfully released: ${json.cid}`);

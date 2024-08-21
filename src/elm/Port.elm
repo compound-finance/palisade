@@ -1,7 +1,6 @@
 port module Port exposing
     ( askNetwork
     , askNewBlock
-    , askSetBlockNativeNetworkPort
     , encodeParameters
     , giveAccountBalance
     , giveEncodedExtrinsic
@@ -40,13 +39,6 @@ port setTitle : String -> Cmd msg
 
 
 port giveProviderType : (Int -> msg) -> Sub msg
-
-
-
--- Update BlockNative target network
-
-
-port askSetBlockNativeNetworkPort : { networkId : Int } -> Cmd msg
 
 
 port giveAccountBalancePort : (Value -> msg) -> Sub msg

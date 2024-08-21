@@ -1,6 +1,5 @@
 import { Sleuth } from '../../node_modules/@compound-finance/sleuth';
 import { StaticJsonRpcProvider } from '../../node_modules/@ethersproject/providers';
-import BlocknativeSdk from '../../node_modules/bnc-sdk';
 import BN from '../../node_modules/bn.js';
 import connectedWalletPorts from '../../node_modules/compound-components/src/js/sharedEth/connectedWalletPorts';
 import EthUtils from '../../node_modules/web3-utils';
@@ -57,7 +56,6 @@ const EXP_SCALE_BN = new BN(10).pow(new BN(18)); // 1e18 used for BN.div
 const defaultCallParams = { gas: 1.0e10 };
 
 const transactionStorage = trxStorage('transactions');
-const bnTransactionStorage = bnTxStorage('blocknative_transactions');
 const preferencesStorage = storage('preferences');
 
 // We wait this amount of milliseconds before informing Elm of a new block
@@ -102,24 +100,6 @@ async function getBlockTimestamps(blockNumbers, network) {
       `https://timestamp.compound.finance/${blockNumbers.join(',')}?network=${network}`
     );
     return await timestampsResult.json();
-  }
-}
-
-let blockNativeApiKey;
-let blockNativeNetwork = {};
-let blockNative;
-
-function buildBlockNative(networkId) {
-  if (blockNativeApiKey) {
-    if (blockNativeNetwork[networkId]) {
-      blockNative = blockNativeNetwork[networkId];
-    } else {
-      blockNative = new BlocknativeSdk({
-        dappId: blockNativeApiKey,
-        networkId: networkId,
-      });
-      blockNativeNetwork[networkId] = blockNative;
-    }
   }
 }
 
@@ -485,44 +465,6 @@ function subscribeToStoreTransaction(app, eth) {
   // port askClearTransactionsPort : {} -> Cmd msg
   app.ports.askClearTransactionsPort.subscribe(({}) => {
     transactionStorage.clear();
-  });
-
-  /**
-   * Block Native storage. We can remove the above ports when we fully migrate to Block Native
-   */
-  // port storeBNTransactionPort : { txModuleId : String, timestamp : Maybe Time.Posix, network : Network, txId : Int, txHash : Maybe Hex, txStatus : String, fromAddress : Address, toAddress : Address, func : String, args : List String }
-  app.ports.storeBNTransactionPort.subscribe(
-    ({ txModuleId, timestamp, network, txId, txHash, txStatus, fromAddress, toAddress, func, args }) => {
-      bnTransactionStorage.put(
-        txModuleId,
-        timestamp,
-        network,
-        txId,
-        txHash,
-        txStatus,
-        fromAddress,
-        toAddress,
-        func,
-        args
-      );
-    }
-  );
-
-  // port storeBNTransactionUpdatePort : { txModuleId : String, txId : Int, txHas : String, txStatus : Int } -> Cmd msg
-  app.ports.storeBNTransactionUpdatePort.subscribe(({ txModuleId, txId, txHash, txStatus }) => {
-    bnTransactionStorage.update(txModuleId, txId, txHash, txStatus);
-  });
-
-  // port askStoredBNTransactionsPort : {} -> Cmd msg
-  app.ports.askStoredBNTransactionsPort.subscribe(({}) => {
-    const transactions = Object.values(bnTransactionStorage.getAll());
-
-    app.ports.giveStoredBNTransactionsPort.send(transactions);
-  });
-
-  // port askClearBNTransactionsPort : {} -> Cmd msg
-  app.ports.askClearBNTransactionsPort.subscribe(({}) => {
-    bnTransactionStorage.clear();
   });
 }
 
@@ -1364,12 +1306,9 @@ function handleTransactionNotification(app, eth, txModule, txId, txHash, status,
   });
 }
 
-function subscribeToEtherPorts(app, eth, blockNativeApiKey) {
+function subscribeToEtherPorts(app, eth) {
   // port etherSendTransactionPort : String -> Encode.Value -> Cmd msg
   app.ports.etherSendTransactionPort.subscribe(([txModule, txId, { from, to, data, value }]) => {
-    // Remember value since we could change networks while we're still awaiting results
-    let txBlockNative = blockNative;
-
     const trxPayload = {
       from,
       to,
@@ -1387,67 +1326,20 @@ function subscribeToEtherPorts(app, eth, blockNativeApiKey) {
           web3Eth
             .sendTransaction(trxPayloadWithGasLimit)
             .on('transactionHash', (txHash) => {
-              if (txBlockNative) {
-                const { emitter } = txBlockNative.transaction(txHash);
+              // If no blocknative, then let's try creating a non BN Transaction
+              // so it can be watched for every new block.
+              app.ports.giveNewNonBNTrxPort.send({
+                txModule,
+                txId,
+                txHash: txHash,
+              });
 
-                emitter.on('txSpeedUp', (transaction) => {
-                  handleTransactionNotification(
-                    app,
-                    eth,
-                    txModule,
-                    txId,
-                    transaction.originalHash,
-                    'speedup',
-                    transaction.blockNumber
-                  );
-                });
-
-                emitter.on('txCancel', (transaction) => {
-                  handleTransactionNotification(
-                    app,
-                    eth,
-                    txModule,
-                    txId,
-                    transaction.originalHash,
-                    'cancel',
-                    transaction.blockNumber
-                  );
-                });
-
-                emitter.on('all', (transaction) => {
-                  handleTransactionNotification(
-                    app,
-                    eth,
-                    txModule,
-                    txId,
-                    transaction.hash,
-                    transaction.status,
-                    transaction.blockNumber
-                  );
-                });
-
-                // port etherTransactionHashPort : (Json.Decode.Value -> msg) -> Sub msg
-                app.ports.etherTransactionHashPort.send({
-                  txModule,
-                  txId,
-                  txHash,
-                });
-              } else {
-                // If no blocknative, then let's try creating a non BN Transaction
-                // so it can be watched for every new block.
-                app.ports.giveNewNonBNTrxPort.send({
-                  txModule,
-                  txId,
-                  txHash: txHash,
-                });
-
-                // Finally let's trigger a reject of the BNTransaction so we don't try 2
-                // of them.
-                app.ports.etherTransactionRejectedPort.send({
-                  txModule,
-                  txId,
-                });
-              }
+              // Finally let's trigger a reject of the BNTransaction so we don't try 2
+              // of them.
+              app.ports.etherTransactionRejectedPort.send({
+                txModule,
+                txId,
+              });
             })
             .catch((e) => {
               // User denied transaction signature
@@ -1471,49 +1363,6 @@ function subscribeToEtherPorts(app, eth, blockNativeApiKey) {
 
   // port etherWatchTransactionPort : ( String, Int, String ) -> Encode.Value -> Cmd msg
   app.ports.etherWatchTransactionPort.subscribe(([txModule, txId, txHash]) => {
-    if (blockNative) {
-      const { emitter } = blockNative.transaction(txHash);
-
-      emitter.on('txSpeedUp', (transaction) => {
-        handleTransactionNotification(
-          app,
-          eth,
-          txModule,
-          txId,
-          transaction.originalHash,
-          'speedup',
-          transaction.blockNumber
-        );
-      });
-
-      emitter.on('txCancel', (transaction) => {
-        handleTransactionNotification(
-          app,
-          eth,
-          txModule,
-          txId,
-          transaction.originalHash,
-          'cancel',
-          transaction.blockNumber
-        );
-      });
-
-      emitter.on('all', (transaction) => {
-        handleTransactionNotification(
-          app,
-          eth,
-          txModule,
-          txId,
-          transaction.hash,
-          transaction.status,
-          transaction.blockNumber
-        );
-      });
-    }
-
-    // There is a quick where Block Native does not actually notify us of a final state
-    // (like confirmed) if the transaction go into that state while we were not actively
-    // watching it. So let's redundantly ask web3 for the status as well.
     getTransactionReceipt(eth, txHash)
       .then((receipt) => {
         if (!receipt) {
@@ -1557,13 +1406,6 @@ function subscribeToFlywheelPorts(app, eth) {
   });
 }
 
-function subscribeToSetBlockNativeNetwork(app, eth) {
-  // port askSetBlockNativeNetworkPort : { networkId : Int } -> Cmd msg
-  app.ports.askSetBlockNativeNetworkPort.subscribe(({ networkId }) => {
-    buildBlockNative(networkId);
-  });
-}
-
 function subscribe(
   app,
   globEthereum,
@@ -1574,14 +1416,12 @@ function subscribe(
   configFiles,
   configAbiFiles,
   configNameToAddressMappings,
-  blockNativeApiKeyInput,
   walletConnectProjectId
 ) {
   const eth = makeEth(dataProviders, networkMap, networkAbiMap, configNameToAddressMappings, defaultNetwork);
   connectedWalletPorts.subscribe(app, eth, globEthereum, networkMap, defaultNetwork, walletConnectProjectId);
 
   subscribeToConsole(app);
-  subscribeToSetBlockNativeNetwork(app, eth);
   subscribeToCTokenPorts(app, eth);
   subscribeToNewBlocks(app, eth);
   subscribeToCheckTrxStatus(app, eth);
@@ -1592,9 +1432,6 @@ function subscribe(
   subscribeToAdminDashboard(app, eth);
   subscribeToGovernancePorts(app, eth);
   subscribeToFlywheelPorts(app, eth);
-
-  // TODO: Do we want to reduce the globalness of these vars?
-  blockNativeApiKey = blockNativeApiKeyInput;
   subscribeToEtherPorts(app, eth);
 }
 
