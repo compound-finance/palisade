@@ -18,13 +18,14 @@ async function release(cid, url, signature) {
     },
   });
 
+  let json;
   try {
-    const json = await res.json();
+    json = await res.json();
   } catch (error) {
     throw new Error(`Response was not valid JSON: ${error}`);
   }
 
-  if (json.cid) {
+  if (json && json.cid) {
     console.log(`Successfully released: ${json.cid}`);
   } else {
     throw new Error(`Invalid response: ${JSON.stringify(json)}`);
