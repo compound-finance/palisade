@@ -56,7 +56,7 @@ Each of the top level keys have the following functions:
 
 ## Getting Started
 
-The Compound web3 front-end is written in [elm](http://elm-lang.org/) and was bootstrapped with [create elm app](https://github.com/halfzebra/create-elm-app). We strongly recommmend getting familiar with the Elm framework before jumping into the Compound source code.
+The Compound web3 front-end is written in [elm](http://elm-lang.org/) and was bootstrapped with [create elm app](https://github.com/halfzebra/create-elm-app). We strongly recommend getting familiar with the Elm framework before jumping into the Compound source code.
 
 To get started, first clone this repo:
 
