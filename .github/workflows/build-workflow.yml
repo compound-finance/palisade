@@ -67,7 +67,7 @@ jobs:
           WALLET_CONNECT_PROJECT_ID: ${{ secrets.WALLET_CONNECT_PROJECT_ID }}
 
       - name: Archive App
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           name: build
           path: build
@@ -80,7 +80,8 @@ jobs:
           IPFS_HOST: ${{ secrets.IPFS_HOST }}
 
       - name: Upload IPFS Release Artifact
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           name: .release
+          include-hidden-files: true
           path: .release
