@@ -155,6 +155,7 @@ type alias Model =
     , governanceState : Eth.Governance.GovernanceState
     , errors : List String
     , currentTime : Maybe Time.Posix
+    , lastNewBlockTime : Maybe Time.Posix
     , currentTimeZone : Time.Zone
     , browserType : Utils.BrowserInfo.BrowserType
     , proposeModel : Propose.Model

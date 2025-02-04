@@ -1,6 +1,7 @@
 port module Port exposing
     ( askNetwork
     , askNewBlock
+    , askNewBlockAsync
     , encodeParameters
     , giveAccountBalance
     , giveEncodedExtrinsic
@@ -89,6 +90,14 @@ port askNewBlockPort : {} -> Cmd msg
 askNewBlock : Cmd msg
 askNewBlock =
     askNewBlockPort {}
+
+
+port askNewBlockAsyncPort : { blockNumber : Int } -> Cmd msg
+
+
+askNewBlockAsync : Int -> Cmd msg
+askNewBlockAsync currentBlock =
+    askNewBlockAsyncPort { blockNumber = currentBlock }
 
 
 port giveNewBlockPort : (Value -> msg) -> Sub msg

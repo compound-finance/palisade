@@ -14,7 +14,7 @@ import CompoundComponents.Eth.Ethereum as Ethereum exposing (Account(..), AssetA
 import CompoundComponents.Eth.Ledger exposing (LedgerAccount(..))
 import CompoundComponents.Eth.Network as Network exposing (Network(..), networkId)
 import CompoundComponents.Ether.BNTransaction as BNTransaction exposing (BNTransactionMsg)
-import CompoundComponents.Functions exposing (handleError)
+import CompoundComponents.Functions as Functions exposing (handleError)
 import CompoundComponents.Utils.CompoundHtmlAttributes exposing (HrefLinkType(..), class, href, id, target)
 import CompoundComponents.Utils.Time
 import DappInterface.ClaimCompModal as ClaimCompModal
@@ -41,7 +41,7 @@ import Http
 import Json.Decode
 import Json.Encode
 import Liquidate
-import Port exposing (askNetwork, askNewBlock, giveAccountBalance, giveError, giveNewBlock, setGasPrice, setTitle)
+import Port exposing (askNetwork, askNewBlock, askNewBlockAsync, giveAccountBalance, giveError, giveNewBlock, setGasPrice, setTitle)
 import Preferences exposing (PreferencesMsg(..), preferencesInit, preferencesSubscriptions, preferencesUpdate)
 import Repl
 import Strings.Translations as Translations
@@ -274,6 +274,7 @@ init { path, configurations, configAbiFiles, dataProviders, apiBaseUrlMap, userA
       , governanceState = Eth.Governance.init
       , errors = []
       , currentTime = Nothing
+      , lastNewBlockTime = Nothing
       , currentTimeZone = Time.utc
       , browserType = browserType
       , proposeModel = Propose.emptyState
@@ -747,14 +748,48 @@ update msg ({ page, configs, apiBaseUrlMap, account, transactionState, bnTransac
 
                 updateCompoundState =
                     Eth.Compound.handleAccountLiquidityCalculation oracleState compoundState
+
+                canCheckForPendingTrxs =
+                    let
+                        pendingTransactions =
+                            Transaction.getAllPendingTransactions model.network model.transactionState.transactions
+                    in
+                    if List.isEmpty pendingTransactions then
+                        Nothing
+
+                    else
+                        Just True
+
+                -- The new block checker in ports now checks every 1 minute
+                -- but if we have pending transactions, then lets continue
+                -- to trigger an async block check every 20 seconds.
+                ( lastNewBlockTimestamp, askNewBlockAsyncCmd ) =
+                    Functions.map3
+                        canCheckForPendingTrxs
+                        model.blockNumber
+                        model.lastNewBlockTime
+                        (\_ currentBlockNumber actualLastNewBlockTime ->
+                            if Time.posixToMillis actualLastNewBlockTime + 20000 > Time.posixToMillis time then
+                                ( Just time
+                                , askNewBlockAsync currentBlockNumber
+                                )
+
+                            else
+                                ( model.lastNewBlockTime, Cmd.none )
+                        )
+                        |> Maybe.withDefault ( model.lastNewBlockTime, Cmd.none )
             in
             ( { model
                 | currentTime = Just time
+                , lastNewBlockTime = lastNewBlockTimestamp
                 , borrowingContainerState = updatedBorrowingContainerState
                 , voteModel = updatedVoteModel
                 , compoundState = updateCompoundState
               }
-            , Cmd.map voteTranslator loadDelegateeCmd
+            , Cmd.batch
+                [ Cmd.map voteTranslator loadDelegateeCmd
+                , askNewBlockAsyncCmd
+                ]
             )
 
         CheckVersion time ->
@@ -786,7 +821,12 @@ update msg ({ page, configs, apiBaseUrlMap, account, transactionState, bnTransac
             ( model, Cmd.none )
 
         SetBlockNumber blockNumber ->
-            ( { model | blockNumber = Just blockNumber }, newBlockCmd apiBaseUrlMap model.network blockNumber model.blockNumber model )
+            ( { model
+                | blockNumber = Just blockNumber
+                , lastNewBlockTime = model.currentTime
+              }
+            , newBlockCmd apiBaseUrlMap model.network blockNumber model.blockNumber model
+            )
 
         WrappedTransactionMsg transactionMsg ->
             let
