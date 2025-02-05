@@ -10,6 +10,7 @@ port module Eth.Transaction exposing
     , containsTransactionType
     , filteredTransactionsByCToken
     , filteredTransactionsByComptroller
+    , getAllPendingTransactions
     , getDefaultOldestPendingTrxTime
     , getPendingTransactionsForAccount
     , giveNewTrx

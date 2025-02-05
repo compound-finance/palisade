@@ -47,7 +47,7 @@ const PROVIDER_TYPE_SHOW_ACCOUNT = 3;
 
 const ACCOUNT_CHECK_INTERVAL_MS = 2000;
 const NETWORK_CHECK_INTERVAL_MS = 4000;
-const NEW_BLOCK_CHECK_INTERVAL_MS = 20_000;
+const NEW_BLOCK_CHECK_INTERVAL_MS = 60_000;
 const SECONDS_PER_BLOCK = 12;
 const BLOCKS_PER_DAY = new BN(7200); // 12 seconds per block
 const EXP_DECIMALS = 18;
@@ -420,6 +420,21 @@ function subscribeToNewBlocks(app, eth) {
 
   // port askNewBlockPort : {} -> Cmd msg
   app.ports.askNewBlockPort.subscribe(newBlockCheckFunction);
+
+  // port askNewBlockAsyncPort : { blockNumber : Int } -> Cmd msg
+  app.ports.askNewBlockAsyncPort.subscribe(({blockNumber}) => {
+    requestForeground(() => {
+      getBlockNumber(eth)
+        .then((blockNumber) => {
+          if (blockNumber && blockNumber !== previousBlock) {
+            debug(`New Block: ${blockNumber}`);
+            app.ports.giveNewBlockPort.send({ block: blockNumber });
+            previousBlock = blockNumber;
+          }
+        })
+        .catch(reportError(app))
+    });
+  });
 }
 
 function subscribeToCheckTrxStatus(app, eth) {
