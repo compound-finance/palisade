@@ -4,7 +4,7 @@
   "description": "The Compound Web3 Front-end",
   "main": "index.js",
   "scripts": {
-    "build": "node --unhandled-rejections=strict --max-old-space-size=8192 scripts/build.js",
+    "build": "node --openssl-legacy-provider --unhandled-rejections=strict --max-old-space-size=8192 scripts/build.js",
     "start": "node --openssl-legacy-provider --unhandled-rejections=strict scripts/start.js dapp",
     "package": "elm-package",
     "make": "elm-make",
@@ -14,9 +14,9 @@
     "build-css": "npx dart-sass -I. -Inode_modules src/scss:src/css-build",
     "deploy-gcloud": "bash scripts/deploy-gcloud.sh",
     "deploy-ipfs": "node --experimental-repl-await scripts/ipfs.js",
-    "i18n": "node --unhandled-rejections=strict config/tx-cli.js -a 'src/strings/always_english_strings.json' -p 'src/strings/strings.<lang>.json' -s en -l es zh fr ko -o src/elm/Strings/Translations.elm -m Strings.Translations -t",
-    "watch-i18n": "node --unhandled-rejections=strict config/tx-cli.js -a 'src/strings/always_english_strings.json' -p 'src/strings/strings.<lang>.json' -s en -l es zh fr ko -o src/elm/Strings/Translations.elm -m Strings.Translations -t -w",
-    "release": "node --unhandled-rejections=strict scripts/release.js",
+    "i18n": "node --openssl-legacy-provider --unhandled-rejections=strict config/tx-cli.js -a 'src/strings/always_english_strings.json' -p 'src/strings/strings.<lang>.json' -s en -l es zh fr ko -o src/elm/Strings/Translations.elm -m Strings.Translations -t",
+    "watch-i18n": "node --openssl-legacy-provider --unhandled-rejections=strict config/tx-cli.js -a 'src/strings/always_english_strings.json' -p 'src/strings/strings.<lang>.json' -s en -l es zh fr ko -o src/elm/Strings/Translations.elm -m Strings.Translations -t -w",
+    "release": "node --openssl-legacy-provider --unhandled-rejections=strict scripts/release.js",
     "sleuth": "forge build --via-ir -c src/sleuth -o src/sleuth/out"
   },
   "author": "",
