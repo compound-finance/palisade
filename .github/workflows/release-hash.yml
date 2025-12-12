@@ -37,7 +37,7 @@ jobs:
         if: github.event.inputs.cid == ''
 
       - name: Seacrest
-        uses: hayesgm/seacrest@b87fb76eca4d03573060a86f4850395f40442087
+        uses: torreyatcitty/seacrest@7db399e44482d234f11a5b5f523ef7caa49a9f95
         with:
           wallet_connect_project_id: ${{secrets.WALLET_CONNECT_PROJECT_ID}}
           requested_network: mainnet
