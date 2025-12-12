@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "node --unhandled-rejections=strict --max-old-space-size=8192 scripts/build.js",
-    "start": "node --unhandled-rejections=strict scripts/start.js dapp",
+    "start": "node --openssl-legacy-provider --unhandled-rejections=strict scripts/start.js dapp",
     "package": "elm-package",
     "make": "elm-make",
     "repl": "elm-repl",

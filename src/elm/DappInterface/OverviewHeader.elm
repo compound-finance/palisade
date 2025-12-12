@@ -130,41 +130,21 @@ view maybeConfig maybeEtherUsdPrice ({ borrowingContainerState, preferences } as
                 , div [ class "headline headline--loading" ] []
                 )
 
-        migratorAlertBanner =
-            cTokens
-                |> List.filter (\ctoken -> ctoken.underlying.symbol == "USDC")
-                |> List.head
-                |> Maybe.andThen
-                    (\cUSDC -> Balances.getUnderlyingBalances mainModel.compoundState cUSDC.contractAddress)
-                |> Maybe.andThen
-                    (\balances ->
-                        let
-                            alertView =
-                                div [ class "container-large" ]
-                                    [ div [ class "migrator-alert" ]
-                                        [ div [ class "migrator-alert__badge" ] [ text "NEW" ]
-                                        , label [ class "migrator-alert__title" ] [ text "Migrate your V2 balances!" ]
-                                        , label [ class "migrator-alert__description" ]
-                                            [ text "Transfer multiple balances to Compound V3 in a single transaction using our new "
-                                            , a (href External "https://app.compound.finance/extensions/comet_migrator") [ text "migrator tool" ]
-                                            , text "."
-                                            ]
-                                        , div [ class "close-x" ]
-                                            [ button [ onClickStopPropagation (ForPreferences (Preferences.SetShowMigratorAlert False)) ] []
-                                            ]
-                                        ]
-                                    ]
-                        in
-                        if Decimal.gt balances.underlyingBorrowBalance Decimal.zero && preferences.showMigratorAlert then
-                            Just alertView
-
-                        else
-                            Nothing
-                    )
-                |> Maybe.withDefault (text "")
+        alertView =
+            div [ class "container-large" ]
+                [ div [ class "migrator-alert" ]
+                    [ label [ class "migrator-alert__title" ]
+                        [ text "V2 Deprecation has begun. Please begin migrating positions to V3 for continued support. Learn more in this "
+                        , a (href External "https://www.comp.xyz/t/gauntlet-compound-v2-deprecation-proposal/7237") [ text "forum post" ]
+                        , text ".  Get started with "
+                        ,  a (href External "https://app.compound.finance/") [ text "V3 here" ]
+                        , text "."
+                        ]
+                    ]
+                ]
     in
     section [ id "borrow-overview", class "hero" ]
-        [ migratorAlertBanner
+        [ alertView
         , div [ class "balance-totals" ]
             [ div [ class "content" ]
                 [ div [ class "row align-middle mobile-hide" ]

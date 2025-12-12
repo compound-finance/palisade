@@ -239,6 +239,7 @@ body {
     display: flex;
     margin-bottom: 3.25rem;
     padding: 0.825rem 0.75rem;
+    justify-content: center;
 
     &__badge {
       background-color: #073e2e;
@@ -256,9 +257,19 @@ body {
       color: $color_light_1;
       font-style: normal;
       font-weight: 500;
-      font-size: 11px;
+      font-size: 13px;
       line-height: 16px;
       margin-right: 0.5rem;
+
+      a {
+        font-style: normal;
+        font-weight: 400;
+        font-size: 13px;
+        line-height: 16px;
+        letter-spacing: inherit;
+        text-transform: none;
+        text-decoration: underline;
+      }
     }
 
     &__description {
