@@ -142,6 +142,31 @@ To deploy to a gcloud bucket:
 > yarn deploy-gcloud your.bucket.name
 ```
 
+## WalletKit / WalletConnect v2 Integration
+
+1. Install dependencies:
+   ```bash
+   npm install @walletconnect/ethereum-provider @walletconnect/web3wallet ethers
+
+Configure walletKit.ts with PROJECT_ID.
+
+Setup JS bridge for Elm ports:
+port connect : () -> Cmd msg
+port disconnect : () -> Cmd msg
+
+Update modal UI to call ports.
+
+* * Features:
+
+Multi-wallet support (Metamask, Rainbow, Coinbase, etc.)
+
+Session restore & multi-session
+
+Network / chain management
+
+Event listeners for accountsChanged, chainChanged, disconnect, session_expire
+
+
 ## Internationalization
 
 To learn more about internationalization, please view [i18n.md](i18n.md).
