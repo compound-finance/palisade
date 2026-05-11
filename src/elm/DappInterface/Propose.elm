@@ -493,7 +493,6 @@ governanceView userLanguage isCrowdProposal config ( governorAddress, isBravo ) 
                                                         Array.toList action.functionArgs
                                                             |> List.map .text
 
-                                                    -- TODO: .text?
                                                     ( isHumanReadable, headerText, subHeaderText ) =
                                                         humanReadableTimelockAction userLanguage goverananceHelperData target action.value functionName functionArgsText
 
