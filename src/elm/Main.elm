@@ -1271,17 +1271,14 @@ alertView ({ account, maybeGasPrice, network, userLanguage } as model) =
                             Nothing ->
                                 False
                 in
-                case ( network, hasZeroEthBalance, maybeGasPrice ) of
-                    ( Just MainNet, _, Just gasPrice ) ->
-                        highGasAlert userLanguage gasPrice
-
-                    ( Just testNet, True, _ ) ->
+                case ( network, hasZeroEthBalance ) of
+                    ( Just testNet, True) ->
                         testNetworkNoEtherAlert userLanguage (Network.networkName testNet) address
 
-                    ( Just testNet, _, _ ) ->
+                    ( Just testNet, _) ->
                         testNetworkAlert userLanguage (Network.networkName testNet)
 
-                    ( Nothing, True, _ ) ->
+                    ( Nothing, True) ->
                         text ""
 
                     _ ->

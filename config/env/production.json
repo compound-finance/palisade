@@ -1,7 +1,5 @@
 {
-  "API_BASE_URL_MAP": {
-    "v3_api": "https://v3-api.compound.finance/"
-  },
+  "API_BASE_URL_MAP": {},
   "DATA_PROVIDERS": {
     "development": "http://localhost:8545",
     "mainnet": "https://infura.io/mainnet"
