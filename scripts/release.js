@@ -4,7 +4,7 @@ const fs = require('fs/promises');
 
 const releaseFile = '.release';
 const ethereumNode = process.env['ETHEREUM_NODE'] || 'http://localhost:8585';
-const workerHost = process.env['WORKER_HOST'] || 'https://v2-app.comp.xyz';
+const workerHost = process.env['WORKER_HOST'] || 'https://v2-app.compound.xyz';
 const url = `${workerHost}/release`;
 
 async function release(cid, url, signature) {
